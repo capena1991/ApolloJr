@@ -1,6 +1,6 @@
 import Discord from "discord.js"
 
-import auth from "./config.json"
+import { token, prefix } from "./config.json"
 
 const client = new Discord.Client()
 
@@ -9,9 +9,9 @@ client.on("ready", () => {
 })
 
 client.on("message", ({ content, channel }) => {
-  if (content === "!ping") {
+  if (content === `${prefix}ping`) {
     channel.send("Pong.")
   }
 })
 
-client.login(auth.token)
+client.login(token)
