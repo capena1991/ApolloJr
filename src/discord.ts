@@ -1,4 +1,5 @@
 import Discord from "discord.js"
+import { getCommand } from "./commands"
 
 import { token, prefix } from "./config.json"
 
@@ -8,10 +9,9 @@ client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`)
 })
 
-const getUserInfo = (user: Discord.User) =>
-  [`${user.username}'s ID: ${user.id}`, `${user.username}'s avatar: ${user.displayAvatarURL}`].join("\n")
+client.on("message", (message) => {
+  const { content, channel, author, reply } = message
 
-client.on("message", ({ content, channel, guild, author, mentions }) => {
   if (!content.startsWith(prefix) || author.bot) {
     return
   }
@@ -20,15 +20,20 @@ client.on("message", ({ content, channel, guild, author, mentions }) => {
   const command = args.shift()?.toLowerCase()
 
   if (!command) {
-    channel.send("You talkin' to me?")
-  } else if (command === "ping") {
-    channel.send("Pong.")
-  } else if (command === "server") {
-    channel.send(`Server name: ${guild.name}\nTotal members: ${guild.memberCount}`)
-  } else if (command === "user") {
-    const users = mentions.users.size ? mentions.users.array() : [author]
-    const message = users.map((u) => getUserInfo(u)).join("\n\n")
-    channel.send(message)
+    return reply("you talkin' to me?")
+  }
+
+  if (channel.type !== "text") {
+    return reply("I can't execute that command inside DMs!")
+  }
+
+  const cmd = getCommand(command)
+
+  try {
+    return cmd.execute(message, args)
+  } catch (error) {
+    console.error(error)
+    return reply("there was an error trying to execute that command!")
   }
 })
 
