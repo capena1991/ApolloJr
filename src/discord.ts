@@ -19,12 +19,12 @@ client.on("message", (message) => {
   const args = content.slice(prefix.length).split(/\s+/)
   const command = args.shift()?.toLowerCase()
 
-  if (!command) {
-    return reply("you talkin' to me?")
+  if (channel.type !== "text") {
+    return
   }
 
-  if (channel.type !== "text") {
-    return reply("I can't execute that command inside DMs!")
+  if (!command) {
+    return reply("you talkin' to me?")
   }
 
   const cmd = getCommand(command)
