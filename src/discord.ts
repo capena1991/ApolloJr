@@ -30,6 +30,10 @@ client.on("message", (message) => {
 
   const cmd = getCommand(command)
 
+  if (!cmd) {
+    return channel.send("That's not a valid command. What are you trying to do? :unamused:")
+  }
+
   try {
     return cmd.execute(message, args)
   } catch (error) {
