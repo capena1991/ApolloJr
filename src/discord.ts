@@ -7,6 +7,7 @@ const client = new Discord.Client()
 
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`)
+  client.user.setPresence({ status: "online", game: { name: "only basic commands for now.", type: "LISTENING" } })
 })
 
 client.on("message", (message) => {
