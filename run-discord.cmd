@@ -1,1 +1,1 @@
-build.cmd && cd dist && node ./discord.js
+build.cmd && cd dist && pm2 start ./discord.js --name ApolloJr --watch --watch-delay 5
