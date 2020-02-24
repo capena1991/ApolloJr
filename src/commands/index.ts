@@ -14,12 +14,12 @@ const commands: Dict<Command> = { ping, hello, server, user, "8ball": _8ball }
 
 const help: Command = {
   name: "help",
-  description: "Shows you what you can ask Apollo Jr. to do.",
+  description: "Shows you what you can ask me to do.",
   execute({ channel, client }) {
     let embed = new Discord.RichEmbed()
       .setTitle("Apollo Jr. commands")
       .setThumbnail(client.user.displayAvatarURL)
-      .setDescription("Here's a list of what you can ask Apollo Jr. to do.")
+      .setDescription("Here's a list of what you can ask me to do.")
     embed = Object.values(commands).reduce((e, c) => e.addField(`\`${prefix}${c?.name}\``, c?.description), embed)
     channel.send(embed)
   },
