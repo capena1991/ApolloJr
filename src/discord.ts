@@ -11,18 +11,21 @@ client.on("ready", () => {
 })
 
 client.on("message", (message) => {
-  const { content, channel, author } = message
+  const { content, channel, author, mentions } = message
+
+  if (channel.type !== "text") {
+    return
+  }
 
   if (!content.startsWith(prefix) || author.bot) {
+    if (mentions.members.find((u) => u.id === client.user.id)) {
+      channel.send("Who's calling me? :eyes:")
+    }
     return
   }
 
   const args = content.slice(prefix.length).split(/\s+/)
   const command = args.shift()?.toLowerCase()
-
-  if (channel.type !== "text") {
-    return
-  }
 
   if (!command) {
     return channel.send("You talkin' to me? :face_with_raised_eyebrow:")
