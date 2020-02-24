@@ -27,7 +27,7 @@ const getUserInfo = (
 
 const ping: Command = {
   name: "user",
-  description: "Display info about yourself or another user.",
+  description: "Shows you info about yourself or another user. Apollo Jr. knows you like snooping. :wink:",
   execute({ channel, mentions, author }) {
     const users = mentions.users.size ? mentions.users.array() : [author]
     users.forEach((u) => {

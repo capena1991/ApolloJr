@@ -5,7 +5,7 @@ import { Command } from "./types"
 
 const server: Command = {
   name: "server",
-  description: "Display info about this server.",
+  description: "Shows you stuff that you might not know about this server.",
   execute({ channel, guild: { name, iconURL, splashURL, createdAt, region, ownerID, memberCount, channels } }) {
     const embed = new Discord.RichEmbed()
       .setTitle("About this server")
