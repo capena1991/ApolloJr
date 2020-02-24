@@ -10,7 +10,7 @@ client.on("ready", () => {
 })
 
 client.on("message", (message) => {
-  const { content, channel, author, reply } = message
+  const { content, channel, author } = message
 
   if (!content.startsWith(prefix) || author.bot) {
     return
@@ -24,7 +24,7 @@ client.on("message", (message) => {
   }
 
   if (!command) {
-    return reply("you talkin' to me?")
+    return channel.send("You talkin' to me? :face_with_raised_eyebrow:")
   }
 
   const cmd = getCommand(command)
@@ -33,7 +33,7 @@ client.on("message", (message) => {
     return cmd.execute(message, args)
   } catch (error) {
     console.error(error)
-    return reply("there was an error trying to execute that command!")
+    return channel.send("Oops! There was an error trying to execute that command! :disappointed:")
   }
 })
 
