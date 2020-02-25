@@ -1,17 +1,20 @@
 import Discord from "discord.js"
-import { getCommand } from "./commands"
 
+import { getCommand } from "./commands"
 import { token, prefix } from "./config.json"
+import { log } from "./log"
 
 const client = new Discord.Client()
 
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`)
-  client.user.setPresence({ status: "online", game: { name: "only basic commands for now.", type: "LISTENING" } })
+  client.user.setPresence({ status: "online", game: { name: "all of you.", type: "LISTENING" } })
 })
 
 client.on("message", (message) => {
   const { content, channel, author, mentions } = message
+
+  log(message)
 
   if (channel.type !== "text") {
     return
