@@ -23,9 +23,11 @@
     "exec": "node ./dist/app.js"
   },
   "dependencies": {
+    "@keyv/sqlite": "^2.0.2",
     "@types/node": "^12.0.2",
     "chalk": "^2.4.2",
     "discord.js": "^11.5.0",
+    "keyv": "^4.0.0",
     "moment": "^2.24.0",
     "typescript": "^3.7"
   }
