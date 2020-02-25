@@ -9,3 +9,5 @@ export const randInt = (min: number, max: number | undefined = undefined) => {
 }
 
 export const chooseOne = (values: any[]) => values[randInt(values.length)]
+
+export const randBool = (probability: number = 0.5) => Math.random() < probability

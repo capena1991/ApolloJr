@@ -9,8 +9,10 @@ import hello from "./hello"
 import server from "./server"
 import user from "./user"
 import _8ball from "./8ball"
+import say from "./say"
+import says from "./says"
 
-const commands: Dict<Command> = { ping, hello, server, user, "8ball": _8ball }
+const commands: Dict<Command> = { ping, hello, server, user, say, "8ball": _8ball }
 
 const help: Command = {
   name: "help",
@@ -25,7 +27,7 @@ const help: Command = {
   },
 }
 
-const allCommands: Dict<Command> = { ...commands, help }
+const allCommands: Dict<Command> = { ...commands, help, says }
 
 export const getCommand = (name: string) => {
   return allCommands[name]
