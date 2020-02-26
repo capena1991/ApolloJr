@@ -1,16 +1,16 @@
 import Discord from "discord.js"
+import simpleLogger from "simple-node-logger"
 
-const logsChannelId = "681709479921975321"
-let logChannel: Discord.TextChannel | undefined = undefined
+const logger = simpleLogger.createRollingFileLogger({
+  logDirectory: "../data/logs/messages",
+  fileNamePattern: "<DATE>.log",
+  dateFormat: "YYYY.MM.DD",
+})
 
-export const log = ({ client, channel, guild, author, cleanContent, embeds }: Discord.Message) => {
-  if (channel.id === logsChannelId) {
-    return
-  }
-  logChannel = logChannel || <Discord.TextChannel>client.channels.get(logsChannelId)
+export const logMessage = ({ channel, guild, author, cleanContent, embeds }: Discord.Message) => {
   const channelStr = ["dm", "group"].includes(channel.type)
     ? "DM"
     : `${guild.name}#${(<Discord.GuildChannel>channel).name}`
   const content = embeds.length ? (cleanContent ? `_<embed(s)>_ + ${cleanContent}` : "_<embed(s)>_") : cleanContent
-  logChannel.send(`\`${channelStr}:${author.tag}\` ${content}`)
+  logger.info(`\`${channelStr}:${author.tag}\` ${content}`)
 }

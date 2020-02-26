@@ -2,7 +2,7 @@ import Discord from "discord.js"
 
 import { getCommand } from "./commands"
 import { token, prefix } from "./config.json"
-import { log } from "./log"
+import { logMessage } from "./log"
 
 const client = new Discord.Client()
 
@@ -14,7 +14,7 @@ client.on("ready", () => {
 client.on("message", (message) => {
   const { content, channel, author, mentions } = message
 
-  log(message)
+  logMessage(message)
 
   if (channel.type !== "text") {
     return
