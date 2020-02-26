@@ -1,6 +1,7 @@
 import Discord from "discord.js"
 
 import { getCommand } from "./commands"
+import { getReaction } from "./reactions"
 import { token, prefix } from "./config.json"
 import { logMessage } from "./log"
 
@@ -21,8 +22,8 @@ client.on("message", (message) => {
   }
 
   if (!content.startsWith(prefix) || author.bot) {
-    if (mentions.members.find((u) => u.id === client.user.id)) {
-      channel.send("Who's calling me? :eyes:")
+    if (mentions.members.has(client.user.id)) {
+      channel.send(getReaction("mention", message))
     }
     return
   }
@@ -31,13 +32,13 @@ client.on("message", (message) => {
   const command = args.shift()?.toLowerCase()
 
   if (!command) {
-    return channel.send("You talkin' to me? :face_with_raised_eyebrow:")
+    return channel.send(getReaction("noCommand", message))
   }
 
   const cmd = getCommand(command)
 
   if (!cmd) {
-    return channel.send("That's not a valid command. What are you trying to do? :unamused:")
+    return channel.send(getReaction("invalidCommand", message))
   }
 
   try {
