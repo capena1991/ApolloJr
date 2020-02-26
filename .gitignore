@@ -62,3 +62,4 @@ typings/
 dist/
 src/config.json
 .vscode/
+data
