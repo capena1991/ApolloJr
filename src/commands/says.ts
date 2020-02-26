@@ -5,7 +5,7 @@ const allowedUsers = ["425379183829581835"]
 const says: Command = {
   name: "says",
   description: "Shhh.",
-  execute({ channel, author }, args) {
+  execute: ({ channel, author }, args) => {
     if (!allowedUsers.includes(author.id) || !args.length) {
       return
     }

@@ -27,7 +27,7 @@ const answers = [
 const _8ball: Command = {
   name: "8ball",
   description: "Ask any question and I will answer through my magic oracle: :8ball:.",
-  execute({ channel }, args) {
+  execute: ({ channel }, args) => {
     if (!args.length) {
       return channel.send("Huh? How can I give you an answer if you don't ask a question?")
     }

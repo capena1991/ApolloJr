@@ -4,7 +4,7 @@ import { randBool } from "../utils"
 const say: Command = {
   name: "say",
   description: "I will say something of your chosing.",
-  execute({ channel }, args) {
+  execute: ({ channel }, args) => {
     if (!args.length) {
       return channel.send("_silence_")
     }

@@ -3,7 +3,7 @@ import { Command } from "./types"
 const ping: Command = {
   name: "ping",
   description: "Ping me to check whether I'm listening.",
-  execute({ channel }) {
+  execute: ({ channel }) => {
     channel.send("Pong.")
   },
 }

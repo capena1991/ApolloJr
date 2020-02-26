@@ -17,7 +17,7 @@ const commands: Dict<Command> = { ping, hello, server, user, say, "8ball": _8bal
 const help: Command = {
   name: "help",
   description: "Shows you what you can ask me to do.",
-  execute({ channel, client }) {
+  execute: ({ channel, client }) => {
     let embed = new Discord.RichEmbed()
       .setTitle("Apollo Jr. commands")
       .setThumbnail(client.user.displayAvatarURL)
