@@ -12,7 +12,7 @@ client.on("ready", () => {
   client.user.setPresence({ status: "online", game: { name: "all of you.", type: "LISTENING" } })
 })
 
-client.on("message", (message) => {
+client.on("message", async (message) => {
   const { content, channel, author, mentions } = message
 
   logMessage(message)
@@ -23,7 +23,7 @@ client.on("message", (message) => {
 
   if (!content.startsWith(prefix) || author.bot) {
     if (mentions.members.has(client.user.id)) {
-      channel.send(getReaction("mention", message))
+      channel.send(await getReaction("mention", message))
     }
     return
   }
@@ -32,13 +32,13 @@ client.on("message", (message) => {
   const command = args.shift()?.toLowerCase()
 
   if (!command) {
-    return channel.send(getReaction("noCommand", message))
+    return channel.send(await getReaction("noCommand", message))
   }
 
   const cmd = getCommand(command)
 
   if (!cmd) {
-    return channel.send(getReaction("invalidCommand", message))
+    return channel.send(await getReaction("invalidCommand", message))
   }
 
   try {
