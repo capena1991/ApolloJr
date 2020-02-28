@@ -3,7 +3,7 @@ import Discord from "discord.js"
 import { getCommand } from "./commands"
 import { getReaction } from "./reactions"
 import { token, prefix } from "./config.json"
-import { logMessage } from "./log"
+import { logMessage, logInfo } from "./log"
 
 const client = new Discord.Client()
 
@@ -23,6 +23,7 @@ client.on("message", async (message) => {
 
   if (!content.startsWith(prefix) || author.bot) {
     if (mentions.members.has(client.user.id)) {
+      logInfo("MENTIONED", message)
       channel.send(await getReaction("mention", message))
     }
     return
@@ -32,16 +33,19 @@ client.on("message", async (message) => {
   const command = args.shift()?.toLowerCase()
 
   if (!command) {
+    logInfo("PREFIX WITH NO COMMAND", message)
     return channel.send(await getReaction("noCommand", message))
   }
 
   const cmd = getCommand(command)
 
   if (!cmd) {
+    logInfo("INVALID COMMAND", message)
     return channel.send(await getReaction("invalidCommand", message))
   }
 
   try {
+    logInfo(`EXECUTING COMMAND ${cmd.name}`, message)
     return cmd.execute(message, args)
   } catch (error) {
     console.error(error)
