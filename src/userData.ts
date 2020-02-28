@@ -20,6 +20,7 @@ export const reset = (userId: string) => users.set(userId, initializeUserData())
 
 export interface UserData {
   timesMentioned: number
+  birthday?: string
 }
 
 const initializeUserData = () => ({

@@ -2,6 +2,7 @@ import Discord from "discord.js"
 import moment from "moment"
 
 import { Command } from "./types"
+import { get } from "../userData"
 
 const getLastMessageTime = (isAuthor: boolean, lastMessage: Discord.Message) => {
   if (isAuthor) {
@@ -13,25 +14,31 @@ const getLastMessageTime = (isAuthor: boolean, lastMessage: Discord.Message) => 
   }
 }
 
-const getUserInfo = (
+const getUserInfo = async (
   { id, username, displayAvatarURL, bot, createdAt, discriminator, lastMessage }: Discord.User,
   isAuthor = false,
-) =>
-  new Discord.RichEmbed()
+) => {
+  let embed = new Discord.RichEmbed()
     .setTitle("User Info")
     .setDescription(`**<@${id}>** (${username}#${discriminator})${bot ? " :robot:" : ""}`)
     .setThumbnail(displayAvatarURL)
     .addField("ID", id, true)
     .addField("Created", `${moment(createdAt).format("ll")}\n(${moment(createdAt).fromNow()})`, true)
     .addField("Last message", getLastMessageTime(isAuthor, lastMessage), true)
+  const user = await get(id)
+  if (user.birthday) {
+    embed = embed.addField("Birthday :birthday:", moment(user.birthday).format("ll"))
+  }
+  return embed
+}
 
 const ping: Command = {
   name: "user",
   description: "I'll show you info about yourself or another user. ~~I know you like snooping.~~ :wink:",
-  execute({ channel, mentions, author }) {
+  execute: ({ channel, mentions, author }) => {
     const users = mentions.users.size ? mentions.users.array() : [author]
-    users.forEach((u) => {
-      channel.send(getUserInfo(u, u.id === author.id))
+    users.forEach(async (u) => {
+      channel.send(await getUserInfo(u, u.id === author.id))
     })
   },
 }
