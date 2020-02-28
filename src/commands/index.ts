@@ -13,7 +13,7 @@ import say from "./say"
 import says from "./says"
 import reset from "./reset"
 
-const commands: Dict<Command> = { ping, hello, server, user, say, "8ball": _8ball }
+const commands = [ping, hello, server, user, say, _8ball]
 
 const help: Command = {
   name: "help",
@@ -23,13 +23,27 @@ const help: Command = {
       .setTitle("Apollo Jr. commands")
       .setThumbnail(client.user.displayAvatarURL)
       .setDescription("Here's a list of what you can ask me to do.")
-    embed = Object.values(commands).reduce((e, c) => e.addField(`\`${prefix}${c?.name}\``, c?.description), embed)
+    embed = commands.reduce(
+      (e, c) =>
+        e.addField([c.name, ...(c.aliases || [])].map((name) => `\`${prefix}${name}\``).join(" "), c.description),
+      embed,
+    )
     channel.send(embed)
   },
 }
 
-const allCommands: Dict<Command> = { ...commands, help, says, reset }
+const hiddenCommands = [help, says, reset]
+
+const allCommands = [...commands, ...hiddenCommands]
+
+const commandMap: Dict<Command> = {}
+allCommands.forEach((cmd) => {
+  commandMap[cmd.name] = cmd
+  ;(cmd.aliases || []).forEach((alias) => {
+    commandMap[alias] = cmd
+  })
+})
 
 export const getCommand = (name: string) => {
-  return allCommands[name]
+  return commandMap[name]
 }
