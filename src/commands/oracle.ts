@@ -24,8 +24,9 @@ const answers = [
   "Very doubtful.",
 ]
 
-const _8ball: Command = {
-  name: "8ball",
+const oracle: Command = {
+  name: "oracle",
+  aliases: ["8ball"],
   description: "Ask any question and I will answer through my magic oracle: :8ball:.",
   execute: ({ channel }, args) => {
     if (!args.length) {
@@ -35,4 +36,4 @@ const _8ball: Command = {
   },
 }
 
-export default _8ball
+export default oracle

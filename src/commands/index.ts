@@ -8,13 +8,13 @@ import ping from "./ping"
 import hello from "./hello"
 import server from "./server"
 import user from "./user"
-import _8ball from "./8ball"
+import oracle from "./oracle"
 import say from "./say"
 import says from "./says"
 import reset from "./reset"
 import birthday from "./birthday"
 
-const commands = [ping, hello, server, user, say, _8ball, birthday]
+const commands = [ping, hello, server, user, say, oracle, birthday]
 
 const help: Command = {
   name: "help",
