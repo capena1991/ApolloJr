@@ -1,5 +1,5 @@
 import Discord from "discord.js"
-import { userData } from "./data/userData"
+import { users } from "./data/userData"
 
 const mentionReactions = [
   () => "Who's calling me? :eyes:",
@@ -20,8 +20,8 @@ const mentionReactions = [
 
 const reasons = {
   mention: async ({ author }: Discord.Message) => {
-    const { timesMentioned, ...rest } = await userData.get(author.id)
-    userData.set(author.id, { ...rest, timesMentioned: timesMentioned + 1 })
+    const { timesMentioned, ...rest } = await users.get(author.id)
+    users.set(author.id, { ...rest, timesMentioned: timesMentioned + 1 })
     return mentionReactions[Math.min(timesMentioned, mentionReactions.length - 1)](author)
   },
   noCommand: (_message: Discord.Message) => "You talkin' to me? :face_with_raised_eyebrow:",

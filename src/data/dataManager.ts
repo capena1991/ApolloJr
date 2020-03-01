@@ -11,17 +11,17 @@ export class DataManager<T extends object> {
     this.initializer = initializer
   }
 
-  get = async (userId: string) => {
-    const dbData = await this.keyv.get(userId)
+  get = async (id: string) => {
+    const dbData = await this.keyv.get(id)
     return { ...this.initializer(), ...(dbData || {}) }
   }
 
-  set = (userId: string, data: T) => this.keyv.set(userId, data)
+  set = (id: string, data: T) => this.keyv.set(id, data)
 
-  setPartial = async (userId: string, data: Partial<T>) => {
-    const currentData = await this.get(userId)
-    return this.set(userId, { ...currentData, ...data })
+  setPartial = async (id: string, data: Partial<T>) => {
+    const currentData = await this.get(id)
+    return this.set(id, { ...currentData, ...data })
   }
 
-  reset = (userId: string) => this.keyv.set(userId, this.initializer())
+  reset = (id: string) => this.keyv.delete(id)
 }

@@ -2,7 +2,7 @@ import Discord from "discord.js"
 import moment from "moment"
 
 import { Command } from "./types"
-import { userData } from "../data/userData"
+import { users } from "../data/userData"
 
 const getLastMessageTime = (isAuthor: boolean, lastMessage: Discord.Message) => {
   if (isAuthor) {
@@ -25,7 +25,7 @@ const getUserInfo = async (
     .addField("ID", id, true)
     .addField("Created", `${moment(createdAt).format("ll")}\n(${moment(createdAt).fromNow()})`, true)
     .addField("Last message", getLastMessageTime(isAuthor, lastMessage), true)
-  const user = await userData.get(id)
+  const user = await users.get(id)
   if (user.birthday) {
     embed = embed.addField("Birthday :birthday:", moment(user.birthday).format("ll"))
   }

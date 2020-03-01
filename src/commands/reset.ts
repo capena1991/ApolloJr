@@ -1,6 +1,6 @@
 import { Command } from "./types"
 
-import { userData } from "../data/userData"
+import { users } from "../data/userData"
 
 const allowedUsers = ["425379183829581835"]
 
@@ -11,7 +11,7 @@ const reset: Command = {
     if (!allowedUsers.includes(author.id) || !args.length) {
       return
     }
-    mentions.members.forEach((user) => userData.reset(user.id))
+    mentions.members.forEach((user) => users.reset(user.id))
     channel.send("done")
   },
 }

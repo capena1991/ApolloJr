@@ -11,6 +11,6 @@ const initializeUserData = () => ({
   timesMentioned: 0,
 })
 
-const users = new Keyv<UserData>("sqlite://../data/userData.sqlite", { namespace: "users" })
+const usersKeyv = new Keyv<UserData>("sqlite://../data/userData.sqlite", { namespace: "users" })
 
-export const userData = new DataManager<UserData>(users, initializeUserData)
+export const users = new DataManager<UserData>(usersKeyv, initializeUserData)
