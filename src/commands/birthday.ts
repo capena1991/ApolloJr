@@ -22,6 +22,19 @@ const setBirthday = async (userId: string, date: string | undefined) => {
   addBirthday(parsedDate, userId)
   return `Now I know your birthday, <@${userId}> (${parsedDate.format("ll")}). :wink:`
 }
+
+const getBirthday = async (userId: string) => {
+  const { birthday } = await users.get(userId)
+  if (!birthday) {
+    return "I don't know their birthday. :slight_frown:"
+  }
+  const parsedBirthday = moment(birthday)
+  const now = moment()
+  let nextBirthday = parsedBirthday.clone().year(now.year())
+  if (nextBirthday.isBefore(now)) {
+    nextBirthday = nextBirthday.add(1, "year")
+  }
+  return `<@${userId}>'s birthday is ${parsedBirthday.format("ll")} (${nextBirthday.fromNow()}).`
 }
 
 const monthBirthdayList = async () => {
@@ -31,7 +44,6 @@ const monthBirthdayList = async () => {
   const daysInMonth = now.daysInMonth()
   for (let d = 0; d < daysInMonth; d++) {
     const key = day.format("MM-DD")
-    console.log(`getting ${key}`)
     const { birthdays: bds } = await birthdays.get(key)
     bds.forEach((bd) => monthBirthdays.push(bd))
     day = day.add(1, "day")
@@ -63,6 +75,10 @@ const birthday: Command = {
       case "set":
         return channel.send(await setBirthday(author.id, args[1]))
       default:
+        const match = args[0].match(/<@!?(\d+)>/)
+        if (match) {
+          return channel.send(await getBirthday(match[1]))
+        }
         return channel.send(await setBirthday(author.id, args[0]))
     }
   },
