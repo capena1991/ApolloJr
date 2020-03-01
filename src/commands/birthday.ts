@@ -1,12 +1,12 @@
 import Discord from "discord.js"
 import moment from "moment"
-import { User } from "discord.js"
 
+import { allBirthdays } from "../config.json"
 import { Command } from "./types"
 import { users } from "../data/userData"
 import { birthdays, addBirthday, removeBirthday } from "../data/birthdayData"
 
-const setBirthday = async ({ id: userId }: User, date: string | undefined) => {
+const setBirthday = async (userId: string, date: string | undefined) => {
   if (!date) {
     return "Don't tease me like that, just tell me the date of your birthday."
   }
@@ -17,10 +17,11 @@ const setBirthday = async ({ id: userId }: User, date: string | undefined) => {
   const userData = await users.get(userId)
   users.set(userId, { ...userData, birthday: parsedDate.toISOString() })
   if (userData.birthday) {
-    removeBirthday(moment(userData.birthday), userId)
+    await removeBirthday(moment(userData.birthday), userId)
   }
   addBirthday(parsedDate, userId)
-  return "Now I know your birthday. :wink:"
+  return `Now I know your birthday, <@${userId}> (${parsedDate.format("ll")}). :wink:`
+}
 }
 
 const monthBirthdayList = async () => {
@@ -44,18 +45,25 @@ const monthBirthdayList = async () => {
   )
 }
 
+const allowedUsers = ["425379183829581835"]
+
 const birthday: Command = {
   name: "birthday",
   aliases: ["bd"],
   description: "Your friends won't need to know you don't remember their birthdays. I'll remind you of them.",
   execute: async ({ author, channel }, args) => {
     switch ((args[0] || "").toLowerCase()) {
+      case "setall":
+        if (!allowedUsers.includes(author.id)) {
+          return channel.send("Nothing here for you, kid. Keep walking. :unamused:")
+        }
+        return allBirthdays.forEach(async ({ id, date }) => channel.send(await setBirthday(id, date)))
       case "":
         return channel.send(await monthBirthdayList())
       case "set":
-        return channel.send(await setBirthday(author, args[1]))
+        return channel.send(await setBirthday(author.id, args[1]))
       default:
-        return channel.send(await setBirthday(author, args[0]))
+        return channel.send(await setBirthday(author.id, args[0]))
     }
   },
 }
