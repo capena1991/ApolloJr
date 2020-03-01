@@ -3,8 +3,9 @@ import { User } from "discord.js"
 
 import { Command } from "./types"
 import { users } from "../data/userData"
+import { addBirthday } from "../data/birthdayData"
 
-const setBirthday = async (author: User, date: string | undefined) => {
+const setBirthday = async ({ id: userId }: User, date: string | undefined) => {
   if (!date) {
     return "Don't tease me like that, just tell me the date of your birthday."
   }
@@ -12,7 +13,8 @@ const setBirthday = async (author: User, date: string | undefined) => {
   if (!parsedDate.isValid()) {
     return "I'm either dumb or that wasn't a valid date. I wouldn't be surprised of either."
   }
-  await users.setPartial(author.id, { birthday: parsedDate.toISOString() })
+  users.setPartial(userId, { birthday: parsedDate.toISOString() })
+  addBirthday(parsedDate, userId)
   return "Now I know your birthday. :wink:"
 }
 
