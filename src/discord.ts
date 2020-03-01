@@ -17,11 +17,11 @@ client.on("message", async (message) => {
 
   logMessage(message)
 
-  if (channel.type !== "text") {
+  if (channel.type !== "text" || author.bot) {
     return
   }
 
-  if (!content.startsWith(prefix) || author.bot) {
+  if (!content.startsWith(prefix)) {
     if (mentions.members.has(client.user.id)) {
       logInfo("MENTIONED", message)
       channel.send(await getReaction("mention", message))
