@@ -59,7 +59,8 @@ typings/
 
 # next.js build output
 .next
-dist/
-src/config.json
-.vscode/
-data
+
+/dist/
+/src/config.json
+/.vscode/
+/data/

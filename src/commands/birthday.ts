@@ -2,7 +2,7 @@ import moment from "moment"
 import { User } from "discord.js"
 
 import { Command } from "./types"
-import { setPartial } from "../userData"
+import { userData } from "../data/userData"
 
 const setBirthday = async (author: User, date: string | undefined) => {
   if (!date) {
@@ -12,7 +12,7 @@ const setBirthday = async (author: User, date: string | undefined) => {
   if (!parsedDate.isValid()) {
     return "I'm either dumb or that wasn't a valid date. I wouldn't be surprised of either."
   }
-  await setPartial(author.id, { birthday: parsedDate.toISOString() })
+  await userData.setPartial(author.id, { birthday: parsedDate.toISOString() })
   return "Now I know your birthday. :wink:"
 }
 
