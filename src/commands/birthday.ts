@@ -86,7 +86,7 @@ const birthday: Command = {
       case "":
         return channel.send(await monthBirthdayList())
       case "set":
-        return channel.send(await setBirthday(author.id, args[1]))
+        return channel.send(await setBirthday(author.id, args.slice(1).join(" ")))
       case "remove":
       case "unset":
       case "delete":
@@ -97,7 +97,7 @@ const birthday: Command = {
         if (match) {
           return channel.send(await getBirthday(match[1]))
         }
-        return channel.send(await setBirthday(author.id, args[0]))
+        return channel.send(await setBirthday(author.id, args.join(" ")))
     }
   },
 }
