@@ -4,24 +4,7 @@ import moment from "moment"
 import { allBirthdays } from "../config.json"
 import { Command } from "./types"
 import { users } from "../data/userData"
-import { birthdays, addBirthday, removeBirthday } from "../data/birthdayData"
-
-const setBirthday = async (userId: string, date: string | undefined) => {
-  if (!date) {
-    return "Don't tease me like that, just tell me the date of your birthday."
-  }
-  const parsedDate = moment(date)
-  if (!parsedDate.isValid()) {
-    return "I'm either dumb or that wasn't a valid date. I wouldn't be surprised of either."
-  }
-  const userData = await users.get(userId)
-  users.set(userId, { ...userData, birthday: parsedDate.toISOString() })
-  if (userData.birthday) {
-    await removeBirthday(moment(userData.birthday), userId)
-  }
-  addBirthday(parsedDate, userId)
-  return `Now I know your birthday, <@${userId}> (${parsedDate.format("ll")}). :wink:`
-}
+import { birthdays, addBirthday, removeBirthday as removeBirthdayData } from "../data/birthdayData"
 
 const getBirthday = async (userId: string) => {
   const { birthday } = await users.get(userId)
@@ -35,6 +18,36 @@ const getBirthday = async (userId: string) => {
     nextBirthday = nextBirthday.add(1, "year")
   }
   return `<@${userId}>'s birthday is ${parsedBirthday.format("ll")} (${nextBirthday.fromNow()}).`
+}
+
+const setBirthday = async (userId: string, date: string | undefined) => {
+  if (!date) {
+    return "Don't tease me like that, just tell me the date of your birthday."
+  }
+  const parsedDate = moment(date)
+  if (!parsedDate.isValid()) {
+    return "I'm either dumb or that wasn't a valid date. I wouldn't be surprised of either."
+  }
+  const userData = await users.get(userId)
+  users.set(userId, { ...userData, birthday: parsedDate.toISOString() })
+  if (userData.birthday) {
+    await removeBirthdayData(moment(userData.birthday), userId)
+  }
+  addBirthday(parsedDate, userId)
+  return `Now I know your birthday, <@${userId}> (${parsedDate.format("ll")}). :wink:`
+}
+
+const removeBirthday = async (userId: string) => {
+  const { birthday, ...userDataSansBD } = await users.get(userId)
+  if (!birthday) {
+    return "But... I don't know your birthday. Are you sure you know what you're doing? :unamused:"
+  }
+  users.set(userId, userDataSansBD)
+  removeBirthdayData(moment(birthday), userId)
+  return (
+    "That's sad :disappointed:. People won't be reminded of your birthday now. " +
+    "Let's hope they remember it because I won't. :slight_frown:"
+  )
 }
 
 const monthBirthdayList = async () => {
@@ -74,6 +87,11 @@ const birthday: Command = {
         return channel.send(await monthBirthdayList())
       case "set":
         return channel.send(await setBirthday(author.id, args[1]))
+      case "remove":
+      case "unset":
+      case "delete":
+      case "forget":
+        return channel.send(await removeBirthday(author.id))
       default:
         const match = args[0].match(/<@!?(\d+)>/)
         if (match) {
