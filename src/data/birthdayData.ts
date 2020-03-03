@@ -1,7 +1,7 @@
 import Keyv from "keyv"
 import moment from "moment"
 
-import { DataManager } from "./dataManager"
+import { DataManager, defaultDB } from "./dataManager"
 
 export interface BirthdayData {
   birthdays: { user: string; date: string }[]
@@ -11,7 +11,7 @@ const initializeBirthdayData = () => ({
   birthdays: [],
 })
 
-const birthdaysKeyv = new Keyv<BirthdayData>("sqlite://../data/userData.sqlite", { namespace: "birthdays" })
+const birthdaysKeyv = new Keyv<BirthdayData>(defaultDB, { namespace: "birthdays" })
 
 export const birthdays = new DataManager<BirthdayData>(birthdaysKeyv, initializeBirthdayData)
 
@@ -25,4 +25,10 @@ export const removeBirthday = async (date: moment.Moment, userId: string) => {
   const formattedDate = date.format("MM-DD")
   const { birthdays: users } = await birthdays.get(formattedDate)
   birthdays.set(formattedDate, { birthdays: users.filter(({ user }) => user !== userId) })
+}
+
+export const getBirthdays = async (date: moment.Moment) => {
+  const formattedDate = date.format("MM-DD")
+  const { birthdays: users } = await birthdays.get(formattedDate)
+  return users
 }

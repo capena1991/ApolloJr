@@ -2,6 +2,8 @@ import Keyv from "keyv"
 
 import { Partial } from "../type-helpers"
 
+export const defaultDB = "sqlite://../data/userData.sqlite"
+
 export class DataManager<T extends object> {
   keyv: Keyv<T>
   initializer: () => T

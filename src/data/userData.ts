@@ -1,6 +1,6 @@
 import Keyv from "keyv"
 
-import { DataManager } from "./dataManager"
+import { DataManager, defaultDB } from "./dataManager"
 
 export interface UserData {
   timesMentioned: number
@@ -11,6 +11,6 @@ const initializeUserData = () => ({
   timesMentioned: 0,
 })
 
-const usersKeyv = new Keyv<UserData>("sqlite://../data/userData.sqlite", { namespace: "users" })
+const usersKeyv = new Keyv<UserData>(defaultDB, { namespace: "users" })
 
 export const users = new DataManager<UserData>(usersKeyv, initializeUserData)
