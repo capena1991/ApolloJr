@@ -5,6 +5,7 @@ import { allBirthdays } from "../config.json"
 import { Command } from "./types"
 import { users } from "../data/userData"
 import { birthdays, addBirthday, removeBirthday as removeBirthdayData } from "../data/birthdayData"
+import { toggleSubscribe, knownSubscriptions } from "../data/subscriptions"
 
 const getBirthday = async (userId: string) => {
   const { birthday } = await users.get(userId)
@@ -70,6 +71,11 @@ const monthBirthdayList = async () => {
   )
 }
 
+const subscribeToNotifications = async (userId: string) =>
+  (await toggleSubscribe(knownSubscriptions.birthday, userId))
+    ? "So your memory sucks, right? Don't worry, that's what I'm here for. I'll let you know the day before every birthday."
+    : "Was I too annoying? :pleading_face: Sorry, I won't notify you anymore... Your memory better be good."
+
 const allowedUsers = ["425379183829581835"]
 
 const birthday: Command = {
@@ -92,6 +98,10 @@ const birthday: Command = {
       case "delete":
       case "forget":
         return channel.send(await removeBirthday(author.id))
+      case "sub":
+      case "subscribe":
+      case "notify":
+        return channel.send(await subscribeToNotifications(author.id))
       default:
         const match = args[0].match(/<@!?(\d+)>/)
         if (match) {
