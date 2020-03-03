@@ -20,6 +20,9 @@ export const logMessage = (message: Discord.Message) => {
   logger.info(formatMessage(message))
 }
 
-export const logInfo = (infoMessage: string, message: Discord.Message) => {
-  console.log(`${moment().toISOString(true)} ${infoMessage}\n${formatMessage(message)}`)
+export const logInfo = (infoMessage: string, message: Discord.Message | undefined = undefined) => {
+  console.log(`${moment().toISOString(true)} ${infoMessage}`)
+  if (message) {
+    console.log(formatMessage(message))
+  }
 }
