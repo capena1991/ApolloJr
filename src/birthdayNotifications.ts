@@ -6,21 +6,26 @@ import { subscriptions, knownSubscriptions } from "./data/subscriptions"
 import { joinReadable } from "./utils"
 import { logInfo } from "./log"
 
-export const notifyBirthday = async (client: Discord.Client) => {
+const notifyBirthday = async (
+  client: Discord.Client,
+  dateSelector: (date: moment.Moment) => moment.Moment,
+  subscriptionKey: string,
+  timeExpression: string,
+) => {
   logInfo("NOTIFYING BIRTHDAYS")
 
   const now = moment()
-  const tomorrow = now.clone().add(1, "day")
-  const birthdays = await getBirthdays(tomorrow)
+  const dateToCheck = dateSelector(now.clone())
+  const birthdays = await getBirthdays(dateToCheck)
   if (!birthdays.length) {
-    logInfo("NO BIRTHDAYS TOMORROW")
+    logInfo(`NO BIRTHDAYS ${timeExpression.toUpperCase()}`)
     return
   }
-  const { subscribed } = await subscriptions.get(knownSubscriptions.birthday)
-  const notification = { reason: tomorrow.format("MM-DD"), datetime: now.toISOString(true) }
-  const message = `Just a friendly notification that ${joinReadable(
+  const { subscribed } = await subscriptions.get(subscriptionKey)
+  const notification = { reason: dateToCheck.format("MM-DD"), datetime: now.toISOString(true) }
+  const message = `Just a friendly reminder that ${joinReadable(
     birthdays.map(({ user }) => `<@${user}>`),
-  )}'s birthday is tomorrow! :tada::birthday:`
+  )}'s birthday is ${timeExpression}! :tada::birthday:`
   const updated = subscribed.map(({ user, lastNotification }) => {
     let res = { user, lastNotification }
     try {
@@ -33,6 +38,14 @@ export const notifyBirthday = async (client: Discord.Client) => {
       return res
     }
   })
-  subscriptions.set(knownSubscriptions.birthday, { subscribed: updated })
+  subscriptions.set(knownSubscriptions.birthdayDay, { subscribed: updated })
   logInfo("SUBSCRIBERS HAVE BEEN NOTIFIED")
+}
+
+export const notifyBirthday1Day = async (client: Discord.Client) => {
+  notifyBirthday(client, (date) => date.add(1, "day"), knownSubscriptions.birthdayDay, "tomorrow")
+}
+
+export const notifyBirthday1Week = async (client: Discord.Client) => {
+  notifyBirthday(client, (date) => date.add(1, "week"), knownSubscriptions.birthdayWeek, "in a week")
 }

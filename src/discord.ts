@@ -4,7 +4,7 @@ import { getCommand } from "./commands"
 import { getReaction } from "./reactions"
 import { token, prefix } from "./config.json"
 import { logMessage, logInfo } from "./log"
-import { notifyBirthday } from "./birthdayNotifications"
+import { notifyBirthday1Day, notifyBirthday1Week } from "./birthdayNotifications"
 import { schedule } from "./utils"
 
 const client = new Discord.Client()
@@ -12,7 +12,8 @@ const client = new Discord.Client()
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`)
   client.user.setPresence({ status: "online", game: { name: "all of you.", type: "LISTENING" } })
-  schedule(notifyBirthday, 3600000, client)
+  schedule(notifyBirthday1Day, 3600000, client)
+  schedule(notifyBirthday1Week, 3600000, client)
 })
 
 client.on("message", async (message) => {

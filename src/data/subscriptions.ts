@@ -35,5 +35,6 @@ export const toggleSubscribe = async (subscription: string, userId: string) => {
 }
 
 export const knownSubscriptions = {
-  birthday: "birthday",
+  birthdayDay: "birthdayDay",
+  birthdayWeek: "birthdayWeek",
 }

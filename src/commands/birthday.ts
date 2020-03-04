@@ -71,10 +71,14 @@ const monthBirthdayList = async () => {
   )
 }
 
-const subscribeToNotifications = async (userId: string) =>
-  (await toggleSubscribe(knownSubscriptions.birthday, userId))
-    ? "So your memory sucks, right? Don't worry, that's what I'm here for. I'll let you know the day before every birthday."
+const subscribeToNotifications = async (userId: string) => {
+  const toggleDay = toggleSubscribe(knownSubscriptions.birthdayDay, userId)
+  const toggleWeek = toggleSubscribe(knownSubscriptions.birthdayWeek, userId)
+
+  return (await toggleDay) || (await toggleWeek)
+    ? "So your memory sucks, right? Don't worry, that's what I'm here for. I'll let you know before every birthday."
     : "Was I too annoying? :pleading_face: Sorry, I won't notify you anymore... Your memory better be good."
+}
 
 const allowedUsers = ["425379183829581835"]
 
