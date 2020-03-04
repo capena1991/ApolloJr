@@ -19,9 +19,12 @@ const mentionReactions = [
 ]
 
 const reasons = {
-  mention: async ({ author }: Discord.Message) => {
+  mention: async ({ author, content }: Discord.Message) => {
     const { timesMentioned, ...rest } = await users.get(author.id)
     users.set(author.id, { ...rest, timesMentioned: timesMentioned + 1 })
+    if (content.match(/\bhugs?\b/i)) {
+      return `>hug <@${author.id}> Yay, hugs!`
+    }
     return mentionReactions[Math.min(timesMentioned, mentionReactions.length - 1)](author)
   },
   noCommand: (_message: Discord.Message) => "You talkin' to me? :face_with_raised_eyebrow:",
