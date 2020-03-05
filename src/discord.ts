@@ -1,6 +1,6 @@
 import Discord from "discord.js"
 
-import { getCommand } from "./commands"
+import { getCommand, getChannelCommand } from "./commands"
 import { getReaction } from "./reactions"
 import { token, prefix } from "./config.json"
 import { logMessage, logInfo } from "./log"
@@ -23,6 +23,18 @@ client.on("message", async (message) => {
 
   if (channel.type !== "text" || author.bot) {
     return
+  }
+
+  const channelCommand = getChannelCommand(channel.id)
+  if (channelCommand) {
+    const args = content.split(/\s+/)
+    try {
+      logInfo(`EXECUTING CHANNEL COMMAND ${channelCommand.name}`, message)
+      return channelCommand.execute(message, args)
+    } catch (error) {
+      console.error(error)
+      return channel.send("Oops! There was an error trying to execute that command! :disappointed:")
+    }
   }
 
   if (!content.startsWith(prefix)) {

@@ -48,3 +48,6 @@ allCommands.forEach((cmd) => {
 export const getCommand = (name: string) => {
   return commandMap[name]
 }
+
+const channelCommands: Dict<Command> = { }
+export const getChannelCommand = (channelId: string) => channelCommands[channelId]
