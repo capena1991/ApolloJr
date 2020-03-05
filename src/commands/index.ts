@@ -13,6 +13,7 @@ import say from "./say"
 import says from "./says"
 import reset from "./reset"
 import birthday from "./birthday"
+import count from "./count"
 
 const commands = [ping, hello, server, user, say, oracle, birthday]
 
@@ -49,5 +50,5 @@ export const getCommand = (name: string) => {
   return commandMap[name]
 }
 
-const channelCommands: Dict<Command> = { }
+const channelCommands: Dict<Command> = { "685233399677452312": count }
 export const getChannelCommand = (channelId: string) => channelCommands[channelId]
