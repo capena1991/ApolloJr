@@ -5,11 +5,12 @@ const allowedUsers = ["425379183829581835"]
 const says: Command = {
   name: "says",
   description: "Shhh.",
-  execute: async ({ channel, author }, args) => {
+  execute: (message, args) => {
+    const { channel, author } = message
     if (!allowedUsers.includes(author.id) || !args.length) {
       return
     }
-    await channel.bulkDelete(1)
+    message.delete()
     channel.send(args.join(" "))
   },
 }

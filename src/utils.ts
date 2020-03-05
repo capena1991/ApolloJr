@@ -28,3 +28,5 @@ export const schedule = (fn: (...args: any[]) => any, time: number, ...args: any
   setImmediate(fn, ...args)
   return setInterval(fn, time, ...args)
 }
+
+export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
