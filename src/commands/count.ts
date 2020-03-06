@@ -2,6 +2,7 @@ import { Command } from "./types"
 import moment from "moment"
 
 import { getCurrent, setCurrent, archiveCurrent } from "../data/countingData"
+import { users } from "../data/userData"
 
 const count: Command = {
   name: "count",
@@ -36,8 +37,29 @@ const count: Command = {
       return reject("Nice try :smirk:, but you gotta let others play. Can't count twice in a row.")
     }
 
+    const user = await users.get(author.id)
+    const now = moment()
+    const lastCounts = user.counting.lastCounts
+    if (lastCounts.length >= 5) {
+      const oldest = moment(lastCounts[4].datetime)
+      const limit = oldest.add(5, "minutes")
+      if (limit.isAfter(now)) {
+        return reject(
+          "Not so fast! You've tried to count too many times recently. You got to give the others a chance.\n" +
+            `Try again **${limit.fromNow()}**.`,
+        )
+      }
+    }
+
     message.react("☑")
     const newCount = count + diff
+    users.set(author.id, {
+      ...user,
+      counting: {
+        ...user.counting,
+        lastCounts: [{ datetime: now.toISOString() }, ...lastCounts].slice(0, 5),
+      },
+    })
     await setCurrent({ count: newCount, last: { user: author.id, datetime: moment().toISOString() }, ...rest })
 
     if (newCount !== 100 && newCount !== -100) {
