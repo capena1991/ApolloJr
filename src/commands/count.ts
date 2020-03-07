@@ -8,6 +8,11 @@ const positiveRole = "685703701209546908"
 const negativeRole = "685703765785182347"
 const getRequiredRole = (diff: 1 | -1) => (diff === 1 ? positiveRole : negativeRole)
 
+const addToContribution = ({ p, n }: { p: number; n: number }, diff: 1 | -1) => ({
+  p: p + (diff === 1 ? 1 : 0),
+  n: n + (diff === -1 ? 1 : 0),
+})
+
 const count: Command = {
   name: "count",
   description: "The game of count. Two teams try to get teh count to either 100 or -100",
@@ -28,7 +33,7 @@ const count: Command = {
           "Leave the idle chit chat for another channel.",
       )
     }
-    const { count, last, ...rest } = await getCurrent()
+    const { count, last, contributions, ...rest } = await getCurrent()
     const diff = number - count
     if (diff !== 1 && diff !== -1) {
       return reject(
@@ -69,7 +74,13 @@ const count: Command = {
         lastCounts: [{ datetime: now.toISOString() }, ...lastCounts].slice(0, 5),
       },
     })
-    await setCurrent({ count: newCount, last: { user: author.id, datetime: moment().toISOString() }, ...rest })
+    const userContrib = contributions[author.id] || { p: 0, n: 0 }
+    await setCurrent({
+      count: newCount,
+      last: { user: author.id, datetime: moment().toISOString() },
+      contributions: { ...contributions, [author.id]: addToContribution(userContrib, diff) },
+      ...rest,
+    })
 
     if (newCount !== 100 && newCount !== -100) {
       return
