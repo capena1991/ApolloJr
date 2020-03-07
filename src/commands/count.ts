@@ -4,11 +4,15 @@ import moment from "moment"
 import { getCurrent, setCurrent, archiveCurrent } from "../data/countingData"
 import { users } from "../data/userData"
 
+const positiveRole = "492031562599366677"
+const negativeRole = "558058506138288142"
+const getRequiredRole = (diff: 1 | -1) => (diff === 1 ? positiveRole : negativeRole)
+
 const count: Command = {
   name: "count",
   description: "The game of count. Two teams try to get teh count to either 100 or -100",
   execute: async (message, args) => {
-    const { channel, author } = message
+    const { channel, author, member } = message
 
     const reject = (reason?: string) => {
       message.delete()
@@ -45,10 +49,15 @@ const count: Command = {
       const limit = oldest.add(5, "minutes")
       if (limit.isAfter(now)) {
         return reject(
-          "Not so fast! You've tried to count too many times recently. You got to give the others a chance.\n" +
+          "Not so fast! That's too many times you've tried recently. " +
+            "You gotta give the others a chance; healthy competition and all that\n" +
             `Try again **${limit.fromNow()}**.`,
         )
       }
+    }
+
+    if (!member.roles.has(getRequiredRole(diff))) {
+      return reject("You're not on the right team. Pick your side first.")
     }
 
     message.react("☑")
