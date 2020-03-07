@@ -4,8 +4,8 @@ import moment from "moment"
 import { getCurrent, setCurrent, archiveCurrent } from "../data/countingData"
 import { users } from "../data/userData"
 
-const positiveRole = "492031562599366677"
-const negativeRole = "558058506138288142"
+const positiveRole = "685703701209546908"
+const negativeRole = "685703765785182347"
 const getRequiredRole = (diff: 1 | -1) => (diff === 1 ? positiveRole : negativeRole)
 
 const count: Command = {
