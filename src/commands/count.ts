@@ -1,6 +1,7 @@
 import { Command } from "./types"
 import moment from "moment"
 
+import { Dict } from "../type-helpers"
 import { getCurrent, setCurrent, archiveCurrent } from "../data/countingData"
 import { users } from "../data/userData"
 
@@ -12,6 +13,18 @@ const addToContribution = ({ p, n }: { p: number; n: number }, diff: 1 | -1) => 
   p: p + (diff === 1 ? 1 : 0),
   n: n + (diff === -1 ? 1 : 0),
 })
+
+const getRewards = (contributions: Dict<{ p: number; n: number }>) =>
+  Object.entries(contributions)
+    .filter(([_, c]) => c && !c.p !== !c.n)
+    .map(([user, c]) => ({ user, reward: c?.p || c?.n || 0 }))
+
+const grantRewards = (rewards: { user: string; reward: number }[]) => {
+  rewards.forEach(async ({ user, reward }) => {
+    const { money, ...rest } = await users.get(user)
+    users.set(user, { money: money + reward, ...rest })
+  })
+}
 
 const count: Command = {
   name: "count",
@@ -75,12 +88,13 @@ const count: Command = {
       },
     })
     const userContrib = contributions[author.id] || { p: 0, n: 0 }
-    await setCurrent({
+    const newCurrent = {
       count: newCount,
       last: { user: author.id, datetime: moment().toISOString() },
       contributions: { ...contributions, [author.id]: addToContribution(userContrib, diff) },
       ...rest,
-    })
+    }
+    await setCurrent(newCurrent)
 
     if (newCount !== 100 && newCount !== -100) {
       return
@@ -88,6 +102,11 @@ const count: Command = {
 
     const archiveProm = archiveCurrent()
     await channel.send(`${newCount > 0 ? "Positives" : "Negatives"} win this round! :tada:`)
+    const rewards = getRewards(newCurrent.contributions)
+    await channel.send(
+      `**Rewards:**\n${rewards.map(({ user, reward }) => `<@${user}>: ${reward} drachmae`).join("\n")}`,
+    )
+    grantRewards(rewards)
     const newRoundNumber = await archiveProm
     await channel.send(`Round ${newRoundNumber} starts now.`)
     let zeroMsg = await channel.send("0")

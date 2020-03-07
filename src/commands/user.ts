@@ -18,6 +18,7 @@ const getUserInfo = async (
   { id, username, displayAvatarURL, bot, createdAt, discriminator, lastMessage }: Discord.User,
   isAuthor = false,
 ) => {
+  const { birthday, money } = await users.get(id)
   let embed = new Discord.RichEmbed()
     .setTitle("User Info")
     .setDescription(`**<@${id}>** (${username}#${discriminator})${bot ? " :robot:" : ""}`)
@@ -25,11 +26,10 @@ const getUserInfo = async (
     .addField("ID", id, true)
     .addField("Created", `${moment(createdAt).format("ll")}\n(${moment(createdAt).fromNow()})`, true)
     .addField("Last message", getLastMessageTime(isAuthor, lastMessage), true)
-  const user = await users.get(id)
-  if (user.birthday) {
-    embed = embed.addField("Birthday :birthday:", moment(user.birthday).format("ll"))
+  if (birthday) {
+    embed = embed.addField("Birthday :birthday:", moment(birthday).format("ll"), true)
   }
-  return embed
+  return embed.addField("Money", money, true)
 }
 
 const ping: Command = {
