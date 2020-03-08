@@ -14,10 +14,10 @@ const addToContribution = ({ p, n }: { p: number; n: number }, diff: 1 | -1) => 
   n: n + (diff === -1 ? 1 : 0),
 })
 
-const getRewards = (contributions: Dict<{ p: number; n: number }>) =>
+const getRewards = (contributions: Dict<{ p: number; n: number }>, positivesWin: boolean) =>
   Object.entries(contributions)
     .filter(([_, c]) => c && !c.p !== !c.n)
-    .map(([user, c]) => ({ user, reward: c?.p || c?.n || 0 }))
+    .map(([user, c]) => ({ user, reward: (positivesWin ? c?.p : c?.n) || 0 }))
 
 const grantRewards = (rewards: { user: string; reward: number }[]) => {
   rewards.forEach(async ({ user, reward }) => {
@@ -100,9 +100,10 @@ const count: Command = {
       return
     }
 
+    const positivesWin = newCount > 0
     const archiveProm = archiveCurrent()
-    await channel.send(`${newCount > 0 ? "Positives" : "Negatives"} win this round! :tada:`)
-    const rewards = getRewards(newCurrent.contributions)
+    await channel.send(`${positivesWin ? "Positives" : "Negatives"} win this round! :tada:`)
+    const rewards = getRewards(newCurrent.contributions, positivesWin)
     await channel.send(
       `**Rewards:**\n${rewards.map(({ user, reward }) => `<@${user}>: ${reward} drachmae`).join("\n")}`,
     )
