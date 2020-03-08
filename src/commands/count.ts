@@ -26,6 +26,14 @@ const grantRewards = (rewards: { user: string; reward: number }[]) => {
   })
 }
 
+const getRemainingTime = (time: moment.Moment, now: moment.Moment) => {
+  const diff = time.diff(now, "seconds")
+  if (diff > 44) {
+    return time.from(now)
+  }
+  return `in ${diff} seconds`
+}
+
 const count: Command = {
   name: "count",
   description: "The game of count. Two teams try to get teh count to either 100 or -100",
@@ -69,7 +77,7 @@ const count: Command = {
         return reject(
           "Not so fast! That's too many times you've tried recently. " +
             "You gotta give the others a chance; healthy competition and all that\n" +
-            `Try again **${limit.fromNow()}**.`,
+            `Try again **${getRemainingTime(limit, now)}**.`,
         )
       }
     }
