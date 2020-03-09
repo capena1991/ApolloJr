@@ -110,7 +110,13 @@ const count: Command = {
 
     const positivesWin = newCount > 0
     const archiveProm = archiveCurrent()
-    await channel.send(`${positivesWin ? "Positives" : "Negatives"} win this round! :tada:`)
+    let winnerMsg = await channel.send(`${positivesWin ? "Positives" : "Negatives"} win this round! :tada:`)
+    if (Array.isArray(winnerMsg)) {
+      winnerMsg = winnerMsg[0]
+    }
+    if (winnerMsg.pinnable) {
+      winnerMsg.pin()
+    }
     const rewards = getRewards(newCurrent.contributions, positivesWin)
     await channel.send(
       `**Rewards:**\n${rewards.map(({ user, reward }) => `<@${user}>: ${reward} drachmae`).join("\n")}`,
