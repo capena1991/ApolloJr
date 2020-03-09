@@ -16,7 +16,7 @@ const addToContribution = ({ p, n }: { p: number; n: number }, diff: 1 | -1) => 
 
 const getRewards = (contributions: Dict<{ p: number; n: number }>, positivesWin: boolean) =>
   Object.entries(contributions)
-    .filter(([_, c]) => c && !c.p !== !c.n)
+    .filter(([_, c]) => c && !c.p !== !c.n && !!c.p === positivesWin)
     .map(([user, c]) => ({ user, reward: (positivesWin ? c?.p : c?.n) || 0 }))
 
 const grantRewards = (rewards: { user: string; reward: number }[]) => {
