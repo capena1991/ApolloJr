@@ -2,11 +2,10 @@ import { Command } from "./types"
 import moment from "moment"
 
 import { Dict } from "../type-helpers"
+import { positiveRole, negativeRole } from "../config.json"
 import { getCurrent, setCurrent, archiveCurrent } from "../data/countingData"
 import { users } from "../data/userData"
 
-const positiveRole = "685703701209546908"
-const negativeRole = "685703765785182347"
 const getRequiredRole = (diff: 1 | -1) => (diff === 1 ? positiveRole : negativeRole)
 
 const addToContribution = ({ p, n }: { p: number; n: number }, diff: 1 | -1) => ({

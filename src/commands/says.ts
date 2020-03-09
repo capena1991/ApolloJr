@@ -1,13 +1,13 @@
 import { Command } from "./types"
 
-const allowedUsers = ["425379183829581835"]
+import { admins } from "../config.json"
 
 const says: Command = {
   name: "says",
   description: "Shhh.",
   execute: (message, args) => {
     const { channel, author } = message
-    if (!allowedUsers.includes(author.id) || !args.length) {
+    if (!admins.includes(author.id) || !args.length) {
       return
     }
     message.delete()

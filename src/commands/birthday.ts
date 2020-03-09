@@ -1,7 +1,7 @@
 import Discord from "discord.js"
 import moment from "moment"
 
-import { allBirthdays } from "../config.json"
+import { allBirthdays, admins } from "../config.json"
 import { Command } from "./types"
 import { users } from "../data/userData"
 import { birthdays, addBirthday, removeBirthday as removeBirthdayData } from "../data/birthdayData"
@@ -80,8 +80,6 @@ const subscribeToNotifications = async (userId: string) => {
     : "Was I too annoying? :pleading_face: Sorry, I won't notify you anymore... Your memory better be good."
 }
 
-const allowedUsers = ["425379183829581835"]
-
 const birthday: Command = {
   name: "birthday",
   aliases: ["bd"],
@@ -89,7 +87,7 @@ const birthday: Command = {
   execute: async ({ author, channel }, args) => {
     switch ((args[0] || "").toLowerCase()) {
       case "setall":
-        if (!allowedUsers.includes(author.id)) {
+        if (!admins.includes(author.id)) {
           return channel.send("Nothing here for you, kid. Keep walking. :unamused:")
         }
         return allBirthdays.forEach(async ({ id, date }) => channel.send(await setBirthday(id, date)))

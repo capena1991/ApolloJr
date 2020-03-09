@@ -1,14 +1,13 @@
 import { Command } from "./types"
 
+import { admins } from "../config.json"
 import { users } from "../data/userData"
-
-const allowedUsers = ["425379183829581835"]
 
 const reset: Command = {
   name: "reset",
   description: "Resets user data.",
   execute: async ({ channel, author, mentions }, args) => {
-    if (!allowedUsers.includes(author.id) || !args.length) {
+    if (!admins.includes(author.id) || !args.length) {
       return
     }
     mentions.members.forEach((user) => users.reset(user.id))

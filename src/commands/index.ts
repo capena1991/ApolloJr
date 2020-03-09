@@ -1,6 +1,6 @@
 import Discord from "discord.js"
 
-import { prefix } from "../config.json"
+import { prefix, countingChannel } from "../config.json"
 import { Dict } from "../type-helpers"
 import { Command } from "./types"
 
@@ -50,5 +50,5 @@ export const getCommand = (name: string) => {
   return commandMap[name]
 }
 
-const channelCommands: Dict<Command> = { "685233399677452312": count }
+const channelCommands: Dict<Command> = { [countingChannel]: count }
 export const getChannelCommand = (channelId: string) => channelCommands[channelId]

@@ -1,6 +1,7 @@
 import Keyv from "keyv"
 import moment from "moment"
 
+import { botUserId } from "../config.json"
 import { Dict } from "../type-helpers"
 import { DataManager, defaultDB } from "./dataManager"
 
@@ -14,7 +15,7 @@ export interface CountingRound {
 const initializeCountingRound = (roundNumber = 0) => ({
   roundNumber,
   count: 0,
-  last: { user: "681209545539846185", datetime: moment().toISOString() }, // bot's user id
+  last: { user: botUserId, datetime: moment().toISOString() }, // bot's user id
   contributions: {},
 })
 
