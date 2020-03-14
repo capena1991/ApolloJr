@@ -71,6 +71,29 @@ const monthBirthdayList = async () => {
   )
 }
 
+const allBirthdaysList = async (page: number = 1) => {
+  const allBirthdays: { user: string; date: string }[] = []
+  let day = moment("2020-01-01")
+  for (let d = 0; d < 366; d++) {
+    const key = day.format("MM-DD")
+    const { birthdays: bds } = await birthdays.get(key)
+    bds.forEach((bd) => allBirthdays.push(bd))
+    day = day.add(1, "day")
+  }
+  if (!allBirthdays.length) {
+    return "I'm sad... I don't know any birthday. :slight_frown:"
+  }
+  if (!Number.isFinite(page)) {
+    page = 1
+  }
+  return allBirthdays
+    .slice(24 * (page - 1), 24 * page)
+    .reduce(
+      (e, { user, date }) => e.addField(moment(date).format("ll"), `<@${user}>`, true),
+      new Discord.RichEmbed().setTitle(`All Birthdays (page ${page})`),
+    )
+}
+
 const subscribeToNotifications = async (userId: string) => {
   const toggleDay = toggleSubscribe(knownSubscriptions.birthdayDay, userId)
   const toggleWeek = toggleSubscribe(knownSubscriptions.birthdayWeek, userId)
@@ -93,6 +116,8 @@ const birthday: Command = {
         return allBirthdays.forEach(async ({ id, date }) => channel.send(await setBirthday(id, date)))
       case "":
         return channel.send(await monthBirthdayList())
+      case "all":
+        return channel.send(await allBirthdaysList(parseInt(args[1])))
       case "set":
         return channel.send(await setBirthday(author.id, args.slice(1).join(" ")))
       case "remove":
