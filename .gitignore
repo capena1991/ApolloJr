@@ -62,5 +62,6 @@ typings/
 
 /dist/
 /src/config.json
+src/deleted.json
 /.vscode/
 /data/

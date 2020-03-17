@@ -90,7 +90,7 @@ const allBirthdaysList = async (page: number = 1) => {
     .slice(24 * (page - 1), 24 * page)
     .reduce(
       (e, { user, date }) => e.addField(moment(date).format("ll"), `<@${user}>`, true),
-      new Discord.RichEmbed().setTitle(`All Birthdays (page ${page})`),
+      new Discord.RichEmbed().setTitle(`All Birthdays (page ${page}/${Math.ceil(allBirthdays.length / 24)})`),
     )
 }
 
