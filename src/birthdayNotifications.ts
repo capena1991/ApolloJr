@@ -47,7 +47,7 @@ const notifyBirthday = async (
       return res
     }
   })
-  subscriptions.set(knownSubscriptions.birthdayDay, { subscribed: updated })
+  subscriptions.set(subscriptionKey, { subscribed: updated })
   logInfo("SUBSCRIBERS HAVE BEEN NOTIFIED")
 }
 
