@@ -39,7 +39,7 @@ const getUserInfo = async (
     embed = embed.addField("Birthday :birthday:", moment(birthday).format("ll"), true)
   }
   const team = roles.has(positiveRole) ? "Positives" : roles.has(negativeRole) ? "Negatives" : "Free Agent"
-  return embed.addField("Curren team", team, true).addField("Money", money, true)
+  return embed.addField("Current team", team, true).addField("Money", money, true)
 }
 
 const ping: Command = {
