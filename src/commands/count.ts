@@ -1,16 +1,22 @@
-import { Command } from "./types"
+import Discord from "discord.js"
 import moment from "moment"
 
+import { Command } from "./types"
 import { Dict } from "../type-helpers"
 import { positiveRole, negativeRole } from "../config.json"
 import { getCurrent, setCurrent, archiveCurrent } from "../data/countingData"
 import { users } from "../data/userData"
 
+const goldenNumbers = new Set([0, 42, -42, 69, -69, 100, -100])
+const silverNumbers = new Set([25, -25, 50, -50, 75, -75])
+
 const getRequiredRole = (diff: 1 | -1) => (diff === 1 ? positiveRole : negativeRole)
 
-const addToContribution = ({ p, n }: { p: number; n: number }, diff: 1 | -1) => ({
-  p: p + (diff === 1 ? 1 : 0),
-  n: n + (diff === -1 ? 1 : 0),
+const getContributionValue = (count: number) => (goldenNumbers.has(count) ? 5 : silverNumbers.has(count) ? 3 : 1)
+
+const addToContribution = ({ p, n }: { p: number; n: number }, diff: 1 | -1, count: number) => ({
+  p: p + (diff === 1 ? getContributionValue(count) : 0),
+  n: n + (diff === -1 ? getContributionValue(count) : 0),
 })
 
 const getRewards = (contributions: Dict<{ p: number; n: number }>, positivesWin: boolean) =>
@@ -31,6 +37,16 @@ const getRemainingTime = (time: moment.Moment, now: moment.Moment) => {
     return time.from(now)
   }
   return `in ${diff} seconds`
+}
+
+const react = async (message: Discord.Message, count: number) => {
+  await message.react("☑")
+  if (goldenNumbers.has(count)) {
+    message.react("🌟")
+  }
+  if (silverNumbers.has(count)) {
+    message.react("🏅")
+  }
 }
 
 const count: Command = {
@@ -85,8 +101,8 @@ const count: Command = {
       return reject("You're not on the right team. Pick your side first.")
     }
 
-    message.react("☑")
     const newCount = count + diff
+    react(message, newCount)
     users.set(author.id, {
       ...user,
       counting: {
@@ -98,7 +114,7 @@ const count: Command = {
     const newCurrent = {
       count: newCount,
       last: { user: author.id, datetime: moment().toISOString() },
-      contributions: { ...contributions, [author.id]: addToContribution(userContrib, diff) },
+      contributions: { ...contributions, [author.id]: addToContribution(userContrib, diff, newCount) },
       ...rest,
     }
     await setCurrent(newCurrent)
