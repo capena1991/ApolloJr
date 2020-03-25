@@ -39,14 +39,22 @@ const getRemainingTime = (time: moment.Moment, now: moment.Moment) => {
   return `in ${diff} seconds`
 }
 
-const react = async (message: Discord.Message, count: number) => {
+const react = async (message: Discord.Message, count: number, remainingCounts: number) => {
   await message.react("☑")
   if (goldenNumbers.has(count)) {
-    message.react("🌟")
+    await message.react("🌟")
   }
   if (silverNumbers.has(count)) {
-    message.react("🏅")
+    await message.react("🏅")
   }
+  const lives = ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
+  await message.react(lives[remainingCounts - 1])
+}
+
+const getRemaining = (now: moment.Moment, lastCounts: { datetime: string }[]) => {
+  const _5minAgo = now.clone().subtract(5, "minutes")
+  const base = 5 - lastCounts.length
+  return base + lastCounts.filter(({ datetime }) => moment(datetime).isBefore(_5minAgo)).length
 }
 
 const count: Command = {
@@ -85,16 +93,14 @@ const count: Command = {
     const user = await users.get(author.id)
     const now = moment()
     const lastCounts = user.counting.lastCounts
-    if (lastCounts.length >= 5) {
+    const remainingCounts = getRemaining(now, lastCounts)
+    if (remainingCounts <= 0) {
       const oldest = moment(lastCounts[4].datetime)
       const limit = oldest.add(5, "minutes")
-      if (limit.isAfter(now)) {
-        return reject(
-          "Not so fast! That's too many times you've tried recently. " +
-            "You gotta give the others a chance; healthy competition and all that\n" +
-            `Try again **${getRemainingTime(limit, now)}**.`,
-        )
-      }
+      return reject(
+        "Not so fast! That's too many times you've tried recently.\n" +
+          `Try again **${getRemainingTime(limit, now)}**.`,
+      )
     }
 
     if (!member.roles.has(getRequiredRole(diff))) {
@@ -102,7 +108,7 @@ const count: Command = {
     }
 
     const newCount = count + diff
-    react(message, newCount)
+    react(message, newCount, remainingCounts)
     users.set(author.id, {
       ...user,
       counting: {
