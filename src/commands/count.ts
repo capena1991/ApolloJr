@@ -8,11 +8,41 @@ import { getCurrent, setCurrent, archiveCurrent } from "../data/countingData"
 import { users } from "../data/userData"
 
 const goldenNumbers = new Set([0, 42, -42, 69, -69, 100, -100])
-const silverNumbers = new Set([25, -25, 50, -50, 75, -75])
+const silverNumbers = new Set([
+  2,
+  3,
+  5,
+  7,
+  11,
+  13,
+  17,
+  19,
+  23,
+  29,
+  31,
+  37,
+  41,
+  43,
+  47,
+  53,
+  59,
+  61,
+  67,
+  71,
+  73,
+  79,
+  83,
+  89,
+  97,
+])
+const bronzeNumbers = new Set([25, 50, 75])
 
 const getRequiredRole = (diff: 1 | -1) => (diff === 1 ? positiveRole : negativeRole)
 
-const getContributionValue = (count: number) => (goldenNumbers.has(count) ? 5 : silverNumbers.has(count) ? 3 : 1)
+const getContributionValue = (count: number) => {
+  const abs = Math.abs(count)
+  return goldenNumbers.has(abs) ? 5 : silverNumbers.has(abs) ? 3 : bronzeNumbers.has(abs) ? 2 : 1
+}
 
 const addToContribution = ({ p, n }: { p: number; n: number }, diff: 1 | -1, count: number) => ({
   p: p + (diff === 1 ? getContributionValue(count) : 0),
@@ -41,14 +71,17 @@ const getRemainingTime = (time: moment.Moment, now: moment.Moment) => {
 
 const react = async (message: Discord.Message, count: number, remainingCounts: number) => {
   await message.react("☑")
+  const lives = ["🅾", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
+  await message.react(lives[remainingCounts - 1])
   if (goldenNumbers.has(count)) {
     await message.react("🌟")
   }
   if (silverNumbers.has(count)) {
-    await message.react("🏅")
+    await message.react("⭐")
   }
-  const lives = ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
-  await message.react(lives[remainingCounts - 1])
+  if (bronzeNumbers.has(count)) {
+    await message.react("✨")
+  }
 }
 
 const getRemaining = (now: moment.Moment, lastCounts: { datetime: string }[]) => {
