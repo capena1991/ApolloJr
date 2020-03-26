@@ -206,9 +206,15 @@ const count: Command = {
     }
     const rewards = getRewards(newCurrent.contributions, positivesWin)
     await channel.send(
-      `**Rewards:**\n${rewards.map(({ user, reward }) => `<@${user}>: ${reward} drachmae`).join("\n")}`,
+      `**Rewards:**\n${rewards.map(({ user, reward }) => `<@${user}> earned ${reward} drachmae`).join("\n")}`,
     )
     grantRewards(rewards)
+    const lostRewards = getRewards(newCurrent.contributions, !positivesWin)
+    await channel.send(
+      `**Rewards lost:**\n${lostRewards
+        .map(({ user, reward }) => `<@${user}> did **not** earn ${reward} drachmae`)
+        .join("\n")}`,
+    )
     const newRoundNumber = await archiveProm
     await channel.send(`Round ${newRoundNumber} starts now.`)
     let zeroMsg = await channel.send("0")
