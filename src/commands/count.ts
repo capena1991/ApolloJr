@@ -72,13 +72,14 @@ const getRemainingTime = (time: moment.Moment, now: moment.Moment) => {
 const react = async (message: Discord.Message, count: number, remainingCounts: number) => {
   const lives = ["🅾", "1️⃣", "2️⃣", "3️⃣", "4️⃣"]
   await message.react(lives[remainingCounts - 1])
-  if (goldenNumbers.has(count)) {
+  const abs = Math.abs(count)
+  if (goldenNumbers.has(abs)) {
     await message.react("🌟")
   }
-  if (silverNumbers.has(count)) {
+  if (silverNumbers.has(abs)) {
     await message.react("⭐")
   }
-  if (bronzeNumbers.has(count)) {
+  if (bronzeNumbers.has(abs)) {
     await message.react("✨")
   }
 }
