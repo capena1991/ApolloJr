@@ -3,7 +3,7 @@ import moment from "moment"
 
 import { Command } from "./types"
 import { Dict } from "../type-helpers"
-import { positiveRole, negativeRole } from "../config.json"
+import { positiveRole, negativeRole, nicePeople } from "../config.json"
 import { getCurrent, setCurrent, archiveCurrent } from "../data/countingData"
 import { users } from "../data/userData"
 
@@ -36,6 +36,43 @@ const silverNumbers = new Set([
   97,
 ])
 const bronzeNumbers = new Set([25, 50, 75])
+
+const messages = {
+  invalidNumber: {
+    nice: () => "Sorry, but I didn't recognize that number. Would you be so kind to try again?",
+    sassy: () =>
+      "We mean business in the counting channel. Valid numbers. Yours was not.\n" +
+      "Leave the idle chit chat for another channel.",
+  },
+  wrongCount: {
+    nice: ({ count }: { count?: string }) =>
+      `Hmmm, so... I think the last number was ${count}. I might be wrong, but can you please count from there.`,
+    sassy: ({ count }: { count?: string }) =>
+      `Try again, pal. Last count was **${count}**. :rolling_eyes:\n` +
+      "If I've said this to you too many times, maybe you should consider going back to elementary school. :wink:",
+  },
+  countTwice: {
+    nice: () =>
+      "I like you but I can't break the rules for you. What would people say if I let you count twice in a row?",
+    sassy: () => "Nice try :smirk:, but you gotta let others play. Can't count twice in a row.",
+  },
+  rateLimit: {
+    nice: ({ remaining }: { remaining?: string }) =>
+      "I'm so sorry for having to say this... You're so nice and I'm here being annoying...\n" +
+      `But can you please try again **${remaining}**, if it's not too much trouble?`,
+    sassy: ({ remaining }: { remaining?: string }) =>
+      "Not so fast! That's too many times you've tried recently.\n" + `Try again **${remaining}**.`,
+  },
+  wrongTeam: {
+    nice: () =>
+      "Sorry, I'm confused. I thought you weren't on that team. I'm so sorry, I probably messed it up." +
+      "Would you be so kind to pick your team again?",
+    sassy: () => "You're not on the right team. Pick your side first.",
+  },
+}
+
+const getMessage = (kind: keyof typeof messages, userId: string, params?: { [key: string]: string }) =>
+  messages[kind][nicePeople.includes(userId) ? "nice" : "sassy"](params ?? {})
 
 const getRequiredRole = (diff: 1 | -1) => (diff === 1 ? positiveRole : negativeRole)
 
@@ -105,22 +142,16 @@ const count: Command = {
 
     const number = parseInt(args[0])
     if (!Number.isFinite(number)) {
-      return reject(
-        "We mean business in the counting channel. Valid numbers. Yours was not.\n" +
-          "Leave the idle chit chat for another channel.",
-      )
+      return reject(getMessage("invalidNumber", author.id))
     }
     const { count, last, contributions, ...rest } = await getCurrent()
     const diff = number - count
     if (diff !== 1 && diff !== -1) {
-      return reject(
-        `Try again, pal. Last count was **${count}**. :rolling_eyes:\n` +
-          "If I've said this to you too many times, maybe you should consider going back to elementary school. :wink:",
-      )
+      return reject(getMessage("wrongCount", author.id, { count: count.toString() }))
     }
 
     if (last.user === author.id) {
-      return reject("Nice try :smirk:, but you gotta let others play. Can't count twice in a row.")
+      return reject(getMessage("countTwice", author.id))
     }
 
     const user = await users.get(author.id)
@@ -130,14 +161,11 @@ const count: Command = {
     if (remainingCounts <= 0) {
       const oldest = moment(lastCounts[4].datetime)
       const limit = oldest.add(5, "minutes")
-      return reject(
-        "Not so fast! That's too many times you've tried recently.\n" +
-          `Try again **${getRemainingTime(limit, now)}**.`,
-      )
+      return reject(getMessage("rateLimit", author.id, { remaining: getRemainingTime(limit, now) }))
     }
 
     if (!member.roles.has(getRequiredRole(diff))) {
-      return reject("You're not on the right team. Pick your side first.")
+      return reject(getMessage("wrongTeam", author.id))
     }
 
     const newCount = count + diff
