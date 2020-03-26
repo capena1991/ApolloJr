@@ -70,7 +70,7 @@ const getRemainingTime = (time: moment.Moment, now: moment.Moment) => {
 }
 
 const react = async (message: Discord.Message, count: number, remainingCounts: number) => {
-  const lives = ["🅾", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
+  const lives = ["🅾", "1️⃣", "2️⃣", "3️⃣", "4️⃣"]
   await message.react(lives[remainingCounts - 1])
   if (goldenNumbers.has(count)) {
     await message.react("🌟")
@@ -141,6 +141,11 @@ const count: Command = {
 
     const newCount = count + diff
     react(message, newCount, remainingCounts)
+    if (remainingCounts === 1) {
+      const newOldest = moment(lastCounts[3].datetime)
+      const limit = newOldest.add(5, "minutes")
+      channel.send(`:stopwatch: _Next **${getRemainingTime(limit, now)}** for <@${author.id}> _`)
+    }
     users.set(author.id, {
       ...user,
       counting: {
