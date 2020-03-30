@@ -206,12 +206,16 @@ const count: Command = {
     }
     const rewards = getRewards(newCurrent.contributions, positivesWin)
     await channel.send(
-      `**Rewards:**\n${rewards.map(({ user, reward }) => `<@${user}> earned ${reward} drachmae`).join("\n")}`,
+      `**Rewards:**\n${rewards
+        .sort(({ reward: r1 }, { reward: r2 }) => r2 - r1)
+        .map(({ user, reward }) => `<@${user}> earned ${reward} drachmae`)
+        .join("\n")}`,
     )
     grantRewards(rewards)
     const lostRewards = getRewards(newCurrent.contributions, !positivesWin)
     await channel.send(
       `**Rewards lost:**\n${lostRewards
+        .sort(({ reward: r1 }, { reward: r2 }) => r2 - r1)
         .map(({ user, reward }) => `<@${user}> did **not** earn ${reward} drachmae`)
         .join("\n")}`,
     )
