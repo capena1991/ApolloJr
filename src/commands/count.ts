@@ -2,6 +2,7 @@ import Discord from "discord.js"
 import moment from "moment"
 
 import { Command } from "./types"
+import { TaskQueueHandler } from "../queue"
 import { Dict } from "../type-helpers"
 import { positiveRole, negativeRole, nicePeople } from "../config.json"
 import { getCurrent, setCurrent, archiveCurrent } from "../data/countingData"
@@ -127,105 +128,111 @@ const getRemaining = (now: moment.Moment, lastCounts: { datetime: string }[]) =>
   return base + lastCounts.filter(({ datetime }) => moment(datetime).isBefore(_5minAgo)).length
 }
 
+const doCount = async (message: Discord.Message, args: string[]) => {
+  const { channel, author, member } = message
+
+  const reject = (reason?: string) => {
+    message.delete()
+    if (reason) {
+      author.send(reason)
+    }
+  }
+
+  const number = parseInt(args[0])
+  if (!Number.isFinite(number)) {
+    return reject(getMessage("invalidNumber", author.id))
+  }
+  const { count, last, contributions, ...rest } = await getCurrent()
+  const diff = number - count
+  if (diff !== 1 && diff !== -1) {
+    return reject(getMessage("wrongCount", author.id, { count: count.toString() }))
+  }
+
+  if (last.user === author.id) {
+    return reject(getMessage("countTwice", author.id))
+  }
+
+  const user = await users.get(author.id)
+  const now = moment()
+  const lastCounts = user.counting.lastCounts
+  const remainingCounts = getRemaining(now, lastCounts)
+  if (remainingCounts <= 0) {
+    const oldest = moment(lastCounts[4].datetime)
+    const limit = oldest.add(5, "minutes")
+    return reject(getMessage("rateLimit", author.id, { remaining: getRemainingTime(limit, now) }))
+  }
+
+  if (!member.roles.has(getRequiredRole(diff))) {
+    return reject(getMessage("wrongTeam", author.id))
+  }
+
+  const newCount = count + diff
+  react(message, newCount, remainingCounts)
+  if (remainingCounts === 1) {
+    const newOldest = moment(lastCounts[3].datetime)
+    const limit = newOldest.add(5, "minutes")
+    channel.send(`:stopwatch: _Next **${getRemainingTime(limit, now)}** for <@${author.id}> _`)
+  }
+  users.set(author.id, {
+    ...user,
+    counting: {
+      ...user.counting,
+      lastCounts: [{ datetime: now.toISOString() }, ...lastCounts].slice(0, 5),
+    },
+  })
+  const userContrib = contributions[author.id] || { p: 0, n: 0 }
+  const newCurrent = {
+    count: newCount,
+    last: { user: author.id, datetime: moment().toISOString() },
+    contributions: { ...contributions, [author.id]: addToContribution(userContrib, diff, newCount) },
+    ...rest,
+  }
+  await setCurrent(newCurrent)
+
+  if (newCount !== 100 && newCount !== -100) {
+    return
+  }
+
+  const positivesWin = newCount > 0
+  const archiveProm = archiveCurrent()
+  let winnerMsg = await channel.send(`${positivesWin ? "Positives" : "Negatives"} win this round! :tada:`)
+  if (Array.isArray(winnerMsg)) {
+    winnerMsg = winnerMsg[0]
+  }
+  if (winnerMsg.pinnable) {
+    winnerMsg.pin()
+  }
+  const rewards = getRewards(newCurrent.contributions, positivesWin)
+  await channel.send(
+    `**Rewards:**\n${rewards
+      .sort(({ reward: r1 }, { reward: r2 }) => r2 - r1)
+      .map(({ user, reward }) => `<@${user}> earned ${reward} drachmae`)
+      .join("\n")}`,
+  )
+  grantRewards(rewards)
+  const lostRewards = getRewards(newCurrent.contributions, !positivesWin)
+  await channel.send(
+    `**Rewards lost:**\n${lostRewards
+      .sort(({ reward: r1 }, { reward: r2 }) => r2 - r1)
+      .map(({ user, reward }) => `<@${user}> did **not** earn ${reward} drachmae`)
+      .join("\n")}`,
+  )
+  const newRoundNumber = await archiveProm
+  await channel.send(`Round ${newRoundNumber} starts now.`)
+  let zeroMsg = await channel.send("0")
+  if (Array.isArray(zeroMsg)) {
+    zeroMsg = zeroMsg[0]
+  }
+  return zeroMsg.react("☑")
+}
+
+const queue = new TaskQueueHandler()
+
 const count: Command = {
   name: "count",
   description: "The game of count. Two teams try to get teh count to either 100 or -100",
-  execute: async (message, args) => {
-    const { channel, author, member } = message
-
-    const reject = (reason?: string) => {
-      message.delete()
-      if (reason) {
-        author.send(reason)
-      }
-    }
-
-    const number = parseInt(args[0])
-    if (!Number.isFinite(number)) {
-      return reject(getMessage("invalidNumber", author.id))
-    }
-    const { count, last, contributions, ...rest } = await getCurrent()
-    const diff = number - count
-    if (diff !== 1 && diff !== -1) {
-      return reject(getMessage("wrongCount", author.id, { count: count.toString() }))
-    }
-
-    if (last.user === author.id) {
-      return reject(getMessage("countTwice", author.id))
-    }
-
-    const user = await users.get(author.id)
-    const now = moment()
-    const lastCounts = user.counting.lastCounts
-    const remainingCounts = getRemaining(now, lastCounts)
-    if (remainingCounts <= 0) {
-      const oldest = moment(lastCounts[4].datetime)
-      const limit = oldest.add(5, "minutes")
-      return reject(getMessage("rateLimit", author.id, { remaining: getRemainingTime(limit, now) }))
-    }
-
-    if (!member.roles.has(getRequiredRole(diff))) {
-      return reject(getMessage("wrongTeam", author.id))
-    }
-
-    const newCount = count + diff
-    react(message, newCount, remainingCounts)
-    if (remainingCounts === 1) {
-      const newOldest = moment(lastCounts[3].datetime)
-      const limit = newOldest.add(5, "minutes")
-      channel.send(`:stopwatch: _Next **${getRemainingTime(limit, now)}** for <@${author.id}> _`)
-    }
-    users.set(author.id, {
-      ...user,
-      counting: {
-        ...user.counting,
-        lastCounts: [{ datetime: now.toISOString() }, ...lastCounts].slice(0, 5),
-      },
-    })
-    const userContrib = contributions[author.id] || { p: 0, n: 0 }
-    const newCurrent = {
-      count: newCount,
-      last: { user: author.id, datetime: moment().toISOString() },
-      contributions: { ...contributions, [author.id]: addToContribution(userContrib, diff, newCount) },
-      ...rest,
-    }
-    await setCurrent(newCurrent)
-
-    if (newCount !== 100 && newCount !== -100) {
-      return
-    }
-
-    const positivesWin = newCount > 0
-    const archiveProm = archiveCurrent()
-    let winnerMsg = await channel.send(`${positivesWin ? "Positives" : "Negatives"} win this round! :tada:`)
-    if (Array.isArray(winnerMsg)) {
-      winnerMsg = winnerMsg[0]
-    }
-    if (winnerMsg.pinnable) {
-      winnerMsg.pin()
-    }
-    const rewards = getRewards(newCurrent.contributions, positivesWin)
-    await channel.send(
-      `**Rewards:**\n${rewards
-        .sort(({ reward: r1 }, { reward: r2 }) => r2 - r1)
-        .map(({ user, reward }) => `<@${user}> earned ${reward} drachmae`)
-        .join("\n")}`,
-    )
-    grantRewards(rewards)
-    const lostRewards = getRewards(newCurrent.contributions, !positivesWin)
-    await channel.send(
-      `**Rewards lost:**\n${lostRewards
-        .sort(({ reward: r1 }, { reward: r2 }) => r2 - r1)
-        .map(({ user, reward }) => `<@${user}> did **not** earn ${reward} drachmae`)
-        .join("\n")}`,
-    )
-    const newRoundNumber = await archiveProm
-    await channel.send(`Round ${newRoundNumber} starts now.`)
-    let zeroMsg = await channel.send("0")
-    if (Array.isArray(zeroMsg)) {
-      zeroMsg = zeroMsg[0]
-    }
-    return zeroMsg.react("☑")
+  execute: (message, args) => {
+    queue.enqueue(() => doCount(message, args))
   },
 }
 
