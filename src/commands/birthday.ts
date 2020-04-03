@@ -105,7 +105,7 @@ const subscribeToNotifications = async (userId: string) => {
 
 const birthday: Command = {
   name: "birthday",
-  aliases: ["bd"],
+  aliases: ["bd", "bday"],
   description: "Your friends won't need to know you don't remember their birthdays. I'll remind you of them.",
   execute: async ({ author, channel }, args) => {
     switch ((args[0] || "").toLowerCase()) {
