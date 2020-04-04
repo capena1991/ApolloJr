@@ -4,7 +4,7 @@ import moment from "moment"
 import { Command } from "./types"
 import { TaskQueueHandler } from "../queue"
 import { Dict } from "../type-helpers"
-import { positiveRole, negativeRole, nicePeople } from "../config.json"
+import { positiveRole, negativeRole, nicePeople, alts } from "../config.json"
 import { getCurrent, setCurrent, archiveCurrent } from "../data/countingData"
 import { users } from "../data/userData"
 
@@ -69,6 +69,10 @@ const messages = {
       "Sorry, I'm confused. I thought you weren't on that team. I'm so sorry, I probably messed it up." +
       "Would you be so kind to pick your team again?",
     sassy: () => "You're not on the right team. Pick your side first.",
+  },
+  alt: {
+    nice: () => "You're banned from counting. Reason: suspicion of being alt account.",
+    sassy: () => "You're banned from counting. Reason: suspicion of being alt account.",
   },
 }
 
@@ -136,6 +140,10 @@ const doCount = async (message: Discord.Message, args: string[]) => {
     if (reason) {
       author.send(reason)
     }
+  }
+
+  if (alts.includes(author.id)) {
+    return reject(getMessage("alt", author.id))
   }
 
   const number = parseInt(args[0])
