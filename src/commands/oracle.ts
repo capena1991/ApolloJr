@@ -1,5 +1,5 @@
 import { Command } from "./types"
-import { chooseOne } from "../utils"
+import { chooseOne } from "../utilities/utils"
 
 const answers = [
   "It is certain.",

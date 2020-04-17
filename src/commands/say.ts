@@ -1,5 +1,5 @@
 import { Command } from "./types"
-import { randBool } from "../utils"
+import { randBool } from "../utilities/utils"
 
 const say: Command = {
   name: "say",

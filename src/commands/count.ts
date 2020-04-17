@@ -2,7 +2,7 @@ import Discord from "discord.js"
 import moment from "moment"
 
 import { Command } from "./types"
-import { TaskQueueHandler } from "../queue"
+import { TaskQueueHandler } from "../utilities/queue"
 import { Dict } from "../type-helpers"
 import { positiveRole, negativeRole, nicePeople, alts } from "../config.json"
 import { getCurrent, setCurrent, archiveCurrent } from "../data/countingData"

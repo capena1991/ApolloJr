@@ -1,8 +1,8 @@
 import Discord from "discord.js"
 import moment from "moment"
 
-import { getBirthdays } from "./data/birthdayData"
-import { subscriptions, knownSubscriptions } from "./data/subscriptions"
+import { getBirthdays } from "../data/birthdayData"
+import { subscriptions, knownSubscriptions } from "../data/subscriptions"
 import { joinReadable } from "./utils"
 import { logInfo } from "./log"
 

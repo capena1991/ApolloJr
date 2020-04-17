@@ -3,9 +3,9 @@ import Discord from "discord.js"
 import { getCommand, getChannelCommand } from "./commands"
 import { getReaction } from "./reactions"
 import { token, prefix } from "./config.json"
-import { logMessage, logInfo } from "./log"
-import { notifyBirthday1Day, notifyBirthday1Week } from "./birthdayNotifications"
-import { schedule } from "./utils"
+import { logMessage, logInfo } from "./utilities/log"
+import { notifyBirthday1Day, notifyBirthday1Week } from "./utilities/birthdayNotifications"
+import { schedule } from "./utilities/utils"
 
 const client = new Discord.Client()
 
