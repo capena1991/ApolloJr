@@ -6,6 +6,7 @@ import { Command } from "./types"
 import { users } from "../data/userData"
 import { birthdays, addBirthday, removeBirthday as removeBirthdayData } from "../data/birthdayData"
 import { toggleSubscribe, knownSubscriptions } from "../data/subscriptions"
+import { createPageableEmbed } from "../utilities/paging"
 
 const getBirthday = async (userId: string) => {
   const { birthday } = await users.get(userId)
@@ -71,7 +72,11 @@ const monthBirthdayList = async () => {
   )
 }
 
-const allBirthdaysList = async (page: number = 1) => {
+const listAllBirthdays = async (
+  channel: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel,
+  author: Discord.User,
+  page: number = 1,
+) => {
   const allBirthdays: { user: string; date: string }[] = []
   let day = moment("2020-01-01")
   for (let d = 0; d < 366; d++) {
@@ -86,12 +91,24 @@ const allBirthdaysList = async (page: number = 1) => {
   if (!Number.isFinite(page)) {
     page = 1
   }
-  return allBirthdays
-    .slice(24 * (page - 1), 24 * page)
-    .reduce(
-      (e, { user, date }) => e.addField(moment(date).format("ll"), `<@${user}>`, true),
-      new Discord.RichEmbed().setTitle(`All Birthdays (page ${page}/${Math.ceil(allBirthdays.length / 24)})`),
-    )
+  return await createPageableEmbed(
+    channel,
+    {
+      title: "All Birthdays",
+      fields: allBirthdays.map(({ user, date }) => ({
+        name: moment(date).format("ll"),
+        value: `<@${user}>`,
+        inline: true,
+      })),
+    },
+    author,
+  )
+  // return allBirthdays
+  //   .slice(24 * (page - 1), 24 * page)
+  //   .reduce(
+  //     (e, { user, date }) => e.addField(moment(date).format("ll"), `<@${user}>`, true),
+  //     new Discord.RichEmbed().setTitle(`All Birthdays (page ${page}/${Math.ceil(allBirthdays.length / 24)})`),
+  //   )
 }
 
 const subscribeToNotifications = async (userId: string) => {
@@ -117,7 +134,7 @@ const birthday: Command = {
       case "":
         return channel.send(await monthBirthdayList())
       case "all":
-        return channel.send(await allBirthdaysList(parseInt(args[1])))
+        return await listAllBirthdays(channel, author, parseInt(args[1]))
       case "set":
         return channel.send(await setBirthday(author.id, args.slice(1).join(" ")))
       case "remove":
