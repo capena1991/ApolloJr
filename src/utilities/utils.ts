@@ -30,3 +30,5 @@ export const schedule = (fn: (...args: any[]) => any, time: number, ...args: any
 }
 
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+export const pluralize = (count: number, singular: string, plural: string) => (count === 1 ? singular : plural)
