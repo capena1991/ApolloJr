@@ -8,14 +8,14 @@ import { positiveRole, negativeRole, nicePeople, alts } from "../config.json"
 import { getCurrent, setCurrent, archiveCurrent } from "../data/countingData"
 import { users } from "../data/userData"
 
-const goldenNumbers = new Set([0, 42, -42, 69, -69, 100, -100])
+const goldenNumbers = new Set([0, 13, 42, 69, 100])
 const silverNumbers = new Set([
   2,
   3,
   5,
   7,
   11,
-  13,
+  // 13,
   17,
   19,
   23,
