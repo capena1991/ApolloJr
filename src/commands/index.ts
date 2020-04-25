@@ -15,8 +15,10 @@ import reset from "./reset"
 import birthday from "./birthday"
 import count from "./count"
 import transfer from "./transfer"
+import shop from "./shop"
+import inventory from "./inventory"
 
-const commands = [ping, hello, server, user, say, oracle, birthday, transfer]
+const commands = [ping, hello, server, user, say, oracle, birthday, transfer, shop, inventory]
 
 const help: Command = {
   name: "help",
