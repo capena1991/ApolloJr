@@ -1,9 +1,7 @@
 import { Command } from "./types"
 
 import { users } from "../data/userData"
-import { pluralize } from "../utilities/utils"
-
-const nDrachma = (n: number) => `${n} ${pluralize(n, "drachma", "drachmae")}`
+import { nDrachma } from "../utilities/utils"
 
 const transfer: Command = {
   name: "transfer",
