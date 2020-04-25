@@ -170,7 +170,7 @@ const doCount = async (message: Discord.Message, args: string[]) => {
     return reject(getMessage("rateLimit", author.id, { remaining: getRemainingTime(limit, now) }))
   }
 
-  if (!member.roles.has(getRequiredRole(diff))) {
+  if (!member?.roles.cache.has(getRequiredRole(diff))) {
     return reject(getMessage("wrongTeam", author.id))
   }
 

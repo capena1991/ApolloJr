@@ -23,30 +23,32 @@ const notifyBirthday = async (
   }
   const { subscribed } = await subscriptions.get(subscriptionKey)
   const notification = { reason: dateToCheck.format("MM-DD"), datetime: now.toISOString(true) }
-  const updated = subscribed.map(({ user, lastNotification }) => {
-    let res = { user, lastNotification }
-    try {
-      if (lastNotification?.reason !== notification.reason) {
-        const clientUser = client.users.get(user)
-        let own = false
-        const birthdayPeople = birthdays.map(({ user: bdUser }) => {
-          if (bdUser === user) {
-            own = true
-            return "a very special person"
-          } else {
-            return `<@${bdUser}>`
-          }
-        })
-        const message = `Just a friendly reminder that ${joinReadable(
-          birthdayPeople,
-        )}'s birthday is ${timeExpression}! :tada::birthday:${own ? "\n(the very special person is you) :wink:" : ""}`
-        clientUser?.send(message)
-        res = { user, lastNotification: notification }
+  const updated = await Promise.all(
+    subscribed.map(async ({ user, lastNotification }) => {
+      let res = { user, lastNotification }
+      try {
+        if (lastNotification?.reason !== notification.reason) {
+          const clientUser = await client.users.fetch(user)
+          let own = false
+          const birthdayPeople = birthdays.map(({ user: bdUser }) => {
+            if (bdUser === user) {
+              own = true
+              return "a very special person"
+            } else {
+              return `<@${bdUser}>`
+            }
+          })
+          const message = `Just a friendly reminder that ${joinReadable(
+            birthdayPeople,
+          )}'s birthday is ${timeExpression}! :tada::birthday:${own ? "\n(the very special person is you) :wink:" : ""}`
+          clientUser?.send(message)
+          res = { user, lastNotification: notification }
+        }
+      } finally {
+        return res
       }
-    } finally {
-      return res
-    }
-  })
+    }),
+  )
   subscriptions.set(subscriptionKey, { subscribed: updated })
   logInfo("SUBSCRIBERS HAVE BEEN NOTIFIED")
 }

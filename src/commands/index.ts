@@ -15,23 +15,25 @@ import reset from "./reset"
 import birthday from "./birthday"
 import count from "./count"
 import transfer from "./transfer"
-import boop from "./boop"
 
-const commands = [ping, hello, server, user, say, oracle, birthday, transfer, boop]
+const commands = [ping, hello, server, user, say, oracle, birthday, transfer]
 
 const help: Command = {
   name: "help",
   description: "Shows you what you can ask me to do.",
   execute: ({ channel, client }) => {
-    let embed = new Discord.RichEmbed()
+    let embed = new Discord.MessageEmbed()
       .setTitle("Apollo Jr. commands")
-      .setThumbnail(client.user.displayAvatarURL)
       .setDescription("Here's a list of what you can ask me to do.")
-    embed = commands.reduce(
-      (e, c) =>
-        e.addField([c.name, ...(c.aliases || [])].map((name) => `\`${prefix}${name}\``).join(" "), c.description),
-      embed,
-    )
+      .addFields(
+        commands.map((c) => ({
+          name: [c.name, ...(c.aliases || [])].map((name) => `\`${prefix}${name}\``).join(" "),
+          value: c.description,
+        })),
+      )
+    if (client.user) {
+      embed = embed.setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
+    }
     channel.send(embed)
   },
 }

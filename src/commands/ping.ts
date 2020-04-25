@@ -13,7 +13,7 @@ const ping: Command = {
     message.edit(
       base +
         "\nIf you doubt me, check out these amazing ~~or not~~ reaction times:\n" +
-        `**My ping**: ${Math.round(botPing)}ms  **API ping**: ${Math.round(client.ping)}ms`,
+        `**My ping**: ${Math.round(botPing)}ms  **API ping**: ${Math.round(client.ws.ping)}ms`,
     )
   },
 }

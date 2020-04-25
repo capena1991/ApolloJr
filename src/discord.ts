@@ -10,13 +10,20 @@ import { schedule } from "./utilities/utils"
 const client = new Discord.Client()
 
 client.on("ready", () => {
-  console.log(`Logged in as ${client.user.tag}!`)
-  client.user.setPresence({ status: "online", game: { name: "all of you.", type: "LISTENING" } })
+  if (!client.user) {
+    throw `Logged in but no user.`
+  }
+  console.log(`Logged in as ${client.user?.tag}!`)
+  client.user.setPresence({ status: "online", activity: { name: "all of you.", type: "LISTENING" } })
   schedule(notifyBirthday1Day, 3600000, client)
   schedule(notifyBirthday1Week, 3600000, client)
 })
 
 client.on("message", async (message) => {
+  if (!client.user) {
+    throw `Logged in but no user.`
+  }
+
   const { content, channel, author, mentions } = message
 
   logMessage(message)
@@ -38,7 +45,7 @@ client.on("message", async (message) => {
   }
 
   if (!content.startsWith(prefix)) {
-    if (mentions.members.has(client.user.id)) {
+    if (mentions.members?.has(client.user.id)) {
       logInfo("MENTIONED", message)
       channel.send(await getReaction("mention", message))
     }

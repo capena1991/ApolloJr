@@ -1,4 +1,4 @@
-import { RichEmbed } from "discord.js"
+import Discord from "discord.js"
 
 import { Command } from "./types"
 import { chooseOne, pluralize } from "../utilities/utils"
@@ -21,7 +21,7 @@ const boop: Command = {
     }
     const have = pluralize(mentions.users.size, "has", "have")
     return channel.send(
-      new RichEmbed()
+      new Discord.MessageEmbed()
         .setDescription(
           `${mentions.users.map(({ id }) => `<@${id}>`).join(", ")} ${have} been booped by <@${author.id}>`,
         )

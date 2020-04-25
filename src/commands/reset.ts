@@ -10,7 +10,8 @@ const reset: Command = {
     if (!admins.includes(author.id) || !args.length) {
       return
     }
-    mentions.members.forEach((user) => users.reset(user.id))
+    // TODO: reset info in other collections as well
+    mentions.members?.forEach((user) => users.reset(user.id))
     channel.send("done")
   },
 }

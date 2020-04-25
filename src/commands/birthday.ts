@@ -68,12 +68,12 @@ const monthBirthdayList = async () => {
   }
   return monthBirthdays.reduce(
     (e, { user, date }) => e.addField(moment(date).format("ll"), `<@${user}>`, true),
-    new Discord.RichEmbed().setTitle(`${now.format("MMMM")}'s Birthdays`),
+    new Discord.MessageEmbed().setTitle(`${now.format("MMMM")}'s Birthdays`),
   )
 }
 
 const listAllBirthdays = async (
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel,
+  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
   author: Discord.User,
   page: number = 1,
 ) => {
@@ -103,12 +103,6 @@ const listAllBirthdays = async (
     },
     author,
   )
-  // return allBirthdays
-  //   .slice(24 * (page - 1), 24 * page)
-  //   .reduce(
-  //     (e, { user, date }) => e.addField(moment(date).format("ll"), `<@${user}>`, true),
-  //     new Discord.RichEmbed().setTitle(`All Birthdays (page ${page}/${Math.ceil(allBirthdays.length / 24)})`),
-  //   )
 }
 
 const subscribeToNotifications = async (userId: string) => {

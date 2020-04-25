@@ -11,7 +11,7 @@ const logger = simpleLogger.createRollingFileLogger({
 const formatMessage = ({ channel, guild, author, cleanContent, embeds }: Discord.Message) => {
   const channelStr = ["dm", "group"].includes(channel.type)
     ? "DM"
-    : `${guild.name}#${(<Discord.GuildChannel>channel).name}`
+    : `${guild?.name || "unknown"}#${(<Discord.GuildChannel>channel).name}`
   const content = embeds.length ? (cleanContent ? `_<embed(s)>_ + ${cleanContent}` : "_<embed(s)>_") : cleanContent
   return `\`${channelStr}:${author.tag}\` ${content}`
 }
