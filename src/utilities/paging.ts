@@ -32,7 +32,7 @@ export const createPageableEmbed = async (
   await message.react("➡")
 
   const collector = message.createReactionCollector(
-    (reaction, user) => ["⬅", "➡"].includes(reaction.emoji.name) && (!author || user.id === author.id),
+    (reaction, user) => !user.bot && ["⬅", "➡"].includes(reaction.emoji.name) && (!author || user.id === author.id),
     { time: 300000 },
   )
   collector.on("collect", (reaction, user) => {
