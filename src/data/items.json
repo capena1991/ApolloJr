@@ -1,4 +1,5 @@
 {
   "item1": { "id": "item1", "name": "Useless box", "icon": "📦", "price": 20, "category": "useless" },
-  "item2": { "id": "item2", "name": "Useless paper", "icon": "📃", "price": 10, "category": "useless" }
+  "item2": { "id": "item2", "name": "Useless paper", "icon": "📃", "price": 10, "category": "useless" },
+  "item3": { "id": "item3", "name": "Useless brick", "icon": "🧱", "price": 20, "category": "useless" }
 }
