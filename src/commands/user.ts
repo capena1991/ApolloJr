@@ -59,7 +59,9 @@ const getUserInfo = async (user: Discord.User, guildMember?: Discord.GuildMember
     .slice(0, 20)
     .map(([id, amount]) => `${typedItems[id]?.icon}${amount && amount > 1 ? `x${amount}` : ""}`)
     .join("  ")
-  embed = embed.addField("Owned items", ownedItems + (allUserItems.length > 20 ? "..." : ""), false)
+  if (allUserItems.length) {
+    embed = embed.addField("Owned items", ownedItems + (allUserItems.length > 20 ? "..." : ""), false)
+  }
 
   return embed
 }
