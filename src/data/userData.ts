@@ -1,12 +1,14 @@
 import Keyv from "keyv"
 
 import { DataManager, defaultDB } from "./dataManager"
+import { Dict } from "../type-helpers"
 
 export interface UserData {
   timesMentioned: number
   birthday?: string
   counting: { lastCounts: { datetime: string }[] }
   money: number
+  items?: Dict<number>
 }
 
 const initializeUserData = () => ({
