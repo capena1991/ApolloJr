@@ -1,5 +1,5 @@
 import { Command } from "./types"
-import items from "./items.json"
+import items from "../data/items.json"
 import { createPageableEmbed } from "../utilities/paging"
 import { nDrachma } from "../utilities/utils"
 import { createConfirm } from "../utilities/confirm"
