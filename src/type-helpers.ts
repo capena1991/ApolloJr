@@ -4,4 +4,6 @@ type Partial<T> = {
   [P in keyof T]?: T[P]
 }
 
-export { Dict, Partial }
+type ObjectValues<T> = T[keyof T]
+
+export { Dict, Partial, ObjectValues }
