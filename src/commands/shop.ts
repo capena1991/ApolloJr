@@ -26,10 +26,14 @@ const shop: Command = {
         channel,
         {
           title: "Shop",
-          description: "Here's the available items",
+          description:
+            "These are the items you can buy.\n" +
+            "To buy any of them, simply write this command followed by the item's name.\n" +
+            `For example, \`=${shop.name} ${Object.values(items)[0].name}\``,
           fields: Object.values(items).map(({ name, icon, price }) => ({
             name: `${icon} ${name}`,
             value: nDrachma(price),
+            inline: true,
           })),
         },
         author,
