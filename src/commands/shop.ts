@@ -43,7 +43,7 @@ const shop: Command = {
     return createConfirm(
       channel,
       author,
-      `If you want to buy **${item.icon} ${item.name} (${nDrachma(item.price)})**, hand in the money.`,
+      `If you want to buy **${item.icon} ${item.name}** (**${nDrachma(item.price)}**), hand in the money.`,
       "💰",
       async () => {
         const user = await users.get(author.id)
@@ -57,7 +57,7 @@ const shop: Command = {
         const newMoney = user.money - item.price
         await users.set(author.id, { ...user, money: newMoney, items: userItems })
         return channel.send(
-          `You have bought a **${item.icon} ${item.name} (${nDrachma(item.price)})**.` +
+          `You have bought a **${item.icon} ${item.name}** (**${nDrachma(item.price)}**).` +
             `You now have ${nDrachma(newMoney)}.`,
         )
       },
