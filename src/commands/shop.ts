@@ -1,6 +1,7 @@
+import Discord from "discord.js"
 import { Command } from "./types"
 import items from "../data/items.json"
-import { createPageableEmbed } from "../utilities/paging"
+import { createSimplePageableEmbed } from "../utilities/paging"
 import { nDrachma } from "../utilities/utils"
 import { createConfirm } from "../utilities/confirm"
 import { users } from "../data/userData"
@@ -22,20 +23,21 @@ const shop: Command = {
     const item = findItem(itemSearch)
 
     if (!item) {
-      return createPageableEmbed(
+      return createSimplePageableEmbed(
         channel,
-        {
-          title: "Shop",
-          description:
+        new Discord.MessageEmbed()
+          .setTitle("Shop")
+          .setDescription(
             "These are the items you can buy.\n" +
-            "To buy any of them, simply write this command followed by the item's name.\n" +
-            `For example, \`=${shop.name} ${Object.values(items)[0].name}\``,
-          fields: Object.values(items).map(({ name, icon, price }) => ({
-            name: `${icon} ${name}`,
-            value: nDrachma(price),
-            inline: true,
-          })),
-        },
+              "To buy any of them, simply write this command followed by the item's name.\n" +
+              `For example, \`=${shop.name} ${Object.values(items)[0].name}\``,
+          ),
+        Object.values(items).map(({ name, icon, price }) => ({
+          name: `${icon} ${name}`,
+          value: nDrachma(price),
+          inline: true,
+        })),
+
         author,
       )
     }

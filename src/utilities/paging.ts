@@ -2,31 +2,17 @@ import Discord from "discord.js"
 
 import { Dict } from "../type-helpers"
 
-type PageableEmbed = {
-  title?: string
-  description?: string
-  fields: { name: string; value: string; inline?: boolean }[]
-}
-
-const getPage = ({ title, description, fields }: PageableEmbed, page = 0, pageSize = 24) =>
-  new Discord.MessageEmbed()
-    .setTitle(title ?? "")
-    .setDescription(description ?? "")
-    .setFooter(`${page + 1}/${Math.ceil(fields.length / pageSize)}`)
-    .addFields(fields.slice(pageSize * page, pageSize * (page + 1)))
-
 const pageIncDict: Dict<number> = { "➡": 1, "⬅": -1 }
 
 export const createPageableEmbed = async (
   channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
-  embedData: PageableEmbed,
+  getPage: (page: number) => Discord.MessageEmbed,
+  nPages: number,
   author?: Discord.User,
-  pageSize = 24,
 ) => {
-  const lastPage = Math.ceil(embedData.fields.length / pageSize) - 1
   let page = 0
 
-  const message = await channel.send(getPage(embedData, page, pageSize))
+  const message = await channel.send(getPage(page))
 
   await message.react("⬅")
   await message.react("➡")
@@ -37,8 +23,46 @@ export const createPageableEmbed = async (
   )
   collector.on("collect", (reaction, user) => {
     reaction.users.remove(user)
-    page = Math.min(Math.max(page + (pageIncDict[reaction.emoji.name] ?? 0), 0), lastPage)
-    message.edit(getPage(embedData, page, pageSize))
+    page = Math.min(Math.max(page + (pageIncDict[reaction.emoji.name] ?? 0), 0), nPages - 1)
+    message.edit(getPage(page))
   })
   collector.on("end", () => message.reactions.removeAll())
+}
+
+export const createListPageableEmbed = (
+  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
+  embeds: Discord.MessageEmbed[],
+  author?: Discord.User,
+) => createPageableEmbed(channel, (page) => embeds[page], embeds.length, author)
+
+export const createFieldsPageableEmbed = (
+  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
+  baseEmbed: Discord.MessageEmbed,
+  fields: Discord.EmbedField[][],
+  author?: Discord.User,
+  setFooter = true,
+) => {
+  const getPage = (page: number) => {
+    baseEmbed.fields = fields[page]
+    if (setFooter) {
+      baseEmbed.setFooter(`${page + 1}/${fields.length}`)
+    }
+    return baseEmbed
+  }
+
+  return createPageableEmbed(channel, getPage, fields.length, author)
+}
+
+export const createSimplePageableEmbed = (
+  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
+  baseEmbed: Discord.MessageEmbed,
+  fields: Discord.EmbedField[],
+  author?: Discord.User,
+  pageSize = 24,
+  setFooter = true,
+) => {
+  const fieldsPerPage = Array.from({ length: Math.ceil(fields.length / pageSize) }, (_, i) =>
+    fields.slice(i * pageSize, (i + 1) * pageSize),
+  )
+  return createFieldsPageableEmbed(channel, baseEmbed, fieldsPerPage, author, setFooter)
 }

@@ -6,7 +6,7 @@ import { Command } from "./types"
 import { users } from "../data/userData"
 import { birthdays, addBirthday, removeBirthday as removeBirthdayData } from "../data/birthdayData"
 import { toggleSubscribe, knownSubscriptions } from "../data/subscriptions"
-import { createPageableEmbed } from "../utilities/paging"
+import { createSimplePageableEmbed } from "../utilities/paging"
 
 const getBirthday = async (userId: string) => {
   const { birthday } = await users.get(userId)
@@ -91,16 +91,14 @@ const listAllBirthdays = async (
   if (!Number.isFinite(page)) {
     page = 1
   }
-  return await createPageableEmbed(
+  return await createSimplePageableEmbed(
     channel,
-    {
-      title: "All Birthdays",
-      fields: allBirthdays.map(({ user, date }) => ({
-        name: moment(date).format("ll"),
-        value: `<@${user}>`,
-        inline: true,
-      })),
-    },
+    new Discord.MessageEmbed().setTitle("All Birthdays"),
+    allBirthdays.map(({ user, date }) => ({
+      name: moment(date).format("ll"),
+      value: `<@${user}>`,
+      inline: true,
+    })),
     author,
   )
 }

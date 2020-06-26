@@ -1,8 +1,9 @@
+import Discord from "discord.js"
 import { Command } from "./types"
 import items from "../data/items.json"
 import { users } from "../data/userData"
 import { Dict, ObjectValues } from "../type-helpers"
-import { createPageableEmbed } from "../utilities/paging"
+import { createSimplePageableEmbed } from "../utilities/paging"
 
 const inventory: Command = {
   name: "inventory",
@@ -13,17 +14,14 @@ const inventory: Command = {
     const typedItems = items as Dict<ObjectValues<typeof items>>
     const user = await users.get(author.id)
     const ownedItems = Object.entries(user.items || {}).map(([id, amount]) => ({ item: typedItems[id], amount }))
-    createPageableEmbed(
+    createSimplePageableEmbed(
       channel,
-      {
-        title: "Inventory",
-        description: "These are the items you own.",
-        fields: ownedItems.map(({ item, amount }) => ({
-          name: `${item?.icon} ${item?.name}`,
-          value: `**${amount}**`,
-          inline: true,
-        })),
-      },
+      new Discord.MessageEmbed().setTitle("Inventory").setDescription("These are the items you own."),
+      ownedItems.map(({ item, amount }) => ({
+        name: `${item?.icon} ${item?.name}`,
+        value: `**${amount}**`,
+        inline: true,
+      })),
       author,
     )
   },
