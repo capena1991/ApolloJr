@@ -1,12 +1,12 @@
 import Discord from "discord.js"
 import moment from "moment"
 
-import { Command } from "./types"
-import { TaskQueueHandler } from "../utilities/queue"
-import { Dict } from "../type-helpers"
-import { positiveRole, negativeRole, nicePeople, alts } from "../config.json"
-import { getCurrent, setCurrent, archiveCurrent } from "../data/countingData"
-import { users } from "../data/userData"
+import { Command } from "../types"
+import { TaskQueueHandler } from "../../utilities/queue"
+import { Dict } from "../../type-helpers"
+import { positiveRole, negativeRole, nicePeople, alts } from "../../config.json"
+import { getCurrent, setCurrent, archiveCurrent } from "../../data/countingData"
+import { users } from "../../data/userData"
 
 const goldenNumbers = new Set([0, 13, 42, 69, 100])
 const silverNumbers = new Set([
@@ -15,7 +15,6 @@ const silverNumbers = new Set([
   5,
   7,
   11,
-  // 13,
   17,
   19,
   23,
