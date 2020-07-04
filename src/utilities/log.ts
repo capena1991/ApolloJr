@@ -1,6 +1,5 @@
 import Discord from "discord.js"
 import simpleLogger from "simple-node-logger"
-import moment from "moment"
 
 const logger = simpleLogger.createRollingFileLogger({
   logDirectory: "../data/logs/messages",
@@ -21,7 +20,7 @@ export const logMessage = (message: Discord.Message) => {
 }
 
 export const logInfo = (infoMessage: string, message: Discord.Message | undefined = undefined) => {
-  console.log(`${moment().toISOString(true)} ${infoMessage}`)
+  console.log(infoMessage)
   if (message) {
     console.log(formatMessage(message))
   }
