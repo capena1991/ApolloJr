@@ -20,6 +20,7 @@
   "homepage": "https://github.com/capena1991/ApolloJr#readme",
   "scripts": {
     "tsc": "tsc",
+    "lint": "eslint . --ext .ts",
     "exec": "node ./dist/app.js"
   },
   "dependencies": {
@@ -33,5 +34,10 @@
     "moment": "^2.24.0",
     "simple-node-logger": "^18.12.24",
     "typescript": "^3.7"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.6.0",
+    "@typescript-eslint/parser": "^3.6.0",
+    "eslint": "^7.4.0"
   }
 }
