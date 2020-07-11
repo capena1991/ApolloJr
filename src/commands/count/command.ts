@@ -148,7 +148,7 @@ const validateCount = (
   }
   const diff = number - currentRound.count
   if (diff !== 1 && diff !== -1) {
-    return getMessage("wrongCount", author.id, { count: count.toString() })
+    return getMessage("wrongCount", author.id, { count: currentRound.count.toString() })
   }
 
   if (currentRound.last.user === author.id) {
@@ -177,10 +177,7 @@ const endRound = async (
 ) => {
   const positivesWin = number > 0
   const archiveProm = archiveCurrent()
-  let winnerMsg = await channel.send(`${positivesWin ? "Positives" : "Negatives"} win this round! :tada:`)
-  if (Array.isArray(winnerMsg)) {
-    winnerMsg = winnerMsg[0]
-  }
+  const winnerMsg = await channel.send(`${positivesWin ? "Positives" : "Negatives"} win this round! :tada:`)
   if (winnerMsg.pinnable) {
     winnerMsg.pin()
   }
@@ -234,7 +231,7 @@ const doCount = async (message: Discord.Message, args: string[]) => {
     return reject(invalidMessage)
   }
 
-  const { count, last, contributions, ...rest } = currentRound
+  const { count: currentRoundCount, last, contributions, ...rest } = currentRound
   const lastCounts = user.counting.lastCounts
   const remainingCounts = getRemaining(now, lastCounts)
 
@@ -252,7 +249,7 @@ const doCount = async (message: Discord.Message, args: string[]) => {
     },
   })
   const userContrib = contributions[author.id] || { p: 0, n: 0 }
-  const diff = number - count
+  const diff = number - currentRoundCount
   const newCurrent = {
     count: number,
     last: { user: author.id, datetime: moment().toISOString() },
@@ -261,7 +258,7 @@ const doCount = async (message: Discord.Message, args: string[]) => {
   }
   await setCurrent(newCurrent)
 
-  if (number !== 100 && number !== -100) {
+  if (Math.abs(number) < 100) {
     return
   }
 
