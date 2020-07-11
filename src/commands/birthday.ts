@@ -75,7 +75,7 @@ const monthBirthdayList = async () => {
 const listAllBirthdays = async (
   channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
   author: Discord.User,
-  page: number = 1,
+  page = 1,
 ) => {
   const allBirthdays: { user: string; date: string }[] = []
   let day = moment("2020-01-01")
@@ -138,12 +138,13 @@ const birthday: Command = {
       case "subscribe":
       case "notify":
         return channel.send(await subscribeToNotifications(author.id))
-      default:
+      default: {
         const match = args[0].match(/<@!?(\d+)>/)
         if (match) {
           return channel.send(await getBirthday(match[1]))
         }
         return channel.send(await setBirthday(author.id, args.join(" ")))
+      }
     }
   },
 }

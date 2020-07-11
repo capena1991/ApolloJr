@@ -1,7 +1,7 @@
-type Task = () => Promise<any>
+type Task<T> = () => Promise<T>
 
-export class TaskQueueHandler {
-  queue: Task[] = []
+export class TaskQueueHandler<T> {
+  queue: Task<T>[] = []
   handling = false
 
   handle = async () => {
@@ -23,7 +23,7 @@ export class TaskQueueHandler {
     this.handling = false
   }
 
-  enqueue = (task: Task) => {
+  enqueue = (task: Task<T>) => {
     this.queue.push(task)
     this.handle()
   }

@@ -92,7 +92,7 @@ const addToContribution = ({ p, n }: { p: number; n: number }, diff: number, cou
 
 const getRewards = (contributions: Dict<{ p: number; n: number }>, positivesWin: boolean) =>
   Object.entries(contributions)
-    .filter(([_, c]) => c && !c.p !== !c.n && !!c.p === positivesWin)
+    .filter(([, c]) => c && !c.p !== !c.n && !!c.p === positivesWin)
     .map(([user, c]) => ({ user, reward: (positivesWin ? c?.p : c?.n) || 0 }))
 
 const grantRewards = (rewards: { user: string; reward: number }[]) => {
@@ -266,7 +266,7 @@ const doCount = async (message: Discord.Message, args: string[]) => {
   await startNewRound(channel, newRoundNumber)
 }
 
-const queue = new TaskQueueHandler()
+const queue = new TaskQueueHandler<void>()
 
 const count: Command = {
   name: "count",

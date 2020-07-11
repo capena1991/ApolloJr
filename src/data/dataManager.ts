@@ -4,7 +4,7 @@ import { Partial } from "../type-helpers"
 
 export const defaultDB = "sqlite://../data/data.sqlite"
 
-export class DataManager<T extends object> {
+export class DataManager<T> {
   keyv: Keyv<T>
   initializer: () => T
 

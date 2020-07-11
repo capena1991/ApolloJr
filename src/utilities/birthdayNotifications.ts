@@ -44,9 +44,10 @@ const notifyBirthday = async (
           clientUser?.send(message)
           res = { user, lastNotification: notification }
         }
-      } finally {
-        return res
+      } catch (e) {
+        console.log(`Error notifying user. Error: ${e}`)
       }
+      return res
     }),
   )
   subscriptions.set(subscriptionKey, { subscribed: updated })

@@ -27,8 +27,8 @@ const reasons = {
     }
     return mentionReactions[Math.min(timesMentioned, mentionReactions.length - 1)](author)
   },
-  noCommand: (_message: Discord.Message) => "You talkin' to me? :face_with_raised_eyebrow:",
-  invalidCommand: (_message: Discord.Message) => "That's not a valid command. What are you trying to do? :unamused:",
+  noCommand: () => "You talkin' to me? :face_with_raised_eyebrow:",
+  invalidCommand: () => "That's not a valid command. What are you trying to do? :unamused:",
 }
 
 export const getReaction = async (reason: "mention" | "noCommand" | "invalidCommand", message: Discord.Message) =>

@@ -8,9 +8,9 @@ export const randInt = (min: number, max: number | undefined = undefined) => {
   return Math.floor(Math.random() * (max - min)) + min
 }
 
-export const chooseOne = (values: any[]) => values[randInt(values.length)]
+export const chooseOne = <T>(values: T[]) => values[randInt(values.length)]
 
-export const randBool = (probability: number = 0.5) => Math.random() < probability
+export const randBool = (probability = 0.5) => Math.random() < probability
 
 export const joinReadable = (list: string[]) => {
   const len = list.length
@@ -24,6 +24,7 @@ export const joinReadable = (list: string[]) => {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const schedule = (fn: (...args: any[]) => any, time: number, ...args: any[]) => {
   setImmediate(fn, ...args)
   return setInterval(fn, time, ...args)
