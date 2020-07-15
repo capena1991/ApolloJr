@@ -1,10 +1,11 @@
 import { Command } from "./types"
+import { getSpecialNickname } from "../utilities/specialPeople"
 
 const ping: Command = {
   name: "ping",
   description: "Ping me to check whether I'm listening.",
-  execute: async ({ channel, client, createdTimestamp }) => {
-    const base = "I'm awake! I'm awake. Just resting my eyes for a bit."
+  execute: async ({ channel, client, createdTimestamp, author }) => {
+    const base = `I'm awake! I'm awake. Just resting my eyes for a bit ${getSpecialNickname(author.id)}.`
     let message = await channel.send(base)
     if (Array.isArray(message)) {
       message = message[0]
