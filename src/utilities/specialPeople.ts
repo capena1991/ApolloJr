@@ -5,11 +5,12 @@ import { chooseOne } from "./utils"
 const categories: Dict<{ names: string[] }> = {
   wife: { names: ["honey", "wifey", "hon'", "babe"] },
   father: { names: ["dad"] },
+  aunt: { names: ["auntie"] },
 }
 
-export const getSpecialNickname = (userId: string, chance = 0.3) => {
+export const getSpecialNickname = (userId: string, chance = 0.5) => {
   const person = specialPeople[specialPeople.findIndex(({ id }) => id === userId)]
-  if (Math.random() < chance) {
+  if (person && Math.random() < chance) {
     const allNames = person.categories.map((c) => categories[c]?.names ?? []).reduce((cum, cur) => [...cum, ...cur])
     return `, ${chooseOne(allNames)}`
   }
