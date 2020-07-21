@@ -19,7 +19,8 @@ const getBirthday = async (userId: string) => {
   if (nextBirthday.isBefore(now)) {
     nextBirthday = nextBirthday.add(1, "year")
   }
-  return `<@${userId}>'s birthday is ${parsedBirthday.format("ll")} (${nextBirthday.fromNow()}).`
+  const age = nextBirthday.year() - parsedBirthday.year()
+  return `<@${userId}>'s birthday is ${parsedBirthday.format("ll")} (turning ${age} ${nextBirthday.fromNow()}).`
 }
 
 const setBirthday = async (userId: string, date: string | undefined) => {
