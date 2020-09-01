@@ -40,7 +40,9 @@ const notifyBirthday = async (
           })
           const message = `Just a friendly reminder that ${joinReadable(
             birthdayPeople,
-          )}'s birthday is ${timeExpression}! :tada::birthday:${own ? "\n(the very special person is you) :wink:" : ""}`
+          )}'s birthday is ${timeExpression} (${dateToCheck.format("MMMM Do")})! :tada::birthday:${
+            own ? "\n(the very special person is you) :wink:" : ""
+          }`
           clientUser?.send(message)
           res = { user, lastNotification: notification }
         }
