@@ -1,43 +1,51 @@
 import Discord from "discord.js"
-import moment from "moment"
+import { DateTime } from "luxon"
 
 import { allBirthdays, admins } from "../config.json"
-import { Command } from "./types"
-import { users } from "../data/userData"
-import { birthdays, addBirthday, removeBirthday as removeBirthdayData } from "../data/birthdayData"
-import { toggleSubscribe, knownSubscriptions } from "../data/subscriptions"
+import { parseDate } from "../utilities/date-helpers"
 import { createSimplePageableEmbed } from "../utilities/paging"
+import { users } from "../data/userData"
+import {
+  addBirthday,
+  removeBirthday as removeBirthdayData,
+  getBirthdays as getBirthdayData,
+} from "../data/birthdayData"
+import { toggleSubscribe, knownSubscriptions } from "../data/subscriptions"
+import { Command } from "./types"
 
 const getBirthday = async (userId: string) => {
   const { birthday } = await users.get(userId)
   if (!birthday) {
     return "I don't know their birthday. :slight_frown:"
   }
-  const parsedBirthday = moment(birthday)
-  const now = moment()
-  let nextBirthday = parsedBirthday.clone().year(now.year())
-  if (nextBirthday.isBefore(now)) {
-    nextBirthday = nextBirthday.add(1, "year")
+  const parsedBirthday = parseDate(birthday)
+  const now = DateTime.local()
+  let nextBirthday = parsedBirthday.set({ year: now.year })
+  if (nextBirthday < now) {
+    nextBirthday = nextBirthday.plus({ year: 1 })
   }
-  const age = nextBirthday.year() - parsedBirthday.year()
-  return `<@${userId}>'s birthday is ${parsedBirthday.format("ll")} (turning ${age} ${nextBirthday.fromNow()}).`
+  const age = nextBirthday.year - parsedBirthday.year
+  return (
+    `<@${userId}>'s birthday is ${parsedBirthday.toLocaleString(DateTime.DATE_MED)} ` +
+    `(turning ${age} ${nextBirthday.toRelative()}).`
+  )
 }
 
 const setBirthday = async (userId: string, date: string | undefined) => {
   if (!date) {
     return "Don't tease me like that, just tell me the date of your birthday."
   }
-  const parsedDate = moment(date)
-  if (!parsedDate.isValid()) {
+  const parsedDate = parseDate(date)
+  if (!parsedDate.isValid) {
     return "I'm either dumb or that wasn't a valid date. I wouldn't be surprised of either."
   }
   const userData = await users.get(userId)
-  users.set(userId, { ...userData, birthday: parsedDate.toISOString() })
+  users.set(userId, { ...userData, birthday: parsedDate.toISODate() })
   if (userData.birthday) {
-    await removeBirthdayData(moment(userData.birthday), userId)
+    await removeBirthdayData(parseDate(userData.birthday), userId)
   }
   addBirthday(parsedDate, userId)
-  return `Now I know your birthday, <@${userId}> (${parsedDate.format("ll")}). :wink:`
+  return `Now I know your birthday, <@${userId}> (${parsedDate.toLocaleString(DateTime.DATE_MED)}). :wink:`
 }
 
 const removeBirthday = async (userId: string) => {
@@ -46,7 +54,7 @@ const removeBirthday = async (userId: string) => {
     return "But... I don't know your birthday. Are you sure you know what you're doing? :unamused:"
   }
   users.set(userId, userDataSansBD)
-  removeBirthdayData(moment(birthday), userId)
+  removeBirthdayData(parseDate(birthday), userId)
   return (
     "That's sad :disappointed:. People won't be reminded of your birthday now. " +
     "Let's hope they remember it because I won't. :slight_frown:"
@@ -55,21 +63,20 @@ const removeBirthday = async (userId: string) => {
 
 const monthBirthdayList = async () => {
   const monthBirthdays: { user: string; date: string }[] = []
-  const now = moment()
-  let day = now.clone().startOf("month")
-  const daysInMonth = now.daysInMonth()
+  const now = DateTime.local()
+  const startOfMonth = now.startOf("month")
+  const daysInMonth = now.daysInMonth
   for (let d = 0; d < daysInMonth; d++) {
-    const key = day.format("MM-DD")
-    const { birthdays: bds } = await birthdays.get(key)
+    const day = startOfMonth.plus({ days: d })
+    const bds = await getBirthdayData(day)
     bds.forEach((bd) => monthBirthdays.push(bd))
-    day = day.add(1, "day")
   }
   if (!monthBirthdays.length) {
     return "This is a sad month... no birthdays. :slight_frown:"
   }
   return monthBirthdays.reduce(
-    (e, { user, date }) => e.addField(moment(date).format("ll"), `<@${user}>`, true),
-    new Discord.MessageEmbed().setTitle(`${now.format("MMMM")}'s Birthdays`),
+    (e, { user, date }) => e.addField(parseDate(date).toLocaleString(DateTime.DATE_MED), `<@${user}>`, true),
+    new Discord.MessageEmbed().setTitle(`${now.toLocaleString({ month: "long" })}'s Birthdays`),
   )
 }
 
@@ -79,12 +86,11 @@ const listAllBirthdays = async (
   page = 1,
 ) => {
   const allBirthdays: { user: string; date: string }[] = []
-  let day = moment("2020-01-01")
+  const startOfYear = parseDate("2020-01-01") // any leap year will do
   for (let d = 0; d < 366; d++) {
-    const key = day.format("MM-DD")
-    const { birthdays: bds } = await birthdays.get(key)
+    const day = startOfYear.plus({ days: d })
+    const bds = await getBirthdayData(day)
     bds.forEach((bd) => allBirthdays.push(bd))
-    day = day.add(1, "day")
   }
   if (!allBirthdays.length) {
     return "I'm sad... I don't know any birthday. :slight_frown:"
@@ -96,7 +102,7 @@ const listAllBirthdays = async (
     channel,
     new Discord.MessageEmbed().setTitle("All Birthdays"),
     allBirthdays.map(({ user, date }) => ({
-      name: moment(date).format("ll"),
+      name: parseDate(date).toLocaleString(DateTime.DATE_MED),
       value: `<@${user}>`,
       inline: true,
     })),

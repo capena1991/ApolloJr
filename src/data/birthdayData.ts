@@ -1,5 +1,5 @@
 import Keyv from "keyv"
-import moment from "moment"
+import { DateTime } from "luxon"
 
 import { DataManager, defaultDB } from "./dataManager"
 
@@ -15,20 +15,20 @@ const birthdaysKeyv = new Keyv<BirthdayData>(defaultDB, { namespace: "birthdays"
 
 export const birthdays = new DataManager<BirthdayData>(birthdaysKeyv, initializeBirthdayData)
 
-export const addBirthday = async (date: moment.Moment, userId: string) => {
-  const formattedDate = date.format("MM-DD")
+export const addBirthday = async (date: DateTime, userId: string) => {
+  const formattedDate = date.toFormat("MM-dd")
   const { birthdays: users } = await birthdays.get(formattedDate)
-  birthdays.set(formattedDate, { birthdays: [...users, { user: userId, date: date.toISOString() }] })
+  birthdays.set(formattedDate, { birthdays: [...users, { user: userId, date: date.toISODate() }] })
 }
 
-export const removeBirthday = async (date: moment.Moment, userId: string) => {
-  const formattedDate = date.format("MM-DD")
+export const removeBirthday = async (date: DateTime, userId: string) => {
+  const formattedDate = date.toFormat("MM-dd")
   const { birthdays: users } = await birthdays.get(formattedDate)
   birthdays.set(formattedDate, { birthdays: users.filter(({ user }) => user !== userId) })
 }
 
-export const getBirthdays = async (date: moment.Moment) => {
-  const formattedDate = date.format("MM-DD")
+export const getBirthdays = async (date: DateTime) => {
+  const formattedDate = date.toFormat("MM-dd")
   const { birthdays: users } = await birthdays.get(formattedDate)
   return users
 }

@@ -1,7 +1,8 @@
 import Discord from "discord.js"
-import moment from "moment"
+import { DateTime } from "luxon"
 
 import { Command } from "../types"
+import { parseDate } from "../../utilities/date-helpers"
 import { TaskQueueHandler } from "../../utilities/queue"
 import { Dict } from "../../type-helpers"
 import { positiveRole, negativeRole, nicePeople, alts } from "../../config.json"
@@ -102,10 +103,10 @@ const grantRewards = (rewards: { user: string; reward: number }[]) => {
   })
 }
 
-const getRemainingTime = (time: moment.Moment, now: moment.Moment) => {
-  const diff = time.diff(now, "seconds")
-  if (diff > 44) {
-    return time.from(now)
+const getRemainingTime = (time: DateTime, now: DateTime) => {
+  const diff = time.diff(now).as("seconds")
+  if (diff > 59) {
+    return time.toRelative({ base: now }) ?? ""
   }
   return `in ${diff} seconds`
 }
@@ -125,10 +126,10 @@ const react = async (message: Discord.Message, count: number, remainingCounts: n
   }
 }
 
-const getRemaining = (now: moment.Moment, lastCounts: { datetime: string }[]) => {
-  const _5minAgo = now.clone().subtract(5, "minutes")
+const getRemaining = (now: DateTime, lastCounts: { datetime: string }[]) => {
+  const _5minAgo = now.minus({ minutes: 5 })
   const base = 5 - lastCounts.length
-  return base + lastCounts.filter(({ datetime }) => moment(datetime).isBefore(_5minAgo)).length
+  return base + lastCounts.filter(({ datetime }) => parseDate(datetime) < _5minAgo).length
 }
 
 const validateCount = (
@@ -136,7 +137,7 @@ const validateCount = (
   member: Discord.GuildMember | null,
   number: number,
   currentRound: CountingRound,
-  now: moment.Moment,
+  now: DateTime,
   user: UserData,
 ) => {
   if (alts.includes(author.id)) {
@@ -158,8 +159,8 @@ const validateCount = (
   const lastCounts = user.counting.lastCounts
   const remainingCounts = getRemaining(now, lastCounts)
   if (remainingCounts <= 0) {
-    const oldest = moment(lastCounts[4].datetime)
-    const limit = oldest.add(5, "minutes")
+    const oldest = parseDate(lastCounts[4].datetime)
+    const limit = oldest.plus({ minutes: 5 })
     return getMessage("rateLimit", author.id, { remaining: getRemainingTime(limit, now) })
   }
 
@@ -224,7 +225,7 @@ const doCount = async (message: Discord.Message, args: string[]) => {
   const number = parseInt(args[0])
   const currentRound = await getCurrent()
   const user = await users.get(author.id)
-  const now = moment()
+  const now = DateTime.utc()
 
   const invalidMessage = validateCount(author, member, number, currentRound, now, user)
   if (invalidMessage) {
@@ -237,22 +238,22 @@ const doCount = async (message: Discord.Message, args: string[]) => {
 
   react(message, number, remainingCounts)
   if (remainingCounts === 1) {
-    const newOldest = moment(lastCounts[3].datetime)
-    const limit = newOldest.add(5, "minutes")
+    const newOldest = parseDate(lastCounts[3].datetime)
+    const limit = newOldest.plus({ minutes: 5 })
     channel.send(`:stopwatch: _Next **${getRemainingTime(limit, now)}** for <@${author.id}> _`)
   }
   users.set(author.id, {
     ...user,
     counting: {
       ...user.counting,
-      lastCounts: [{ datetime: now.toISOString() }, ...lastCounts].slice(0, 5),
+      lastCounts: [{ datetime: now.toISO() }, ...lastCounts].slice(0, 5),
     },
   })
   const userContrib = contributions[author.id] || { p: 0, n: 0 }
   const diff = number - currentRoundCount
   const newCurrent = {
     count: number,
-    last: { user: author.id, datetime: moment().toISOString() },
+    last: { user: author.id, datetime: DateTime.utc().toISO() },
     contributions: { ...contributions, [author.id]: addToContribution(userContrib, diff, number) },
     ...rest,
   }

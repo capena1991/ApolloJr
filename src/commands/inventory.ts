@@ -1,9 +1,10 @@
 import Discord from "discord.js"
-import { Command } from "./types"
+
 import items from "../data/items.json"
 import { users } from "../data/userData"
 import { Dict, ObjectValues } from "../type-helpers"
 import { createSimplePageableEmbed } from "../utilities/paging"
+import { Command } from "./types"
 
 const inventory: Command = {
   name: "inventory",

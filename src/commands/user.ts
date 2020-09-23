@@ -1,11 +1,12 @@
 import Discord from "discord.js"
-import moment from "moment"
+import { DateTime } from "luxon"
 
-import { positiveRole, negativeRole } from "../config.json"
-import { Command } from "./types"
-import { users } from "../data/userData"
-import items from "../data/items.json"
 import { Dict, ObjectValues } from "../type-helpers"
+import { positiveRole, negativeRole } from "../config.json"
+import { parseDate } from "../utilities/date-helpers"
+import items from "../data/items.json"
+import { users } from "../data/userData"
+import { Command } from "./types"
 
 const getLastMessageTime = (isAuthor: boolean, lastMessage: Discord.Message | null) => {
   if (isAuthor) {
@@ -13,7 +14,7 @@ const getLastMessageTime = (isAuthor: boolean, lastMessage: Discord.Message | nu
   } else if (!lastMessage) {
     return "¯\\_(ツ)_/¯"
   } else {
-    return moment(lastMessage.createdAt).fromNow()
+    return DateTime.fromJSDate(lastMessage.createdAt).toRelative()
   }
 }
 
@@ -21,8 +22,8 @@ const showDateWithFromNow = (date?: Date | null) => {
   if (!date) {
     return "¯\\_(ツ)_/¯"
   }
-  const momentDate = moment(date)
-  return `${momentDate.format("ll")}\n(${momentDate.fromNow()})`
+  const dt = DateTime.fromJSDate(date)
+  return `${dt.toLocaleString(DateTime.DATE_MED)}\n(${dt.toRelative()})`
 }
 
 const getUserInfo = async (user: Discord.User, guildMember?: Discord.GuildMember | null, isAuthor = false) => {
@@ -43,7 +44,7 @@ const getUserInfo = async (user: Discord.User, guildMember?: Discord.GuildMember
   }
 
   if (birthday) {
-    embed = embed.addField("Birthday :birthday:", moment(birthday).format("ll"), true)
+    embed = embed.addField("Birthday :birthday:", parseDate(birthday).toLocaleString(DateTime.DATE_MED), true)
   }
 
   const team = roles?.cache.has(positiveRole)

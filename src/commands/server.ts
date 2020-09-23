@@ -1,5 +1,5 @@
 import Discord from "discord.js"
-import moment from "moment"
+import { DateTime } from "luxon"
 
 import { Command } from "./types"
 
@@ -12,10 +12,11 @@ const server: Command = {
     }
 
     const { name, createdAt, region, ownerID, memberCount, channels } = guild
+    const createdDt = DateTime.fromJSDate(createdAt)
     let embed = new Discord.MessageEmbed()
       .setTitle("About this server")
       .setDescription(`**${name}**`)
-      .addField("Created", `${moment(createdAt).format("ll")} (${moment(createdAt).fromNow()})`, true)
+      .addField("Created", `${createdDt.toLocaleString(DateTime.DATE_MED)} (${createdDt.toRelative()})`, true)
       .addField("Region", region, true)
       .addField("Owner", `<@${ownerID}>`, true)
       .addField("Total members", memberCount, true)

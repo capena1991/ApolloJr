@@ -1,5 +1,5 @@
 import Keyv from "keyv"
-import moment from "moment"
+import { DateTime } from "luxon"
 
 import { botUserId } from "../config.json"
 import { Dict } from "../type-helpers"
@@ -15,7 +15,7 @@ export interface CountingRound {
 const initializeCountingRound = (roundNumber = 0) => ({
   roundNumber,
   count: 0,
-  last: { user: botUserId, datetime: moment().toISOString() }, // bot's user id
+  last: { user: botUserId, datetime: DateTime.utc().toISO() }, // bot's user id
   contributions: {},
 })
 

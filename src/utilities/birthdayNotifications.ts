@@ -1,5 +1,5 @@
 import Discord from "discord.js"
-import moment from "moment"
+import { DateTime } from "luxon"
 
 import { getBirthdays } from "../data/birthdayData"
 import { subscriptions, knownSubscriptions } from "../data/subscriptions"
@@ -8,21 +8,21 @@ import { logInfo } from "./log"
 
 const notifyBirthday = async (
   client: Discord.Client,
-  dateSelector: (date: moment.Moment) => moment.Moment,
+  dateSelector: (date: DateTime) => DateTime,
   subscriptionKey: string,
   timeExpression: string,
 ) => {
   logInfo("NOTIFYING BIRTHDAYS")
 
-  const now = moment()
-  const dateToCheck = dateSelector(now.clone())
+  const now = DateTime.local()
+  const dateToCheck = dateSelector(now)
   const birthdays = await getBirthdays(dateToCheck)
   if (!birthdays.length) {
     logInfo(`NO BIRTHDAYS ${timeExpression.toUpperCase()}`)
     return
   }
   const { subscribed } = await subscriptions.get(subscriptionKey)
-  const notification = { reason: dateToCheck.format("MM-DD"), datetime: now.toISOString(true) }
+  const notification = { reason: dateToCheck.toFormat("MM-dd"), datetime: now.toISO() }
   const updated = await Promise.all(
     subscribed.map(async ({ user, lastNotification }) => {
       let res = { user, lastNotification }
@@ -38,11 +38,10 @@ const notifyBirthday = async (
               return `<@${bdUser}>`
             }
           })
-          const message = `Just a friendly reminder that ${joinReadable(
-            birthdayPeople,
-          )}'s birthday is ${timeExpression} (${dateToCheck.format("MMMM Do")})! :tada::birthday:${
-            own ? "\n(the very special person is you) :wink:" : ""
-          }`
+          const message =
+            `Just a friendly reminder that ${joinReadable(birthdayPeople)}'s ` +
+            `birthday is ${timeExpression} (${dateToCheck.toLocaleString({ month: "long", day: "numeric" })})! ` +
+            `:tada::birthday:${own ? "\n(the very special person is you) :wink:" : ""}`
           clientUser?.send(message)
           res = { user, lastNotification: notification }
         }
@@ -57,9 +56,9 @@ const notifyBirthday = async (
 }
 
 export const notifyBirthday1Day = async (client: Discord.Client) => {
-  notifyBirthday(client, (date) => date.add(1, "day"), knownSubscriptions.birthdayDay, "tomorrow")
+  notifyBirthday(client, (date) => date.plus({ day: 1 }), knownSubscriptions.birthdayDay, "tomorrow")
 }
 
 export const notifyBirthday1Week = async (client: Discord.Client) => {
-  notifyBirthday(client, (date) => date.add(1, "week"), knownSubscriptions.birthdayWeek, "in a week")
+  notifyBirthday(client, (date) => date.plus({ week: 1 }), knownSubscriptions.birthdayWeek, "in a week")
 }
