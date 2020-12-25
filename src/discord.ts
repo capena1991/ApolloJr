@@ -5,7 +5,7 @@ import { getReaction } from "./reactions"
 import { token, prefix } from "./config.json"
 import { logMessage, logInfo } from "./utilities/log"
 import { notifyBirthday1Day, notifyBirthday1Week } from "./utilities/birthdayNotifications"
-import { schedule } from "./utilities/utils"
+import { parseArgs, schedule } from "./utilities/utils"
 
 const client = new Discord.Client()
 
@@ -52,8 +52,7 @@ client.on("message", async (message) => {
     return
   }
 
-  const args = content.slice(prefix.length).split(/\s+/)
-  const command = args.shift()?.toLowerCase()
+  const { command, args } = parseArgs(content, prefix)
 
   if (!command) {
     logInfo("PREFIX WITH NO COMMAND", message)

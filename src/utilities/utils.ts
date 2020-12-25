@@ -35,3 +35,10 @@ export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve
 export const pluralize = (count: number, singular: string, plural: string) => (count === 1 ? singular : plural)
 
 export const nDrachma = (n: number) => `${n} ${pluralize(n, "drachma", "drachmae")}`
+
+export const parseArgs = (text: string, prefix: string) => {
+  const split = text.slice(prefix.length).match(/(?:"(?:(?:\\.)|[^\\"])*?")|(?:[^\s]+)/g) ?? []
+  const args = split.map((t) => t.replace(/(^|[^\\])"/g, "$1").replace(/\\"/g, '"'))
+  const command = args.shift()?.toLowerCase()
+  return { command, args }
+}
