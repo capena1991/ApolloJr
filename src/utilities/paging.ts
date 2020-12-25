@@ -1,8 +1,6 @@
 import Discord from "discord.js"
 
-import { Dict } from "../type-helpers"
-
-const pageIncDict: Dict<number> = { "➡": 1, "⬅": -1 }
+import { createReactableEmbed } from "./reactions"
 
 export const createPageableEmbed = async (
   channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
@@ -12,21 +10,17 @@ export const createPageableEmbed = async (
 ) => {
   let page = 0
 
-  const message = await channel.send(getPage(page))
-
-  await message.react("⬅")
-  await message.react("➡")
-
-  const collector = message.createReactionCollector(
-    (reaction, user) => !user.bot && ["⬅", "➡"].includes(reaction.emoji.name) && (!author || user.id === author.id),
-    { time: 300000 },
-  )
-  collector.on("collect", (reaction, user) => {
-    reaction.users.remove(user)
-    page = Math.min(Math.max(page + (pageIncDict[reaction.emoji.name] ?? 0), 0), nPages - 1)
+  const pageJump = (message: Discord.Message, jump: number) => {
+    page = Math.min(Math.max(page + jump, 0), nPages - 1)
     message.edit(getPage(page))
-  })
-  collector.on("end", () => message.reactions.removeAll())
+  }
+
+  const reactions = {
+    "⬅": (message: Discord.Message) => pageJump(message, -1),
+    "➡": (message: Discord.Message) => pageJump(message, 1),
+  }
+
+  createReactableEmbed(channel, getPage(page), reactions, { activeTime: 300000, author })
 }
 
 export const createListPageableEmbed = (
