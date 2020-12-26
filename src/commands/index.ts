@@ -17,8 +17,9 @@ import count from "./count"
 import transfer from "./transfer"
 import shop from "./shop"
 import inventory from "./inventory"
+import poll from "./poll"
 
-const commands = [ping, hello, server, user, say, oracle, birthday, transfer, shop, inventory]
+const commands = [ping, hello, server, user, say, oracle, birthday, transfer, shop, inventory, poll]
 
 const help: Command = {
   name: "help",
