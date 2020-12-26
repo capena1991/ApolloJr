@@ -9,6 +9,7 @@ interface PollState {
   choices: string[]
   votes: Discord.User[][]
   closed: boolean
+  multiple: boolean
 }
 
 const choiceEmojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"]
@@ -20,10 +21,10 @@ const getPercent = (amount: number, total: number, width = 60) => {
   return `\`${"█".repeat(scaled)}${" ".repeat(width - scaled)}\` ${percent}% (${amount})`
 }
 
-const getEmbed = ({ question, choices, votes, closed }: PollState) => {
+const getEmbed = ({ question, choices, votes, closed, multiple }: PollState) => {
   const totalVotes = votes.reduce((cum, choiceVotes) => cum + choiceVotes.length, 0)
   return new Discord.MessageEmbed()
-    .setTitle("Poll")
+    .setTitle(`Poll (${multiple ? "multiple" : "single"} choice)`)
     .setDescription(question)
     .addFields(
       choices.map((c, i) => ({
@@ -38,8 +39,10 @@ const poll: Command = {
   name: "poll",
   description: "Wanna know what everybody thinks? No better way than with a poll. Hooray for democracy!",
   execute: async ({ channel }, args) => {
-    const question = args[0]
-    const [, ...choices] = args
+    const myArgs = [...args]
+    const multiple = !!extractMatch(myArgs, (a) => a === "-m" || a === "-multiple")
+    const question = myArgs[0]
+    const [, ...choices] = myArgs
     const votes: Discord.User[][] = choices.map(() => [])
     let closed = false
 
@@ -66,21 +69,27 @@ const poll: Command = {
       (cum, _, i) => ({
         ...cum,
         [choiceEmojis[i]]: (message, user) => {
-          const match = extractMatch(votes[i], (u) => u.id === user.id)
+          let match
+          if (multiple) {
+            match = extractMatch(votes[i], (u) => u.id === user.id)
+          } else {
+            const allMatches = votes.map((choiceVotes) => extractMatch(choiceVotes, (u) => u.id === user.id))
+            match = allMatches[i]
+          }
           if (!match) {
             votes[i].push(user)
           }
-          message.edit(getEmbed({ question, choices, votes, closed }))
+          message.edit(getEmbed({ question, choices, votes, closed, multiple }))
         },
       }),
       {},
     )
 
-    await createReactableEmbed(channel, getEmbed({ question, choices, votes, closed }), reactions, {
+    await createReactableEmbed(channel, getEmbed({ question, choices, votes, closed, multiple }), reactions, {
       activeTime: 86400000,
       endEffect: (message) => {
         closed = true
-        message.edit(getEmbed({ question, choices, votes, closed }))
+        message.edit(getEmbed({ question, choices, votes, closed, multiple }))
       },
     })
   },
