@@ -1,5 +1,6 @@
 import Discord from "discord.js"
 
+import { extractMatch } from "../utilities/utils"
 import { createReactableEmbed } from "../utilities/reactions"
 import { Command } from "./types"
 
@@ -65,11 +66,9 @@ const poll: Command = {
       (cum, _, i) => ({
         ...cum,
         [choiceEmojis[i]]: (message, user) => {
-          const index = votes[i].findIndex((u) => u.id === user.id)
-          if (index < 0) {
+          const match = extractMatch(votes[i], (u) => u.id === user.id)
+          if (!match) {
             votes[i].push(user)
-          } else {
-            votes[i].splice(index, 1)
           }
           message.edit(getEmbed({ question, choices, votes, closed }))
         },

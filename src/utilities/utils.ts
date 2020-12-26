@@ -42,3 +42,13 @@ export const parseArgs = (text: string, prefix: string) => {
   const command = args.shift()?.toLowerCase()
   return { command, args }
 }
+
+export const extractMatch = <T>(list: T[], pred: (elem: T) => boolean) => {
+  const index = list.findIndex(pred)
+  if (index < 0) {
+    return undefined
+  }
+  return list.splice(index, 1)
+}
+
+export const extractElement = <T>(list: T[], element: T) => extractMatch(list, (e) => e === element)
