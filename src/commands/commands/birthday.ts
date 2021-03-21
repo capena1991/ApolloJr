@@ -1,17 +1,17 @@
 import Discord from "discord.js"
 import { DateTime } from "luxon"
 
-import { allBirthdays, admins } from "../config.json"
-import { parseDate } from "../utilities/date-helpers"
-import { createSimplePageableEmbed } from "../utilities/paging"
-import { users } from "../data/userData"
+import { allBirthdays, admins } from "../../config.json"
+import { parseDate } from "../../utilities/date-helpers"
+import { createSimplePageableEmbed } from "../../utilities/paging"
+import { users } from "../../data/userData"
 import {
   addBirthday,
   removeBirthday as removeBirthdayData,
   getBirthdays as getBirthdayData,
-} from "../data/birthdayData"
-import { toggleSubscribe, knownSubscriptions } from "../data/subscriptions"
-import { Command } from "./types"
+} from "../../data/birthdayData"
+import { toggleSubscribe, knownSubscriptions } from "../../data/subscriptions"
+import { Command } from "../types"
 
 const getBirthday = async (userId: string) => {
   const { birthday } = await users.get(userId)

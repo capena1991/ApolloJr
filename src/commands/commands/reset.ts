@@ -1,7 +1,7 @@
-import { Command } from "./types"
+import { Command } from "../types"
 
-import { admins } from "../config.json"
-import { users } from "../data/userData"
+import { admins } from "../../config.json"
+import { users } from "../../data/userData"
 
 const reset: Command = {
   name: "reset",

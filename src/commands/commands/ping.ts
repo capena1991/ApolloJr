@@ -1,5 +1,5 @@
-import { Command } from "./types"
-import { getSpecialNickname } from "../utilities/specialPeople"
+import { Command } from "../types"
+import { getSpecialNickname } from "../../utilities/specialPeople"
 
 const ping: Command = {
   name: "ping",

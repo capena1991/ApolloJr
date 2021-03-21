@@ -1,5 +1,5 @@
-import { admins } from "../config.json"
-import { Command } from "./types"
+import { admins } from "../../config.json"
+import { Command } from "../types"
 
 const says: Command = {
   name: "says",

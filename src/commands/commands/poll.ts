@@ -1,8 +1,8 @@
 import Discord from "discord.js"
 
-import { extractMatch } from "../utilities/utils"
-import { createReactableEmbed } from "../utilities/reactions"
-import { Command } from "./types"
+import { extractMatch } from "../../utilities/utils"
+import { createReactableEmbed } from "../../utilities/reactions"
+import { Command } from "../types"
 
 interface PollState {
   question: string

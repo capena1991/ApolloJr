@@ -1,6 +1,6 @@
-import { Command } from "./types"
-import { chooseOne } from "../utilities/utils"
-import { getSpecialNickname } from "../utilities/specialPeople"
+import { Command } from "../types"
+import { chooseOne } from "../../utilities/utils"
+import { getSpecialNickname } from "../../utilities/specialPeople"
 
 const answers = [
   "It is certain",

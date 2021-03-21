@@ -1,7 +1,7 @@
 import Discord from "discord.js"
 import { DateTime } from "luxon"
 
-import { Command } from "./types"
+import { Command } from "../types"
 
 const server: Command = {
   name: "server",
