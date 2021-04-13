@@ -61,7 +61,6 @@ typings/
 .next
 
 /dist/
-/src/config.json
-src/deleted.json
+/deleted.json
 /.vscode/
 /data/

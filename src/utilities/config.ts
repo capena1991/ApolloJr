@@ -15,13 +15,8 @@ interface Config {
 }
 
 export const getConfig = <T extends keyof Config>(key: T): Config[T] => {
-  if (isDev()) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    return require("../config.json")[key]
-  } else {
-    const val = process.env[key]
-    return val && JSON.parse(val)
-  }
+  const val = process.env[key]
+  return val && JSON.parse(val)
 }
 
 export const token = getConfig("token")
