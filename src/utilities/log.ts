@@ -10,7 +10,7 @@ let logger: Logger
 
 if (isDev()) {
   logger = simpleLogger.createRollingFileLogger({
-    logDirectory: "../data/logs/messages",
+    logDirectory: "data/logs/messages",
     fileNamePattern: "<DATE>.log",
     dateFormat: "YYYY.MM.DD",
   })
