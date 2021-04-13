@@ -1,4 +1,4 @@
-import { specialPeople } from "../config.json"
+import { specialPeople } from "../utilities/config"
 import { Dict } from "../type-helpers"
 import { chooseOne } from "./utils"
 

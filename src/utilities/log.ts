@@ -1,5 +1,6 @@
 import Discord from "discord.js"
 import simpleLogger from "simple-node-logger"
+import { isDev } from "./config"
 
 interface Logger {
   info: (message: string) => void
@@ -7,7 +8,7 @@ interface Logger {
 
 let logger: Logger
 
-if (process.env.ENVIRONMENT === "dev") {
+if (isDev()) {
   logger = simpleLogger.createRollingFileLogger({
     logDirectory: "../data/logs/messages",
     fileNamePattern: "<DATE>.log",

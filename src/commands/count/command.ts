@@ -5,7 +5,7 @@ import { Command } from "../types"
 import { parseDate } from "../../utilities/date-helpers"
 import { TaskQueueHandler } from "../../utilities/queue"
 import { Dict } from "../../type-helpers"
-import { positiveRole, negativeRole, nicePeople, alts } from "../../config.json"
+import { positiveRole, negativeRole, nicePeople, alts } from "../../utilities/config"
 import { getCurrent, setCurrent, archiveCurrent, CountingRound } from "../../data/countingData"
 import { users, UserData } from "../../data/userData"
 

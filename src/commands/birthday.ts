@@ -1,7 +1,7 @@
 import Discord from "discord.js"
 import { DateTime } from "luxon"
 
-import { allBirthdays, admins } from "../config.json"
+import { allBirthdays, admins } from "../utilities/config"
 import { parseDate } from "../utilities/date-helpers"
 import { createSimplePageableEmbed } from "../utilities/paging"
 import { users } from "../data/userData"

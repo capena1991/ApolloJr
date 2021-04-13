@@ -1,6 +1,6 @@
 import Discord from "discord.js"
 
-import { prefix, countingChannel } from "../config.json"
+import { prefix, countingChannel } from "../utilities/config"
 import { Dict } from "../type-helpers"
 import { Command } from "./types"
 

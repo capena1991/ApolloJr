@@ -1,7 +1,7 @@
 import Keyv from "keyv"
 import { DateTime } from "luxon"
 
-import { botUserId } from "../config.json"
+import { botUserId } from "../utilities/config"
 import { Dict } from "../type-helpers"
 import { DataManager, defaultDB } from "./dataManager"
 

@@ -2,7 +2,7 @@ import Discord from "discord.js"
 
 import { getCommand, getChannelCommand } from "./commands"
 import { getReaction } from "./reactions"
-import { token, prefix } from "./config.json"
+import { token, prefix } from "./utilities/config"
 import { logMessage, logInfo } from "./utilities/log"
 import { notifyBirthday1Day, notifyBirthday1Week } from "./utilities/birthdayNotifications"
 import { parseArgs, schedule } from "./utilities/utils"
