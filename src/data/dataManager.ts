@@ -1,8 +1,9 @@
 import Keyv from "keyv"
 
+import { isDev } from "../utilities/config"
 import { Partial } from "../type-helpers"
 
-export const defaultDB = "sqlite://../data/data.sqlite"
+export const defaultDB = isDev() ? undefined : "sqlite://../data/data.sqlite"
 
 export class DataManager<T> {
   keyv: Keyv<T>

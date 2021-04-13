@@ -2,7 +2,7 @@ import Discord from "discord.js"
 import { DateTime } from "luxon"
 
 import { Dict, ObjectValues } from "../type-helpers"
-import { positiveRole, negativeRole } from "../config.json"
+import { positiveRole, negativeRole } from "../utilities/config"
 import { parseDate } from "../utilities/date-helpers"
 import items from "../data/items.json"
 import { users } from "../data/userData"

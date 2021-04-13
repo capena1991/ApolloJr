@@ -1,6 +1,6 @@
 import { Command } from "./types"
 
-import { admins } from "../config.json"
+import { admins } from "../utilities/config"
 import { users } from "../data/userData"
 
 const reset: Command = {

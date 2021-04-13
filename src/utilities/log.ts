@@ -1,11 +1,26 @@
 import Discord from "discord.js"
 import simpleLogger from "simple-node-logger"
+import { isDev } from "./config"
 
-const logger = simpleLogger.createRollingFileLogger({
-  logDirectory: "../data/logs/messages",
-  fileNamePattern: "<DATE>.log",
-  dateFormat: "YYYY.MM.DD",
-})
+interface Logger {
+  info: (message: string) => void
+}
+
+let logger: Logger
+
+if (isDev()) {
+  logger = simpleLogger.createRollingFileLogger({
+    logDirectory: "data/logs/messages",
+    fileNamePattern: "<DATE>.log",
+    dateFormat: "YYYY.MM.DD",
+  })
+} else {
+  logger = {
+    info: () => {
+      // do nothing
+    },
+  }
+}
 
 const formatMessage = ({ channel, guild, author, cleanContent, embeds }: Discord.Message) => {
   const channelStr = ["dm", "group"].includes(channel.type)

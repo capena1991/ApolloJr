@@ -1,4 +1,4 @@
-import { admins } from "../config.json"
+import { admins } from "../utilities/config"
 import { Command } from "./types"
 
 const says: Command = {
