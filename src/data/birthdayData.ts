@@ -1,8 +1,7 @@
 import Keyv from "keyv"
 import { DateTime } from "luxon"
 
-import { db } from "../utilities/config"
-import { DataManager } from "./dataManager"
+import { DataManager, defaultDB } from "./dataManager"
 
 export interface BirthdayData {
   birthdays: { user: string; date: string }[]
@@ -12,7 +11,7 @@ const initializeBirthdayData = () => ({
   birthdays: [],
 })
 
-const birthdaysKeyv = new Keyv<BirthdayData>(db, { namespace: "birthdays" })
+const birthdaysKeyv = new Keyv<BirthdayData>(defaultDB, { namespace: "birthdays" })
 
 export const birthdays = new DataManager<BirthdayData>(birthdaysKeyv, initializeBirthdayData)
 
