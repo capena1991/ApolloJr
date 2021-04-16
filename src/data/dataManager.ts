@@ -8,6 +8,9 @@ export class DataManager<T> {
 
   constructor(keyv: Keyv<T>, initializer: () => T) {
     this.keyv = keyv
+    this.keyv.on("error", (e) => {
+      console.log(e)
+    })
     this.initializer = initializer
   }
 
