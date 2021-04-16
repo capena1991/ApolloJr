@@ -1,5 +1,7 @@
 export const isDev = () => process.env.ENVIRONMENT === "dev"
 
+export const db = process.env.DATABASE_URL
+
 interface Config {
   token: string
   prefix: string
