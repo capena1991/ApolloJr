@@ -1,6 +1,7 @@
 import Keyv from "keyv"
 
-import { DataManager, defaultDB } from "./dataManager"
+import { db } from "../utilities/config"
+import { DataManager } from "./dataManager"
 import { Dict } from "../type-helpers"
 
 export interface UserData {
@@ -17,6 +18,6 @@ const initializeUserData = () => ({
   money: 0,
 })
 
-const usersKeyv = new Keyv<UserData>(defaultDB, { namespace: "users" })
+const usersKeyv = new Keyv<UserData>(db, { namespace: "users" })
 
 export const users = new DataManager<UserData>(usersKeyv, initializeUserData)

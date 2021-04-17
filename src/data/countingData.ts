@@ -1,9 +1,9 @@
 import Keyv from "keyv"
 import { DateTime } from "luxon"
 
-import { botUserId } from "../utilities/config"
+import { botUserId, db } from "../utilities/config"
 import { Dict } from "../type-helpers"
-import { DataManager, defaultDB } from "./dataManager"
+import { DataManager } from "./dataManager"
 
 export interface CountingRound {
   roundNumber: number
@@ -19,7 +19,7 @@ const initializeCountingRound = (roundNumber = 0) => ({
   contributions: {},
 })
 
-const usersKeyv = new Keyv<CountingRound>(defaultDB, { namespace: "counting" })
+const usersKeyv = new Keyv<CountingRound>(db, { namespace: "counting" })
 
 export const counting = new DataManager<CountingRound>(usersKeyv, initializeCountingRound)
 

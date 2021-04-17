@@ -1,6 +1,7 @@
 import Keyv from "keyv"
 
-import { DataManager, defaultDB } from "./dataManager"
+import { db } from "../utilities/config"
+import { DataManager } from "./dataManager"
 
 export interface Subscription {
   subscribed: { user: string; lastNotification?: { reason: string; datetime: string } }[]
@@ -10,7 +11,7 @@ const initializeSubscriptionData = () => ({
   subscribed: [],
 })
 
-const subscriptionsKeyv = new Keyv<Subscription>(defaultDB, { namespace: "subscriptions" })
+const subscriptionsKeyv = new Keyv<Subscription>(db, { namespace: "subscriptions" })
 
 export const subscriptions = new DataManager<Subscription>(subscriptionsKeyv, initializeSubscriptionData)
 
