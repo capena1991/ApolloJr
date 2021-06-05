@@ -19,6 +19,8 @@ import shop from "./shop"
 import inventory from "./inventory"
 import poll from "./poll"
 
+export { Command }
+
 const commands = [ping, hello, server, user, say, oracle, birthday, transfer, shop, inventory, poll]
 
 const help: Command = {

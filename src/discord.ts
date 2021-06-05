@@ -1,13 +1,29 @@
 import Discord from "discord.js"
 
-import { getCommand, getChannelCommand } from "./commands"
+import { getCommand, getChannelCommand, Command } from "./commands"
 import { getReaction } from "./reactions"
 import { token, prefix } from "./utilities/config"
 import { logMessage, logInfo } from "./utilities/log"
 import { notifyBirthday1Day, notifyBirthday1Week } from "./utilities/birthdayNotifications"
-import { parseArgs, schedule } from "./utilities/utils"
+import { parseArgs, parseArgsWithCommand, schedule } from "./utilities/utils"
 
 const client = new Discord.Client()
+
+const runCommand = (
+  channel: Discord.TextChannel,
+  command: Command,
+  message: Discord.Message,
+  args: string[],
+  commandType = "COMMAND",
+) => {
+  try {
+    logInfo(`EXECUTING ${commandType} ${command.name}`, message)
+    return command.execute(message, args)
+  } catch (error) {
+    console.error(error)
+    return channel.send("Oops! There was an error trying to execute that command! :disappointed:")
+  }
+}
 
 client.on("ready", () => {
   if (!client.user) {
@@ -34,14 +50,8 @@ client.on("message", async (message) => {
 
   const channelCommand = getChannelCommand(channel.id)
   if (channelCommand) {
-    const args = content.split(/\s+/)
-    try {
-      logInfo(`EXECUTING CHANNEL COMMAND ${channelCommand.name}`, message)
-      return channelCommand.execute(message, args)
-    } catch (error) {
-      console.error(error)
-      return channel.send("Oops! There was an error trying to execute that command! :disappointed:")
-    }
+    const args = parseArgs(content)
+    return runCommand(channel, channelCommand, message, args, "CHANNEL COMMAND")
   }
 
   if (!content.startsWith(prefix)) {
@@ -52,7 +62,7 @@ client.on("message", async (message) => {
     return
   }
 
-  const { command, args } = parseArgs(content, prefix)
+  const { command, args } = parseArgsWithCommand(content, prefix)
 
   if (!command) {
     logInfo("PREFIX WITH NO COMMAND", message)
@@ -66,13 +76,7 @@ client.on("message", async (message) => {
     return channel.send(await getReaction("invalidCommand", message))
   }
 
-  try {
-    logInfo(`EXECUTING COMMAND ${cmd.name}`, message)
-    return cmd.execute(message, args)
-  } catch (error) {
-    console.error(error)
-    return channel.send("Oops! There was an error trying to execute that command! :disappointed:")
-  }
+  return runCommand(channel, cmd, message, args)
 })
 
 client.login(token).catch(() => {

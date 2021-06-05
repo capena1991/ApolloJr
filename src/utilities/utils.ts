@@ -36,9 +36,13 @@ export const pluralize = (count: number, singular: string, plural: string) => (c
 
 export const nDrachma = (n: number) => `${n} ${pluralize(n, "drachma", "drachmae")}`
 
-export const parseArgs = (text: string, prefix: string) => {
+export const parseArgs = (text: string, prefix = "") => {
   const split = text.slice(prefix.length).match(/(?:"(?:(?:\\.)|[^\\"])*?")|(?:[^\s]+)/g) ?? []
-  const args = split.map((t) => t.replace(/(^|[^\\])"/g, "$1").replace(/\\"/g, '"'))
+  return split.map((t) => t.replace(/(^|[^\\])"/g, "$1").replace(/\\"/g, '"'))
+}
+
+export const parseArgsWithCommand = (text: string, prefix: string) => {
+  const args = parseArgs(text, prefix)
   const command = args.shift()?.toLowerCase()
   return { command, args }
 }
