@@ -7,6 +7,7 @@ interface Config {
   prefix: string
   admins: string[]
   countingChannel: string
+  gifChannels: string[]
   positiveRole: string
   negativeRole: string
   botUserId: string
@@ -25,6 +26,7 @@ export const token = getConfig("token")
 export const prefix = getConfig("prefix")
 export const admins = getConfig("admins")
 export const countingChannel = getConfig("countingChannel")
+export const gifChannels = getConfig("gifChannels")
 export const positiveRole = getConfig("positiveRole")
 export const negativeRole = getConfig("negativeRole")
 export const botUserId = getConfig("botUserId")
