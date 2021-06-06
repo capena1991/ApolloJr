@@ -9,6 +9,10 @@ export interface Command {
   execute: (message: Discord.Message, args: string[]) => void
 }
 
+export interface ConditionalCommand extends Command {
+  condition: (message: Discord.Message) => boolean
+}
+
 export const executeSubcommands = (subcommands: Command[]) => {
   return (message: Discord.Message, args: string[]) => {
     const cmd = args[0]
