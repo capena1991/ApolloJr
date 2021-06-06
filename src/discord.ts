@@ -1,6 +1,6 @@
 import Discord from "discord.js"
 
-import { getCommand, getChannelCommand, Command } from "./commands"
+import { getCommand, getChannelCommand, Command, findConditionalCommand } from "./commands"
 import { getReaction } from "./reactions"
 import { token, prefix } from "./utilities/config"
 import { logMessage, logInfo } from "./utilities/log"
@@ -52,6 +52,12 @@ client.on("message", async (message) => {
   if (channelCommand) {
     const args = parseArgs(content)
     return runCommand(channel, channelCommand, message, args, "CHANNEL COMMAND")
+  }
+
+  const conditionalCommand = findConditionalCommand(message)
+  if (conditionalCommand) {
+    const args = parseArgs(content)
+    return runCommand(channel, conditionalCommand, message, args, "CHANNEL COMMAND")
   }
 
   if (!content.startsWith(prefix)) {

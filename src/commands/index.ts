@@ -18,6 +18,7 @@ import transfer from "./transfer"
 import shop from "./shop"
 import inventory from "./inventory"
 import poll from "./poll"
+import gif from "./gif"
 
 export { Command }
 
@@ -61,3 +62,7 @@ export const getCommand = (name: string) => {
 
 const channelCommands: Dict<Command> = { [countingChannel]: count }
 export const getChannelCommand = (channelId: string) => channelCommands[channelId]
+
+const conditionalCommands = [gif]
+export const findConditionalCommand = (message: Discord.Message) =>
+  conditionalCommands.find(({ condition }) => condition(message))
