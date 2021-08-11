@@ -56,7 +56,7 @@ const removeBirthday = async (userId: string) => {
   users.set(userId, userDataSansBD)
   removeBirthdayData(parseDate(birthday), userId)
   return (
-    "That's sad :disappointed:. People won't be reminded of your birthday now. " +
+    `That's sad :disappointed:. People won't be reminded of your birthday now, <@${userId}>. ` +
     "Let's hope they remember it because I won't. :slight_frown:"
   )
 }
@@ -135,13 +135,12 @@ const birthday: Command = {
           return channel.send("Nothing here for you, kid. Keep walking. :unamused:")
         }
         return allBirthdaysBackup.forEach(async ({ id, date }) => channel.send(await setBirthday(id, date)))
-      case "resetall": {
+      case "removeall": {
         if (!admins.includes(author.id)) {
           return channel.send("Nothing here for you, kid. Keep walking. :unamused:")
         }
         const allBirthdays = await getAllBirthdays()
-        allBirthdays.forEach(async ({ user }) => channel.send(await removeBirthday(user)))
-        return allBirthdaysBackup.forEach(async ({ id, date }) => channel.send(await setBirthday(id, date)))
+        return allBirthdays.forEach(async ({ user }) => channel.send(await removeBirthday(user)))
       }
       case "":
         return channel.send(await monthBirthdayList())
