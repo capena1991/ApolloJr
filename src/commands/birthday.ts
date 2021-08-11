@@ -1,7 +1,7 @@
 import Discord from "discord.js"
 import { DateTime } from "luxon"
 
-import { allBirthdays, admins } from "../utilities/config"
+import { allBirthdays as allBirthdaysBackup, admins } from "../utilities/config"
 import { parseDate } from "../utilities/date-helpers"
 import { createSimplePageableEmbed } from "../utilities/paging"
 import { users } from "../data/userData"
@@ -80,11 +80,7 @@ const monthBirthdayList = async () => {
   )
 }
 
-const listAllBirthdays = async (
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
-  author: Discord.User,
-  page = 1,
-) => {
+const getAllBirthdays = async () => {
   const allBirthdays: { user: string; date: string }[] = []
   const startOfYear = parseDate("2020-01-01") // any leap year will do
   for (let d = 0; d < 366; d++) {
@@ -92,6 +88,15 @@ const listAllBirthdays = async (
     const bds = await getBirthdayData(day)
     bds.forEach((bd) => allBirthdays.push(bd))
   }
+  return allBirthdays
+}
+
+const listAllBirthdays = async (
+  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
+  author: Discord.User,
+  page = 1,
+) => {
+  const allBirthdays = await getAllBirthdays()
   if (!allBirthdays.length) {
     return "I'm sad... I don't know any birthday. :slight_frown:"
   }
@@ -129,7 +134,15 @@ const birthday: Command = {
         if (!admins.includes(author.id)) {
           return channel.send("Nothing here for you, kid. Keep walking. :unamused:")
         }
-        return allBirthdays.forEach(async ({ id, date }) => channel.send(await setBirthday(id, date)))
+        return allBirthdaysBackup.forEach(async ({ id, date }) => channel.send(await setBirthday(id, date)))
+      case "resetall": {
+        if (!admins.includes(author.id)) {
+          return channel.send("Nothing here for you, kid. Keep walking. :unamused:")
+        }
+        const allBirthdays = await getAllBirthdays()
+        allBirthdays.forEach(async ({ user }) => channel.send(await removeBirthday(user)))
+        return allBirthdaysBackup.forEach(async ({ id, date }) => channel.send(await setBirthday(id, date)))
+      }
       case "":
         return channel.send(await monthBirthdayList())
       case "all":
