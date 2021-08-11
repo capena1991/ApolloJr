@@ -1,10 +1,10 @@
 import Discord from "discord.js"
 import { DateTime } from "luxon"
 
-import { Dict, ObjectValues } from "../type-helpers"
+// import { Dict, ObjectValues } from "../type-helpers"
 import { positiveRole, negativeRole } from "../utilities/config"
 import { parseDate } from "../utilities/date-helpers"
-import items from "../data/items.json"
+// import items from "../data/items.json"
 import { users } from "../data/userData"
 import { Command } from "./types"
 
@@ -29,7 +29,7 @@ const showDateWithFromNow = (date?: Date | null) => {
 const getUserInfo = async (user: Discord.User, guildMember?: Discord.GuildMember | null, isAuthor = false) => {
   const { id, username, bot, createdAt, discriminator, lastMessage } = user
   const { displayHexColor, joinedAt, roles } = guildMember ?? {}
-  const { birthday, money, items: userItems } = await users.get(id)
+  const { birthday, money } = await users.get(id)
   let embed = new Discord.MessageEmbed()
     .setTitle("User Info")
     .setDescription(`**<@${id}>** (${username}#${discriminator})${bot ? " :robot:" : ""}`)
@@ -54,15 +54,15 @@ const getUserInfo = async (user: Discord.User, guildMember?: Discord.GuildMember
     : "Free Agent"
   embed = embed.addField("Current team", team, true).addField("Money", money, true)
 
-  const typedItems = items as Dict<ObjectValues<typeof items>>
-  const allUserItems = Object.entries(userItems || {})
-  const ownedItems = allUserItems
-    .slice(0, 20)
-    .map(([id, amount]) => `${typedItems[id]?.icon}${amount && amount > 1 ? `x${amount}` : ""}`)
-    .join("  ")
-  if (allUserItems.length) {
-    embed = embed.addField("Owned items", ownedItems + (allUserItems.length > 20 ? "..." : ""), false)
-  }
+  // const typedItems = items as Dict<ObjectValues<typeof items>>
+  // const allUserItems = Object.entries(userItems || {})
+  // const ownedItems = allUserItems
+  //   .slice(0, 20)
+  //   .map(([id, amount]) => `${typedItems[id]?.icon}${amount && amount > 1 ? `x${amount}` : ""}`)
+  //   .join("  ")
+  // if (allUserItems.length) {
+  //   embed = embed.addField("Owned items", ownedItems + (allUserItems.length > 20 ? "..." : ""), false)
+  // }
 
   return embed
 }

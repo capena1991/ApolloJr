@@ -14,15 +14,15 @@ import says from "./says"
 import reset from "./reset"
 import birthday from "./birthday"
 import count from "./count"
-import transfer from "./transfer"
-import shop from "./shop"
-import inventory from "./inventory"
+// import transfer from "./transfer"
+// import shop from "./shop"
+// import inventory from "./inventory"
 import poll from "./poll"
 import gif from "./gif"
 
 export { Command }
 
-const commands = [ping, hello, server, user, say, oracle, birthday, transfer, shop, inventory, poll]
+const commands = [ping, hello, server, user, say, oracle, birthday, poll]
 
 const help: Command = {
   name: "help",
