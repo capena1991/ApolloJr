@@ -7,7 +7,7 @@ import { Dict } from "../type-helpers"
 export interface UserData {
   timesMentioned: number
   birthday?: string
-  counting: { lastCounts: { datetime: string }[] }
+  counting: { lastCounts: Array<{ datetime: string } | undefined> }
   money: number
   items?: Dict<number>
 }

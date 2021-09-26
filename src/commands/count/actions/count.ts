@@ -28,7 +28,8 @@ const count = async (
 
   let messages: PlayMessageResult[] = []
   if (activeCharges === 1) {
-    const newOldest = parseDate(user.counting.lastCounts[3].datetime)
+    // if activeCharges is 1, then lastCounts[3] is guarantee to exist
+    const newOldest = parseDate(user.counting.lastCounts[3]?.datetime ?? "")
     const limit = newOldest.plus({ minutes: 5 })
     messages = [{ key: "nextCount", params: { inTime: getRemainingTime(limit, playTime), userId }, kind: "info" }]
   }

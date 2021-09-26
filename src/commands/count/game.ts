@@ -12,10 +12,10 @@ import { getPlayData, PlayData, savePlayData } from "./data"
 import { PlayResult } from "./types"
 import { validatePlay } from "./validate"
 
-const getActiveCharges = (now: DateTime, lastCounts: Array<{ datetime: string }>) => {
+const getActiveCharges = (now: DateTime, lastCounts: Array<{ datetime: string } | undefined>) => {
   const _5minAgo = now.minus({ minutes: 5 })
   const base = 5 - lastCounts.length
-  return base + lastCounts.filter(({ datetime }) => parseDate(datetime) < _5minAgo).length
+  return base + lastCounts.filter((countEntry) => countEntry && parseDate(countEntry.datetime) < _5minAgo).length
 }
 
 const getRemainingTimeText = (diffInSeconds: number) => {
@@ -29,7 +29,11 @@ const rateLimit = (playTime: DateTime, { user }: PlayData) => {
   const lastCounts = user.counting.lastCounts
   const activeCharges = getActiveCharges(playTime, lastCounts)
 
-  const oldest = parseDate(lastCounts[4].datetime)
+  if (lastCounts.length < 5) {
+    return { activeCharges, remainingTime: +Infinity }
+  }
+
+  const oldest = parseDate(lastCounts[4]?.datetime ?? "")
   const limit = oldest.plus({ minutes: 5 })
   const remainingTime = limit.diff(playTime).as("seconds")
 
