@@ -27,10 +27,7 @@ export const getCurrent = () => counting.get("current")
 
 export const setCurrent = (data: CountingRound) => counting.set("current", data)
 
-export const archiveCurrent = async () => {
-  const current = await getCurrent()
-  counting.set(current.roundNumber.toString(), current)
-  const newRoundNumber = current.roundNumber + 1
-  setCurrent(initializeCountingRound(newRoundNumber))
-  return newRoundNumber
+export const archiveCurrent = async (currentRound: CountingRound) => {
+  await counting.set(currentRound.roundNumber.toString(), currentRound)
+  return initializeCountingRound(currentRound.roundNumber + 1)
 }
