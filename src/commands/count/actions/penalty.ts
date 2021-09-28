@@ -3,8 +3,10 @@ import { ActionResult } from "./types"
 import { clampExtra, emptyActionResult, getContributions, withParam } from "./utils"
 
 const timePenalty = [
-  { range: [10, 300], penalty: -1, text: "⏱ counting before your time" },
-  { range: [0, 10], penalty: -2, text: "⏱❗ less than 10 seconds remaining, 😬 so close!" },
+  { range: [15, 300], penalty: -1, text: "⏱ counting before your time" },
+  { range: [5, 15], penalty: -2, text: "⏱ less than 15 seconds remaining" },
+  { range: [1, 5], penalty: -3, text: "⏱❗ less than 5 seconds remaining!" },
+  { range: [0, 1], penalty: -4, text: "⏱‼ less than 1 seconds remaining, 😬 so close!" },
 ]
 
 const getPenalty = (remainingTime: number, sign: number) => {
