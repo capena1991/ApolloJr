@@ -2,19 +2,12 @@ import { DateTime } from "luxon"
 
 import { parseDate } from "../../../utilities/date-helpers"
 import { addContribution, addCountEntries, PlayData, setCount } from "../data"
+import { getRemainingTimeText } from "../messages"
 import { PlayMessageResult } from "../types"
 import { ActionResult } from "./types"
 import { getContributions, withParam } from "./utils"
 
 const getChargesReaction = (charges: number) => ["🅾", "1️⃣", "2️⃣", "3️⃣", "4️⃣"][charges]
-
-const getRemainingTime = (time: DateTime, base: DateTime) => {
-  const diff = time.diff(base).as("seconds")
-  if (diff > 59) {
-    return time.toRelative({ base }) ?? ""
-  }
-  return `in ${diff} seconds`
-}
 
 const count = async (
   playData: PlayData,
@@ -31,7 +24,13 @@ const count = async (
     // if activeCharges is 1, then lastCounts[3] is guarantee to exist
     const newOldest = parseDate(user.counting.lastCounts[3]?.datetime ?? "")
     const limit = newOldest.plus({ minutes: 5 })
-    messages = [{ key: "nextCount", params: { inTime: getRemainingTime(limit, playTime), userId }, kind: "info" }]
+    messages = [
+      {
+        key: "nextCount",
+        params: { inTime: getRemainingTimeText(limit.diff(playTime).as("seconds")), userId },
+        kind: "info",
+      },
+    ]
   }
 
   return { messages, playData: newPlayData, reactions: [getChargesReaction(activeCharges - 1)] }

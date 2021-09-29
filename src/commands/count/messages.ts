@@ -89,3 +89,12 @@ export type MessageKey = keyof typeof messages
 
 export const getMessage = (kind: MessageKey, userId: string, params: Dict<unknown> = {}) =>
   messages[kind][nicePeople.includes(userId) ? "nice" : "sassy"](params)
+
+export const getRemainingTimeText = (diffInSeconds: number) => {
+  if (diffInSeconds > 59) {
+    const minutes = Math.floor(diffInSeconds / 60)
+    const seconds = String(Math.round(diffInSeconds % 60)).padStart(2, "0")
+    return `in ${minutes}:${seconds}`
+  }
+  return `in ${Math.round(diffInSeconds)} seconds`
+}

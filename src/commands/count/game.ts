@@ -9,6 +9,7 @@ import { tryFinishRound } from "./actions/finish"
 import { getApplyPenalty } from "./actions/penalty"
 import { rewardSpecialNumber } from "./actions/specialNumbers"
 import { getPlayData, PlayData, savePlayData } from "./data"
+import { getRemainingTimeText } from "./messages"
 import { PlayResult } from "./types"
 import { validatePlay } from "./validate"
 
@@ -16,13 +17,6 @@ const getActiveCharges = (now: DateTime, lastCounts: Array<{ datetime: string } 
   const _5minAgo = now.minus({ minutes: 5 })
   const base = 5 - lastCounts.length
   return base + lastCounts.filter((countEntry) => countEntry && parseDate(countEntry.datetime) < _5minAgo).length
-}
-
-const getRemainingTimeText = (diffInSeconds: number) => {
-  if (diffInSeconds > 59) {
-    return DateTime.now().plus({ seconds: diffInSeconds }).toRelative() ?? ""
-  }
-  return `in ${diffInSeconds} seconds`
 }
 
 const rateLimit = (playTime: DateTime, { user }: PlayData) => {
