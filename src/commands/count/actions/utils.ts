@@ -15,5 +15,5 @@ export const clampExtra = (extra: number, currentCount: number) =>
 
 export const getContributions = (countSign: number, contribution: number) => ({
   positive: countSign > 0 ? contribution : 0,
-  negative: countSign < 0 ? -contribution : 0,
+  negative: countSign < 0 ? contribution : 0,
 })
