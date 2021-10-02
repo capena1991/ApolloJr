@@ -1,4 +1,4 @@
-import { Dict } from "../../type-helpers"
+import { Dict } from "../../../type-helpers"
 import { MessageKey } from "./messages"
 
 export interface PlayMessageResult {

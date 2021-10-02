@@ -1,4 +1,4 @@
-import { Dict } from "../../../type-helpers"
+import { Dict } from "../../../../type-helpers"
 import { archiveCurrentRound, grantRewards, PlayData } from "../data"
 import { ActionResult } from "./types"
 

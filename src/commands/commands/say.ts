@@ -1,6 +1,6 @@
-import { Command } from "./types"
-import { randBool } from "../utilities/utils"
-import { getSpecialNickname } from "../utilities/specialPeople"
+import { Command } from "../types"
+import { randBool } from "../../utilities/utils"
+import { getSpecialNickname } from "../../utilities/specialPeople"
 
 const say: Command = {
   name: "say",

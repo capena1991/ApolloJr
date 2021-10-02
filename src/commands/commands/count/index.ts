@@ -1,7 +1,7 @@
 import Discord from "discord.js"
 
-import { Command } from "../types"
-import { TaskQueueHandler } from "../../utilities/queue"
+import { Command } from "../../types"
+import { TaskQueueHandler } from "../../../utilities/queue"
 import { play } from "./game"
 import { getMessage } from "./messages"
 

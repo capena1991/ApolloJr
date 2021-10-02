@@ -1,7 +1,7 @@
 import Discord from "discord.js"
 
 import { Dict } from "@app/type-helpers"
-import { alts, negativeRole, positiveRole } from "../../utilities/config"
+import { alts, negativeRole, positiveRole } from "../../../utilities/config"
 import { PlayData } from "./data"
 import { MessageKey } from "./messages"
 import { PlayResult } from "./types"

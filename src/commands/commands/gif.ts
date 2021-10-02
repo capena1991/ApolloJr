@@ -2,8 +2,8 @@ import Discord from "discord.js"
 import axios from "axios"
 import cheerio from "cheerio"
 
-import { ConditionalCommand } from "./types"
-import { gifChannels } from "../utilities/config"
+import { ConditionalCommand } from "../types"
+import { gifChannels } from "../../utilities/config"
 
 const gifLinkRe = /^https:\/\/tenor.com\/view\//
 

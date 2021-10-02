@@ -1,7 +1,7 @@
-import { Command } from "./types"
+import { Command } from "../types"
 
-import { users } from "../data/userData"
-import { nDrachma } from "../utilities/utils"
+import { users } from "../../data/userData"
+import { nDrachma } from "../../utilities/utils"
 
 const transfer: Command = {
   name: "transfer",

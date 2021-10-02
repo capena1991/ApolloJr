@@ -1,7 +1,7 @@
 import Discord from "discord.js"
 import { DateTime } from "luxon"
 
-import { parseDate } from "../../utilities/date-helpers"
+import { parseDate } from "../../../utilities/date-helpers"
 import { executeActions } from "./actions"
 import { getApplyBonus } from "./actions/bonus"
 import { getCount as getCountAction } from "./actions/count"

@@ -1,7 +1,7 @@
 import Discord from "discord.js"
 
-import { Command } from "./types"
-import { chooseOne, pluralize } from "../utilities/utils"
+import { Command } from "../types"
+import { chooseOne, pluralize } from "../../utilities/utils"
 
 const gifs = [
   "https://media1.tenor.com/images/083ccb85ea107a76b5030cbcb43cbf36/tenor.gif?itemid=7296714",

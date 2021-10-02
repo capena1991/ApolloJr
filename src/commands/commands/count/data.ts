@@ -1,7 +1,7 @@
 import { DateTime } from "luxon"
 
-import { archiveCurrent, CountingRound, getCurrent, setCurrent } from "../../data/countingData"
-import { UserData, users } from "../../data/userData"
+import { archiveCurrent, CountingRound, getCurrent, setCurrent } from "../../../data/countingData"
+import { UserData, users } from "../../../data/userData"
 
 export interface PlayData {
   currentRound: CountingRound

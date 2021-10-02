@@ -1,5 +1,5 @@
-import { Dict } from "../../type-helpers"
-import { nicePeople } from "../../utilities/config"
+import { Dict } from "../../../type-helpers"
+import { nicePeople } from "../../../utilities/config"
 
 const messages = {
   invalidNumber: {
