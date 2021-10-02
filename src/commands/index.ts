@@ -40,7 +40,7 @@ const help: Command = {
     if (client.user) {
       embed = embed.setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
     }
-    channel.send(embed)
+    channel.send({ embeds: [embed] })
   },
 }
 

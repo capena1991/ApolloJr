@@ -20,13 +20,10 @@ const boop: Command = {
       )
     }
     const have = pluralize(mentions.users.size, "has", "have")
-    return channel.send(
-      new Discord.MessageEmbed()
-        .setDescription(
-          `${mentions.users.map(({ id }) => `<@${id}>`).join(", ")} ${have} been booped by <@${author.id}>`,
-        )
-        .setImage(chooseOne(gifs)),
-    )
+    const embed = new Discord.MessageEmbed()
+      .setDescription(`${mentions.users.map(({ id }) => `<@${id}>`).join(", ")} ${have} been booped by <@${author.id}>`)
+      .setImage(chooseOne(gifs))
+    return channel.send({ embeds: [embed] })
   },
 }
 

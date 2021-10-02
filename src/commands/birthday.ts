@@ -72,12 +72,13 @@ const monthBirthdayList = async () => {
     bds.forEach((bd) => monthBirthdays.push(bd))
   }
   if (!monthBirthdays.length) {
-    return "This is a sad month... no birthdays. :slight_frown:"
+    return { content: "This is a sad month... no birthdays. :slight_frown:" }
   }
-  return monthBirthdays.reduce(
+  const embed = monthBirthdays.reduce(
     (e, { user, date }) => e.addField(parseDate(date).toLocaleString(DateTime.DATE_MED), `<@${user}>`, true),
     new Discord.MessageEmbed().setTitle(`${now.toLocaleString({ month: "long" })}'s Birthdays`),
   )
+  return { embeds: [embed] }
 }
 
 const getAllBirthdays = async () => {
@@ -91,11 +92,7 @@ const getAllBirthdays = async () => {
   return allBirthdays
 }
 
-const listAllBirthdays = async (
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
-  author: Discord.User,
-  page = 1,
-) => {
+const listAllBirthdays = async (channel: Discord.TextBasedChannels, author: Discord.User, page = 1) => {
   const allBirthdays = await getAllBirthdays()
   if (!allBirthdays.length) {
     return "I'm sad... I don't know any birthday. :slight_frown:"

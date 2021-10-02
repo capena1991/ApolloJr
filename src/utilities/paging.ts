@@ -3,7 +3,7 @@ import Discord from "discord.js"
 import { createReactableEmbed } from "./reactions"
 
 export const createPageableEmbed = async (
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
+  channel: Discord.TextBasedChannels,
   getPage: (page: number) => Discord.MessageEmbed,
   nPages: number,
   author?: Discord.User,
@@ -12,7 +12,7 @@ export const createPageableEmbed = async (
 
   const pageJump = (message: Discord.Message, jump: number) => {
     page = Math.min(Math.max(page + jump, 0), nPages - 1)
-    message.edit(getPage(page))
+    message.edit({ embeds: [getPage(page)] })
   }
 
   const reactions = {
@@ -30,7 +30,7 @@ export const createListPageableEmbed = (
 ) => createPageableEmbed(channel, (page) => embeds[page], embeds.length, author)
 
 export const createFieldsPageableEmbed = (
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
+  channel: Discord.TextBasedChannels,
   baseEmbed: Discord.MessageEmbed,
   fields: Discord.EmbedField[][],
   author?: Discord.User,
@@ -48,7 +48,7 @@ export const createFieldsPageableEmbed = (
 }
 
 export const createSimplePageableEmbed = (
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
+  channel: Discord.TextBasedChannels,
   baseEmbed: Discord.MessageEmbed,
   fields: Discord.EmbedField[],
   author?: Discord.User,

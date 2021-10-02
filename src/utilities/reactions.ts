@@ -8,7 +8,7 @@ interface ReactableEmbedOptions {
 }
 
 export const createReactableEmbed = async (
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
+  channel: Discord.TextBasedChannels,
   embed: Discord.MessageEmbed,
   reactions: Record<string, (message: Discord.Message, user: Discord.User) => void>,
   { removeReactions = true, activeTime = 300000, author, endEffect }: ReactableEmbedOptions = {
@@ -16,21 +16,21 @@ export const createReactableEmbed = async (
     activeTime: 300000,
   },
 ) => {
-  const message = await channel.send(embed)
+  const message = await channel.send({ embeds: [embed] })
 
   for (const r of Object.keys(reactions)) {
     await message.react(r)
   }
 
-  const collector = message.createReactionCollector(
-    (reaction, user) => !user.bot && reactions[reaction.emoji.name] !== undefined && (!author || user.id === author.id),
-    { time: activeTime },
-  )
+  const collector = message.createReactionCollector({
+    filter: (reaction, user) => !user.bot && reactions[reaction.emoji.name ?? ""] && (!author || user.id === author.id),
+    time: activeTime,
+  })
   collector.on("collect", (reaction, user) => {
     if (removeReactions) {
       reaction.users.remove(user)
     }
-    const effect = reactions[reaction.emoji.name]
+    const effect = reactions[reaction.emoji.name ?? ""]
     effect(message, user)
   })
   collector.on("end", () => {

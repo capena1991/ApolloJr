@@ -1,7 +1,7 @@
 import Discord from "discord.js"
 
 export const createConfirm = async (
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
+  channel: Discord.TextBasedChannels,
   author: Discord.User,
   text: string,
   confirmIcon: string,
@@ -16,10 +16,11 @@ export const createConfirm = async (
     await message.react(cancelIcon)
   }
 
-  const collector = message.createReactionCollector(
-    (reaction, user) => !user.bot && [confirmIcon, cancelIcon].includes(reaction.emoji.name) && user.id === author.id,
-    { time: 60000 },
-  )
+  const collector = message.createReactionCollector({
+    filter: (reaction, user) =>
+      !user.bot && [confirmIcon, cancelIcon].includes(reaction.emoji.name ?? "") && user.id === author.id,
+    time: 60000,
+  })
   collector.on("collect", (reaction) => {
     if (reaction.emoji.name === confirmIcon) {
       onConfirm()

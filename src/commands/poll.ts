@@ -79,7 +79,7 @@ const poll: Command = {
           if (!match) {
             votes[i].push(user)
           }
-          message.edit(getEmbed({ question, choices, votes, closed, multiple }))
+          message.edit({ embeds: [getEmbed({ question, choices, votes, closed, multiple })] })
         },
       }),
       {},
@@ -89,7 +89,7 @@ const poll: Command = {
       activeTime: 86400000,
       endEffect: (message) => {
         closed = true
-        message.edit(getEmbed({ question, choices, votes, closed, multiple }))
+        message.edit({ embeds: [getEmbed({ question, choices, votes, closed, multiple })] })
       },
     })
   },
