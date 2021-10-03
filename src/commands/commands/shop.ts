@@ -19,7 +19,7 @@ const shop: Command = {
   name: "shop",
   aliases: ["buy"],
   description: "The shop is open for business! Come buy all kinds of stuff.",
-  execute: ({ channel, author }, args) => {
+  runOnMessage: ({ channel, author }, args) => {
     const itemSearch = args.join(" ")
     const item = findItem(itemSearch)
 

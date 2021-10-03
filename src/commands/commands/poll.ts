@@ -38,7 +38,7 @@ const getEmbed = ({ question, choices, votes, closed, multiple }: PollState) => 
 const poll: Command = {
   name: "poll",
   description: "Wanna know what everybody thinks? No better way than with a poll. Hooray for democracy!",
-  execute: async ({ channel }, args) => {
+  runOnMessage: async ({ channel }, args) => {
     const myArgs = [...args]
     const multiple = !!extractMatch(myArgs, (a) => a === "-m" || a === "-multiple")
     const question = myArgs[0]

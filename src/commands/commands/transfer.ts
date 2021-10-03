@@ -7,7 +7,7 @@ const transfer: Command = {
   name: "transfer",
   aliases: ["give"],
   description: "You can give your hard-earned money to someone else... after I collect a small fee. :wink:",
-  execute: async ({ channel, author, mentions }, args) => {
+  runOnMessage: async ({ channel, author, mentions }, args) => {
     const sender = await users.get(author.id)
 
     if (mentions.users.has(author.id)) {

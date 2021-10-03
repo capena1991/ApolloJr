@@ -4,7 +4,7 @@ import { Command } from "../types"
 const says: Command = {
   name: "says",
   description: "Shhh.",
-  execute: (message, args) => {
+  runOnMessage: (message, args) => {
     const { channel, author } = message
     if (!admins.includes(author.id) || !args.length) {
       return

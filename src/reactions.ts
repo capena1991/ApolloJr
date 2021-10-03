@@ -2,9 +2,11 @@ import Discord from "discord.js"
 
 import { users } from "./data/userData"
 
+const DEFAULT_REACTION = "Who's calling me? :eyes:"
+
 const mentionReactions = [
-  () => "Who's calling me? :eyes:",
-  () => "Who's calling me? :eyes:",
+  () => DEFAULT_REACTION,
+  () => DEFAULT_REACTION,
   ({ id }: Discord.User) => `Who's call... oh, it's you again. What's up, <@${id}>?`,
   ({ id }: Discord.User) => `Hi, <@${id}>. I see you like saying my name.`,
   () =>
@@ -20,7 +22,11 @@ const mentionReactions = [
 ]
 
 const reasons = {
-  mention: async ({ author, content }: Discord.Message) => {
+  mention: async (message?: Discord.Message) => {
+    if (!message) {
+      return DEFAULT_REACTION
+    }
+    const { author, content } = message
     const { timesMentioned, ...rest } = await users.get(author.id)
     users.set(author.id, { ...rest, timesMentioned: timesMentioned + 1 })
     if (content.match(/\bhugs?\b/i)) {
@@ -32,5 +38,5 @@ const reasons = {
   invalidCommand: () => "That's not a valid command. What are you trying to do? :unamused:",
 }
 
-export const getReaction = async (reason: "mention" | "noCommand" | "invalidCommand", message: Discord.Message) =>
+export const getReaction = async (reason: "mention" | "noCommand" | "invalidCommand", message?: Discord.Message) =>
   await reasons[reason](message)

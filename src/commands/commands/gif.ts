@@ -11,7 +11,7 @@ const gif: ConditionalCommand = {
   name: "gif",
   description: "Replaces a gif link with a visible one in channels where media is not allowed.",
   condition: ({ channel, content }) => gifChannels.includes(channel.id) && gifLinkRe.test(content),
-  execute: async ({ channel, author }, args) => {
+  runOnMessage: async ({ channel, author }, args) => {
     const [url] = args
     let gifUrl
     try {

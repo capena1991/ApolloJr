@@ -125,7 +125,7 @@ const birthday: Command = {
   name: "birthday",
   aliases: ["bd", "bday", "birthdays", "bds", "bdays"],
   description: "Your friends won't need to know you don't remember their birthdays. I'll remind you of them.",
-  execute: async ({ author, channel }, args) => {
+  runOnMessage: async ({ author, channel }, args) => {
     switch ((args[0] || "").toLowerCase()) {
       case "setall":
         if (!admins.includes(author.id)) {

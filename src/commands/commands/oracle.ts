@@ -29,7 +29,7 @@ const oracle: Command = {
   name: "oracle",
   aliases: ["8ball"],
   description: "Ask any question and I will answer through my magic oracle: :8ball:.",
-  execute: ({ channel, author }, args) => {
+  runOnMessage: ({ channel, author }, args) => {
     if (!args.length) {
       return channel.send("Huh? How can I give you an answer if you don't ask a question?")
     }

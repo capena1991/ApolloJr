@@ -1,8 +1,9 @@
 import Discord from "discord.js"
 
 import { prefix, countingChannel } from "../utilities/config"
+import { logInfo } from "../utilities/log"
 import { Dict } from "../type-helpers"
-import { Command } from "./types"
+import { Command, InteractionCommand, MessageCommand } from "./types"
 
 import ping from "./commands/ping"
 import hello from "./commands/hello"
@@ -20,49 +21,68 @@ import count from "./commands/count"
 import poll from "./commands/poll"
 import gif from "./commands/gif"
 
-export { Command }
+export { Command, MessageCommand, InteractionCommand }
 
-const commands = [ping, hello, server, user, say, oracle, birthday, poll]
+const runHelp = (client: Discord.Client) => {
+  let embed = new Discord.MessageEmbed()
+    .setTitle("Apollo Jr. commands")
+    .setDescription("Here's a list of what you can ask me to do.")
+    .addFields(
+      commands.map((c) => ({
+        name: [c.name, ...(c.aliases || [])].map((name) => `\`${prefix}${name}\``).join(" "),
+        value: c.description,
+      })),
+    )
+  if (client.user) {
+    embed = embed.setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
+  }
+  return { embeds: [embed] }
+}
 
 const help: Command = {
   name: "help",
   description: "Shows you what you can ask me to do.",
-  execute: ({ channel, client }) => {
-    let embed = new Discord.MessageEmbed()
-      .setTitle("Apollo Jr. commands")
-      .setDescription("Here's a list of what you can ask me to do.")
-      .addFields(
-        commands.map((c) => ({
-          name: [c.name, ...(c.aliases || [])].map((name) => `\`${prefix}${name}\``).join(" "),
-          value: c.description,
-        })),
-      )
-    if (client.user) {
-      embed = embed.setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
-    }
-    channel.send({ embeds: [embed] })
-  },
+  runOnMessage: ({ channel, client }) => channel.send(runHelp(client)),
+  runOnInteraction: (interaction) => interaction.reply(runHelp(interaction.client)),
 }
 
-const hiddenCommands = [help, says, reset]
+const commands = [ping, hello, server, user, say, oracle, birthday, poll, help]
+
+const hiddenCommands = [says, reset]
 
 const allCommands = [...commands, ...hiddenCommands]
 
-const commandMap: Dict<Command> = {}
-allCommands.forEach((cmd) => {
-  commandMap[cmd.name] = cmd
-  ;(cmd.aliases || []).forEach((alias) => {
-    commandMap[alias] = cmd
-  })
-})
+const getCommandMap = (wantedCommands: Command[]) =>
+  Object.fromEntries(wantedCommands.map((cmd) => [cmd.name, cmd.aliases ?? []].map((name) => [name, cmd])).flat())
 
-export const getCommand = (name: string) => {
-  return commandMap[name]
+const messageCommandMap: Dict<MessageCommand> = getCommandMap(allCommands.filter(({ runOnMessage }) => runOnMessage))
+export const getMessageCommand = (name: string) => {
+  return messageCommandMap[name]
 }
 
-const channelCommands: Dict<Command> = { [countingChannel]: count }
+const interactionCommandMap: Dict<InteractionCommand> = getCommandMap(
+  allCommands.filter(({ runOnInteraction }) => runOnInteraction),
+)
+export const getInteractionCommand = (name: string) => {
+  return interactionCommandMap[name]
+}
+
+const channelCommands: Dict<MessageCommand> = { [countingChannel]: count }
 export const getChannelCommand = (channelId: string) => channelCommands[channelId]
 
 const conditionalCommands = [gif]
 export const findConditionalCommand = (message: Discord.Message) =>
   conditionalCommands.find(({ condition }) => condition(message))
+
+export const registerCommands = async (
+  commandManager: Discord.ApplicationCommandManager | Discord.GuildApplicationCommandManager,
+) => {
+  const slashCommands = allCommands
+    .filter(({ runOnInteraction }) => runOnInteraction)
+    .map(({ name, description }) => ({ name, description }))
+
+  for (const cmd of slashCommands) {
+    await commandManager.create(cmd)
+    logInfo(`CREATED COMMAND ${cmd.name}`)
+  }
+}

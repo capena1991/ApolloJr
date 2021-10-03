@@ -5,7 +5,7 @@ import { getSpecialNickname } from "../../utilities/specialPeople"
 const say: Command = {
   name: "say",
   description: "I will say something of your chosing.",
-  execute: ({ channel, author }, args) => {
+  runOnMessage: ({ channel, author }, args) => {
     if (!args.length) {
       return channel.send("_silence_")
     }

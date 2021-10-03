@@ -6,7 +6,7 @@ import { users } from "../../data/userData"
 const reset: Command = {
   name: "reset",
   description: "Resets user data.",
-  execute: async ({ channel, author, mentions }, args) => {
+  runOnMessage: async ({ channel, author, mentions }, args) => {
     if (!admins.includes(author.id) || !args.length) {
       return
     }

@@ -13,7 +13,7 @@ const gifs = [
 const boop: Command = {
   name: "boop",
   description: "Want to mildly annoy someone in a cute and wholesome way? I got your back.",
-  execute: ({ channel, author, mentions }) => {
+  runOnMessage: ({ channel, author, mentions }) => {
     if (!mentions.users.size) {
       return channel.send(
         "Who do you want to boop? If you can't think of someone I offer myself as volunteer. :slight_smile:",

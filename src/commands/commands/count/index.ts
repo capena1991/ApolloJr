@@ -1,6 +1,6 @@
 import Discord from "discord.js"
 
-import { Command } from "../../types"
+import { MessageCommand } from "../../types"
 import { TaskQueueHandler } from "../../../utilities/queue"
 import { play } from "./game"
 import { getMessage } from "./messages"
@@ -39,10 +39,10 @@ const doCount = async (message: Discord.Message, args: string[]) => {
 
 const queue = new TaskQueueHandler<void>()
 
-const count: Command = {
+const count: MessageCommand = {
   name: "count",
   description: "The game of count. Two teams try to get the count to either 100 or -100",
-  execute: (message, args) => {
+  runOnMessage: (message, args) => {
     queue.enqueue(() => doCount(message, args))
   },
 }

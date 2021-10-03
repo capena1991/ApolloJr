@@ -59,7 +59,7 @@ const getUserInfo = async (user: Discord.User, guildMember?: Discord.GuildMember
 const ping: Command = {
   name: "user",
   description: "I'll show you info about yourself or another user. ~~I know you like snooping.~~ :wink:",
-  execute: ({ channel, mentions, author, guild }) => {
+  runOnMessage: ({ channel, mentions, author, guild }) => {
     const users = mentions.users.size ? [...mentions.users.values()] : [author]
     users.forEach(async (u) => {
       const embed = await getUserInfo(u, guild?.members.cache.get(u.id))
