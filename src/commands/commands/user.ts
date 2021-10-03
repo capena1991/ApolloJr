@@ -59,12 +59,25 @@ const getUserInfo = async (user: Discord.User, guildMember?: Discord.GuildMember
 const ping: Command = {
   name: "user",
   description: "I'll show you info about yourself or another user. ~~I know you like snooping.~~ :wink:",
+  options: [
+    {
+      name: "user",
+      description: "The user that you want to know about.",
+      type: "USER",
+    },
+  ],
   runOnMessage: ({ channel, mentions, author, guild }) => {
     const users = mentions.users.size ? [...mentions.users.values()] : [author]
     users.forEach(async (u) => {
       const embed = await getUserInfo(u, guild?.members.cache.get(u.id))
       channel.send({ embeds: [embed] })
     })
+  },
+  runOnInteraction: async (interaction) => {
+    const { options, user, guild } = interaction
+    const wantedUser = options.getUser("user") ?? user
+    const embed = await getUserInfo(wantedUser, guild?.members.cache.get(wantedUser.id))
+    interaction.reply({ embeds: [embed] })
   },
 }
 

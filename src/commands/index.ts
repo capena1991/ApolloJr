@@ -79,7 +79,7 @@ export const registerCommands = async (
 ) => {
   const slashCommands = allCommands
     .filter(({ runOnInteraction }) => runOnInteraction)
-    .map(({ name, description }) => ({ name, description }))
+    .map(({ name, description, options }) => ({ name, description, options }))
 
   for (const cmd of slashCommands) {
     await commandManager.create(cmd)

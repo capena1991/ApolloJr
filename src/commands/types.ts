@@ -4,8 +4,7 @@ export interface Command {
   name: string
   aliases?: string[]
   description: string
-  subcommands?: Command[]
-  default?: boolean
+  options?: Discord.ApplicationCommandOptionData[]
   runOnMessage?: (message: Discord.Message, args: string[]) => void
   runOnInteraction?: (interaction: Discord.CommandInteraction) => void
 }
