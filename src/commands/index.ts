@@ -53,7 +53,7 @@ const hiddenCommands = [says, reset]
 const allCommands = [...commands, ...hiddenCommands]
 
 const getCommandMap = (wantedCommands: Command[]) =>
-  Object.fromEntries(wantedCommands.map((cmd) => [cmd.name, cmd.aliases ?? []].map((name) => [name, cmd])).flat())
+  Object.fromEntries(wantedCommands.map((cmd) => [cmd.name, ...(cmd.aliases ?? [])].map((name) => [name, cmd])).flat())
 
 const messageCommandMap: Dict<MessageCommand> = getCommandMap(allCommands.filter(({ runOnMessage }) => runOnMessage))
 export const getMessageCommand = (name: string) => {
