@@ -35,9 +35,19 @@ const addRoundCount = (round: CountingRound, userId: string, datetime: DateTime)
   last: { user: userId, datetime: datetime.toISO() },
 })
 
-export const addCountEntries = ({ currentRound, userId, user, countSign }: PlayData, datetime: DateTime): PlayData => ({
-  currentRound: addRoundCount(currentRound, userId, datetime),
-  user: addUserCount(user, datetime),
+export const addCountEntries = (
+  { currentRound, userId, user, countSign }: PlayData,
+  datetime: DateTime,
+  {
+    addRoundCountEntry = true,
+    addUserCountEntry = true,
+  }: { addRoundCountEntry: boolean; addUserCountEntry: boolean } = {
+    addRoundCountEntry: true,
+    addUserCountEntry: true,
+  },
+): PlayData => ({
+  currentRound: addRoundCountEntry ? addRoundCount(currentRound, userId, datetime) : currentRound,
+  user: addUserCountEntry ? addUserCount(user, datetime) : user,
   userId,
   countSign,
 })

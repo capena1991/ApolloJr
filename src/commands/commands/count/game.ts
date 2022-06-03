@@ -45,7 +45,7 @@ export const play = async (member: Discord.GuildMember, number: number): Promise
 
   const { activeCharges, remainingTime } = rateLimit(playTime, playData)
   if (!activeCharges) {
-    const actions = [getApplyPenalty(remainingTime), tryFinishRound]
+    const actions = [getApplyPenalty(remainingTime, playTime), tryFinishRound]
     const { messages, playData: finalPlayData } = await executeActions(actions, playData)
     await savePlayData(finalPlayData)
 

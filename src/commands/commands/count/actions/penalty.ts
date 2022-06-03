@@ -1,4 +1,5 @@
-import { addContribution, PlayData, setCount } from "../data"
+import { DateTime } from "luxon"
+import { addContribution, addCountEntries, PlayData, setCount } from "../data"
 import { ActionResult } from "./types"
 import { clampExtra, emptyActionResult, getContributions, withParam } from "./utils"
 
@@ -20,7 +21,10 @@ const getPenalty = (remainingTime: number, sign: number) => {
   return { penalty: penaltyData.penalty * sign, text: penaltyData.text }
 }
 
-const applyPenalty = async (playData: PlayData, remainingTime: number): Promise<ActionResult> => {
+const applyPenalty = async (
+  playData: PlayData,
+  { remainingTime, playTime }: { remainingTime: number; playTime: DateTime },
+): Promise<ActionResult> => {
   const { currentRound, countSign, userId } = playData
 
   const penaltyData = getPenalty(remainingTime, countSign)
@@ -34,6 +38,7 @@ const applyPenalty = async (playData: PlayData, remainingTime: number): Promise<
 
   let newPlayData = setCount(playData, playData.currentRound.count + clampedPenalty)
   newPlayData = addContribution(newPlayData, getContributions(countSign, clampedPenalty))
+  newPlayData = addCountEntries(newPlayData, playTime, { addRoundCountEntry: true, addUserCountEntry: false })
 
   const numbers = [...Array(Math.abs(clampedPenalty)).keys()].map((i) => currentRound.count - (i + 1) * countSign)
   const messages = numbers.map((count) => ({
@@ -45,4 +50,5 @@ const applyPenalty = async (playData: PlayData, remainingTime: number): Promise<
   return { messages, playData: newPlayData, reactions: [] }
 }
 
-export const getApplyPenalty = (remainingTime: number) => withParam(applyPenalty, remainingTime)
+export const getApplyPenalty = (remainingTime: number, playTime: DateTime) =>
+  withParam(applyPenalty, { remainingTime, playTime })
