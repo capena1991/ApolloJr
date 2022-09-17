@@ -56,29 +56,49 @@ const messages = {
   },
   rewards: {
     nice: ({ rewards }: { rewards?: Array<{ user: string; reward: string }> }) =>
-      `**Rewards:**\n${rewards
-        ?.map(({ user, reward }) => `  💰 <@${user}> earned ${reward} ${pluralize(+reward, "drachma", "drachmae")}`)
-        .join("\n")}`,
+      `**Rewards:**\n${
+        rewards?.length
+          ? rewards
+              ?.map(
+                ({ user, reward }) => `  💰 <@${user}> earned ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
+              )
+              .join("\n")
+          : "  _No one_"
+      }`,
     sassy: ({ rewards }: { rewards?: Array<{ user: string; reward: string }> }) =>
-      `**Rewards:**\n${rewards
-        ?.map(({ user, reward }) => `  💰 <@${user}> earned ${reward} ${pluralize(+reward, "drachma", "drachmae")}`)
-        .join("\n")}`,
+      `**Rewards:**\n${
+        rewards?.length
+          ? rewards
+              ?.map(
+                ({ user, reward }) => `  💰 <@${user}> earned ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
+              )
+              .join("\n")
+          : "  _No one_"
+      }`,
   },
   rewardsLost: {
     nice: ({ lostRewards }: { lostRewards?: Array<{ user: string; reward: string }> }) =>
-      `**Rewards lost:**\n${lostRewards
-        ?.map(
-          ({ user, reward }) =>
-            `  💸 <@${user}> did **not** earn ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
-        )
-        .join("\n")}`,
+      `**Rewards lost:**\n${
+        lostRewards?.length
+          ? lostRewards
+              ?.map(
+                ({ user, reward }) =>
+                  `  💸 <@${user}> did **not** earn ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
+              )
+              .join("\n")
+          : "  _No one_"
+      }`,
     sassy: ({ lostRewards }: { lostRewards?: Array<{ user: string; reward: string }> }) =>
-      `**Rewards lost:**\n${lostRewards
-        ?.map(
-          ({ user, reward }) =>
-            `  💸 <@${user}> did **not** earn ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
-        )
-        .join("\n")}`,
+      `**Rewards lost:**\n${
+        lostRewards?.length
+          ? lostRewards
+              ?.map(
+                ({ user, reward }) =>
+                  `  💸 <@${user}> did **not** earn ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
+              )
+              .join("\n")
+          : "  _No one_"
+      }`,
   },
   roundsSummary: {
     nice: ({ positiveWins, negativeWins }: { positiveWins?: number; negativeWins?: number }) =>
