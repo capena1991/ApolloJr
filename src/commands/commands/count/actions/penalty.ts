@@ -37,7 +37,7 @@ const applyPenalty = async (
   const clampedPenalty = clampExtra(penalty, playData.currentRound.count)
 
   let newPlayData = setCount(playData, playData.currentRound.count + clampedPenalty)
-  newPlayData = addContribution(newPlayData, getContributions(countSign, clampedPenalty))
+  newPlayData = addContribution(newPlayData, getContributions(countSign, -Math.abs(clampedPenalty)))
   newPlayData = addCountEntries(newPlayData, playTime, { addRoundCountEntry: true, addUserCountEntry: false })
 
   const numbers = [...Array(Math.abs(clampedPenalty)).keys()].map((i) => currentRound.count - (i + 1) * countSign)

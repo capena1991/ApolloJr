@@ -35,7 +35,7 @@ const applyBonus = async (playData: PlayData, remainingTime: number): Promise<Ac
   const clampedBonus = clampExtra(bonus, currentRound.count)
 
   let newPlayData = setCount(playData, currentRound.count + clampedBonus)
-  newPlayData = addContribution(newPlayData, getContributions(countSign, clampedBonus))
+  newPlayData = addContribution(newPlayData, getContributions(countSign, Math.abs(clampedBonus)))
 
   const numbers = [...Array(Math.abs(clampedBonus)).keys()].map((i) => currentRound.count + (i + 1) * countSign)
   const messages = numbers.map((count) => ({
