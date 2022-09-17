@@ -1,4 +1,4 @@
-import { pluralize } from "@app/utilities/utils"
+import { pluralize } from "../../../utilities/utils"
 import { Dict } from "../../../type-helpers"
 import { nicePeople } from "../../../utilities/config"
 
