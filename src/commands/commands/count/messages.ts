@@ -1,3 +1,4 @@
+import { pluralize } from "@app/utilities/utils"
 import { Dict } from "../../../type-helpers"
 import { nicePeople } from "../../../utilities/config"
 
@@ -55,18 +56,26 @@ const messages = {
   },
   rewards: {
     nice: ({ rewards }: { rewards?: Array<{ user: string; reward: string }> }) =>
-      `**Rewards:**\n${rewards?.map(({ user, reward }) => `<@${user}> earned ${reward} drachmae`).join("\n")}`,
+      `**Rewards:**\n${rewards
+        ?.map(({ user, reward }) => `<@${user}> earned ${reward} ${pluralize(+reward, "drachma", "drachmae")}`)
+        .join("\n")}`,
     sassy: ({ rewards }: { rewards?: Array<{ user: string; reward: string }> }) =>
-      `**Rewards:**\n${rewards?.map(({ user, reward }) => `<@${user}> earned ${reward} drachmae`).join("\n")}`,
+      `**Rewards:**\n${rewards
+        ?.map(({ user, reward }) => `<@${user}> earned ${reward} ${pluralize(+reward, "drachma", "drachmae")}`)
+        .join("\n")}`,
   },
   rewardsLost: {
     nice: ({ lostRewards }: { lostRewards?: Array<{ user: string; reward: string }> }) =>
       `**Rewards lost:**\n${lostRewards
-        ?.map(({ user, reward }) => `<@${user}> did **not** earn ${reward} drachmae`)
+        ?.map(
+          ({ user, reward }) => `<@${user}> did **not** earn ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
+        )
         .join("\n")}`,
     sassy: ({ lostRewards }: { lostRewards?: Array<{ user: string; reward: string }> }) =>
       `**Rewards lost:**\n${lostRewards
-        ?.map(({ user, reward }) => `<@${user}> did **not** earn ${reward} drachmae`)
+        ?.map(
+          ({ user, reward }) => `<@${user}> did **not** earn ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
+        )
         .join("\n")}`,
   },
   newRound: {
