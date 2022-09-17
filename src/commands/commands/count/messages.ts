@@ -96,5 +96,8 @@ export const getRemainingTimeText = (diffInSeconds: number) => {
     const seconds = String(Math.round(diffInSeconds % 60)).padStart(2, "0")
     return `in ${minutes}:${seconds}`
   }
+  if (diffInSeconds < 1) {
+    return `in ${Math.round(diffInSeconds * 10000) / 10000} seconds`
+  }
   return `in ${Math.round(diffInSeconds)} seconds`
 }
