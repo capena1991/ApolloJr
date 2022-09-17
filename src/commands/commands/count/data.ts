@@ -103,7 +103,7 @@ export const grantRewards = async (
 
 export const getPreviousRoundsSummary = async () => {
   const { roundNumber } = await getCurrent()
-  const previousRounds = await Promise.all([...new Array(roundNumber)].map((i) => counting.get(`${i}`)))
+  const previousRounds = await Promise.all([...new Array(roundNumber)].map((_, i) => counting.get(i.toString())))
   const positiveWins = previousRounds.filter(({ count }) => count === 100).length
   const negativeWins = previousRounds.filter(({ count }) => count === -100).length
   return { positiveWins, negativeWins }
