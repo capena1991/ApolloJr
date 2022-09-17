@@ -1,5 +1,5 @@
 import { Dict } from "../../../../type-helpers"
-import { archiveCurrentRound, grantRewards, PlayData } from "../data"
+import { archiveCurrentRound, getPreviousRoundsSummary, grantRewards, PlayData } from "../data"
 import { ActionResult } from "./types"
 
 const getRewards = (contributions: Dict<{ p: number; n: number }>, positivesWin: boolean) =>
@@ -25,6 +25,8 @@ export const tryFinishRound = async (playData: PlayData): Promise<ActionResult> 
   let newPlayData = await grantRewards(playData, rewards)
   newPlayData = await archiveCurrentRound(newPlayData)
 
+  const roundsSummary = await getPreviousRoundsSummary()
+
   const messages = [
     {
       key: "winner" as const,
@@ -34,6 +36,7 @@ export const tryFinishRound = async (playData: PlayData): Promise<ActionResult> 
     },
     { key: "rewards" as const, params: { rewards: sortedRewards }, kind: "info" as const },
     { key: "rewardsLost" as const, params: { lostRewards: sortedLostRewards }, kind: "info" as const },
+    { key: "roundsSummary" as const, params: roundsSummary, kind: "info" as const },
     { key: "newRound" as const, params: { roundNumber: newPlayData.currentRound.roundNumber }, kind: "info" as const },
     { key: "zero" as const, reactions: ["☑"], kind: "info" as const },
   ]

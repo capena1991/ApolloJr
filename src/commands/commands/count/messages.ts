@@ -57,26 +57,34 @@ const messages = {
   rewards: {
     nice: ({ rewards }: { rewards?: Array<{ user: string; reward: string }> }) =>
       `**Rewards:**\n${rewards
-        ?.map(({ user, reward }) => `<@${user}> earned ${reward} ${pluralize(+reward, "drachma", "drachmae")}`)
+        ?.map(({ user, reward }) => `  💰 <@${user}> earned ${reward} ${pluralize(+reward, "drachma", "drachmae")}`)
         .join("\n")}`,
     sassy: ({ rewards }: { rewards?: Array<{ user: string; reward: string }> }) =>
       `**Rewards:**\n${rewards
-        ?.map(({ user, reward }) => `<@${user}> earned ${reward} ${pluralize(+reward, "drachma", "drachmae")}`)
+        ?.map(({ user, reward }) => `  💰 <@${user}> earned ${reward} ${pluralize(+reward, "drachma", "drachmae")}`)
         .join("\n")}`,
   },
   rewardsLost: {
     nice: ({ lostRewards }: { lostRewards?: Array<{ user: string; reward: string }> }) =>
       `**Rewards lost:**\n${lostRewards
         ?.map(
-          ({ user, reward }) => `<@${user}> did **not** earn ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
+          ({ user, reward }) =>
+            `  💸 <@${user}> did **not** earn ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
         )
         .join("\n")}`,
     sassy: ({ lostRewards }: { lostRewards?: Array<{ user: string; reward: string }> }) =>
       `**Rewards lost:**\n${lostRewards
         ?.map(
-          ({ user, reward }) => `<@${user}> did **not** earn ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
+          ({ user, reward }) =>
+            `  💸 <@${user}> did **not** earn ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
         )
         .join("\n")}`,
+  },
+  roundsSummary: {
+    nice: ({ positiveWins, negativeWins }: { positiveWins?: number; negativeWins?: number }) =>
+      `➕ **Positives** have won **${positiveWins}** times\n➖ **Negatives** have won **${negativeWins}** times`,
+    sassy: ({ positiveWins, negativeWins }: { positiveWins?: number; negativeWins?: number }) =>
+      `➕ **Positives** have won **${positiveWins}** times\n➖ **Negatives** have won **${negativeWins}** times`,
   },
   newRound: {
     nice: ({ roundNumber }: { roundNumber?: number }) => `Round ${roundNumber} starts now.`,

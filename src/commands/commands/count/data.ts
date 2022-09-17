@@ -1,6 +1,6 @@
 import { DateTime } from "luxon"
 
-import { archiveCurrent, CountingRound, getCurrent, setCurrent } from "../../../data/countingData"
+import { archiveCurrent, counting, CountingRound, getCurrent, setCurrent } from "../../../data/countingData"
 import { UserData, users } from "../../../data/userData"
 
 export interface PlayData {
@@ -99,4 +99,12 @@ export const grantRewards = async (
     ...playData,
     user: { ...playData.user, money: playData.user.money + currentUserReward.reward },
   }
+}
+
+export const getPreviousRoundsSummary = async () => {
+  const { roundNumber } = await getCurrent()
+  const previousRounds = await Promise.all([...new Array(roundNumber)].map((i) => counting.get(`${i}`)))
+  const positiveWins = previousRounds.filter(({ count }) => count === 100).length
+  const negativeWins = previousRounds.filter(({ count }) => count === -100).length
+  return { positiveWins, negativeWins }
 }
