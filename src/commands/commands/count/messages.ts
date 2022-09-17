@@ -102,9 +102,9 @@ const messages = {
   },
   roundsSummary: {
     nice: ({ positiveWins, negativeWins }: { positiveWins?: number; negativeWins?: number }) =>
-      `➕ **Positives** have won **${positiveWins}** times\n➖ **Negatives** have won **${negativeWins}** times`,
+      `🔼 **Positives** have won **${positiveWins}** times\n🔽 **Negatives** have won **${negativeWins}** times`,
     sassy: ({ positiveWins, negativeWins }: { positiveWins?: number; negativeWins?: number }) =>
-      `➕ **Positives** have won **${positiveWins}** times\n➖ **Negatives** have won **${negativeWins}** times`,
+      `🔼 **Positives** have won **${positiveWins}** times\n🔽 **Negatives** have won **${negativeWins}** times`,
   },
   newRound: {
     nice: ({ roundNumber }: { roundNumber?: number }) => `Round ${roundNumber} starts now.`,
