@@ -51,8 +51,8 @@ const messages = {
       `${count} **bonus!** _for <@${userId}> _(_${bonusText}_)`,
   },
   winner: {
-    nice: ({ winner }: { winner?: string }) => `${winner} win this round! :tada:`,
-    sassy: ({ winner }: { winner?: string }) => `${winner} win this round! :tada:`,
+    nice: ({ winner }: { winner?: string }) => `**${winner}** win this round! :tada:`,
+    sassy: ({ winner }: { winner?: string }) => `**${winner}** win this round! :tada:`,
   },
   rewards: {
     nice: ({ rewards }: { rewards?: Array<{ user: string; reward: string }> }) =>
@@ -60,7 +60,7 @@ const messages = {
         rewards?.length
           ? rewards
               ?.map(
-                ({ user, reward }) => `  💰 <@${user}> earned ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
+                ({ user, reward }) => `    💰 <@${user}> earned ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
               )
               .join("\n")
           : "  _No one_"
@@ -70,7 +70,7 @@ const messages = {
         rewards?.length
           ? rewards
               ?.map(
-                ({ user, reward }) => `  💰 <@${user}> earned ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
+                ({ user, reward }) => `    💰 <@${user}> earned ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
               )
               .join("\n")
           : "  _No one_"
@@ -83,7 +83,7 @@ const messages = {
           ? lostRewards
               ?.map(
                 ({ user, reward }) =>
-                  `  💸 <@${user}> did **not** earn ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
+                  `    💸 <@${user}> did **not** earn ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
               )
               .join("\n")
           : "  _No one_"
@@ -94,7 +94,7 @@ const messages = {
           ? lostRewards
               ?.map(
                 ({ user, reward }) =>
-                  `  💸 <@${user}> did **not** earn ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
+                  `    💸 <@${user}> did **not** earn ${reward} ${pluralize(+reward, "drachma", "drachmae")}`,
               )
               .join("\n")
           : "  _No one_"

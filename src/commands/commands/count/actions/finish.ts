@@ -30,7 +30,7 @@ export const tryFinishRound = async (playData: PlayData): Promise<ActionResult> 
   const messages = [
     {
       key: "winner" as const,
-      params: { winner: positivesWin ? "Positives" : "Negatives" },
+      params: { winner: positivesWin ? "🔼 Positives 🔼" : "🔽 Negatives 🔽" },
       pin: true,
       kind: "info" as const,
     },
