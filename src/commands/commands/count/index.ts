@@ -1,6 +1,6 @@
 import { MessageCommand } from "../../types"
 import { TaskQueueHandler } from "../../../utilities/queue"
-import { RepliableMessage } from "../../../utilities/discord"
+import { pinMessage, RepliableMessage } from "../../../utilities/discord"
 import { play } from "./game"
 import { getMessage } from "./messages"
 
@@ -31,7 +31,7 @@ const doCount = async (message: RepliableMessage, args: string[]) => {
       await sentMessage.react(r)
     }
     if (pin) {
-      await sentMessage.pin()
+      await pinMessage(sentMessage)
     }
   }
 }

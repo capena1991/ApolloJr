@@ -16,7 +16,8 @@ export class TaskQueueHandler<T> {
       }
       try {
         await current()
-      } catch {
+      } catch (error) {
+        console.error(error)
         continue
       }
     }
