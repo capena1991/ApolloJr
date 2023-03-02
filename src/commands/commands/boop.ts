@@ -20,7 +20,7 @@ const boop: Command = {
       )
     }
     const have = pluralize(mentions.users.size, "has", "have")
-    const embed = new Discord.MessageEmbed()
+    const embed = new Discord.EmbedBuilder()
       .setDescription(`${mentions.users.map(({ id }) => `<@${id}>`).join(", ")} ${have} been booped by <@${author.id}>`)
       .setImage(chooseOne(gifs))
     return channel.send({ embeds: [embed] })

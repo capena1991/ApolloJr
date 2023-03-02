@@ -1,4 +1,5 @@
 import Discord from "discord.js"
+import { SendableChannel } from "./discord"
 
 interface ReactableEmbedOptions {
   removeReactions?: boolean
@@ -8,8 +9,8 @@ interface ReactableEmbedOptions {
 }
 
 export const createReactableEmbed = async (
-  channel: Discord.TextBasedChannels,
-  embed: Discord.MessageEmbed,
+  channel: SendableChannel,
+  embed: Discord.EmbedBuilder,
   reactions: Record<string, (message: Discord.Message, user: Discord.User) => void>,
   { removeReactions = true, activeTime = 300000, author, endEffect }: ReactableEmbedOptions = {
     removeReactions: true,

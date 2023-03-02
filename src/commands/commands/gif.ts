@@ -24,7 +24,7 @@ const gif: ConditionalCommand = {
     if (!gifUrl) {
       return
     }
-    const embed = new Discord.MessageEmbed().setDescription(`GIF from <@${author.id}>`).setImage(gifUrl)
+    const embed = new Discord.EmbedBuilder().setDescription(`GIF from <@${author.id}>`).setImage(gifUrl)
     return channel.send({ embeds: [embed] })
   },
 }

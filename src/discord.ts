@@ -13,19 +13,21 @@ import { logMessage, logInfo } from "./utilities/log"
 import { notifyBirthday1Day, notifyBirthday1Week } from "./utilities/birthdayNotifications"
 import { parseArgs, parseArgsWithCommand, schedule } from "./utilities/utils"
 import { MessageCommand } from "./commands"
+import { isRepliableMessage, RepliableMessage, SendableChannel } from "./utilities/discord"
 
 const client = new Discord.Client({
   intents: [
-    Discord.Intents.FLAGS.GUILDS,
-    Discord.Intents.FLAGS.GUILD_MESSAGES,
-    Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+    Discord.GatewayIntentBits.Guilds,
+    Discord.GatewayIntentBits.GuildMessages,
+    Discord.GatewayIntentBits.MessageContent,
+    Discord.GatewayIntentBits.GuildMessageReactions,
   ],
 })
 
 const runMessageCommand = (
-  channel: Discord.TextBasedChannels,
+  channel: SendableChannel,
   command: MessageCommand,
-  message: Discord.Message,
+  message: RepliableMessage,
   args: string[],
   commandType = "COMMAND",
 ) => {
@@ -43,7 +45,10 @@ client.on("ready", async () => {
     throw `Logged in but no user.`
   }
   console.log(`Logged in as ${client.user?.tag}!`)
-  client.user.setPresence({ status: "online", activities: [{ name: "all of you.", type: "LISTENING" }] })
+  client.user.setPresence({
+    status: "online",
+    activities: [{ name: "all of you.", type: Discord.ActivityType.Listening }],
+  })
 
   const application = client.application
   if (application) {
@@ -56,7 +61,12 @@ client.on("ready", async () => {
 
 client.on("messageCreate", async (message) => {
   if (!client.user) {
-    throw `Logged in but no user.`
+    throw Error("Logged in but no user.")
+  }
+
+  if (!isRepliableMessage(message)) {
+    console.error("Unable to run command on stage channel.")
+    return
   }
 
   const { content, channel, author, mentions } = message
@@ -109,7 +119,7 @@ client.on("messageCreate", async (message) => {
 })
 
 client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isCommand()) {
+  if (!interaction.isChatInputCommand()) {
     return
   }
 

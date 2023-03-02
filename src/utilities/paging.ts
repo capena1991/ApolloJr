@@ -1,10 +1,11 @@
 import Discord from "discord.js"
+import { SendableChannel } from "./discord"
 
 import { createReactableEmbed } from "./reactions"
 
 export const createPageableEmbed = async (
-  channel: Discord.TextBasedChannels,
-  getPage: (page: number) => Discord.MessageEmbed,
+  channel: SendableChannel,
+  getPage: (page: number) => Discord.EmbedBuilder,
   nPages: number,
   author?: Discord.User,
 ) => {
@@ -25,21 +26,21 @@ export const createPageableEmbed = async (
 
 export const createListPageableEmbed = (
   channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
-  embeds: Discord.MessageEmbed[],
+  embeds: Discord.EmbedBuilder[],
   author?: Discord.User,
 ) => createPageableEmbed(channel, (page) => embeds[page], embeds.length, author)
 
 export const createFieldsPageableEmbed = (
-  channel: Discord.TextBasedChannels,
-  baseEmbed: Discord.MessageEmbed,
+  channel: SendableChannel,
+  baseEmbed: Discord.EmbedBuilder,
   fields: Discord.EmbedField[][],
   author?: Discord.User,
   setFooter = true,
 ) => {
   const getPage = (page: number) => {
-    baseEmbed.fields = fields[page]
+    baseEmbed.setFields(fields[page])
     if (setFooter) {
-      baseEmbed.setFooter(`${page + 1}/${fields.length}`)
+      baseEmbed.setFooter({ text: `${page + 1}/${fields.length}` })
     }
     return baseEmbed
   }
@@ -48,8 +49,8 @@ export const createFieldsPageableEmbed = (
 }
 
 export const createSimplePageableEmbed = (
-  channel: Discord.TextBasedChannels,
-  baseEmbed: Discord.MessageEmbed,
+  channel: SendableChannel,
+  baseEmbed: Discord.EmbedBuilder,
   fields: Discord.EmbedField[],
   author?: Discord.User,
   pageSize = 24,

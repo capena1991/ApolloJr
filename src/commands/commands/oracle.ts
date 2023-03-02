@@ -40,7 +40,7 @@ const oracle: Command = {
     {
       name: "question",
       description: "What's your question, mortal",
-      type: "STRING",
+      type: Discord.ApplicationCommandOptionType.String,
       required: true,
     },
   ],

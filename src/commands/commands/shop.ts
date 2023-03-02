@@ -26,7 +26,7 @@ const shop: Command = {
     if (!item) {
       return createSimplePageableEmbed(
         channel,
-        new Discord.MessageEmbed()
+        new Discord.EmbedBuilder()
           .setTitle("Shop")
           .setDescription(
             "These are the items you can buy.\n" +

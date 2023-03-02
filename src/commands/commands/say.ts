@@ -3,6 +3,7 @@ import Discord from "discord.js"
 import { Command } from "../types"
 import { randBool } from "../../utilities/utils"
 import { getSpecialNickname } from "../../utilities/specialPeople"
+import { isSendableChannel } from "../../utilities/discord"
 
 const run = (message: string | null, author: Discord.User) => {
   if (!message) {
@@ -21,7 +22,7 @@ const say: Command = {
     {
       name: "message",
       description: "What you want me to say.",
-      type: "STRING",
+      type: Discord.ApplicationCommandOptionType.String,
       required: true,
     },
   ],
@@ -34,6 +35,11 @@ const say: Command = {
   },
   runOnInteraction: async (interaction) => {
     const { user, options, channel } = interaction
+
+    if (!channel || !isSendableChannel(channel)) {
+      throw Error("Can't say that in this channel")
+    }
+
     const { reply, message } = run(options.getString("message"), user)
     await interaction.reply({ content: reply ?? "saying that...", ephemeral: true })
     await channel?.send(message)

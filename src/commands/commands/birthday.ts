@@ -12,6 +12,7 @@ import {
 } from "../../data/birthdayData"
 import { toggleSubscribe, knownSubscriptions } from "../../data/subscriptions"
 import { Command } from "../types"
+import { SendableChannel } from "@app/utilities/discord"
 
 const getBirthday = async (userId: string) => {
   const { birthday } = await users.get(userId)
@@ -74,9 +75,12 @@ const monthBirthdayList = async () => {
   if (!monthBirthdays.length) {
     return { content: "This is a sad month... no birthdays. :slight_frown:" }
   }
-  const embed = monthBirthdays.reduce(
-    (e, { user, date }) => e.addField(parseDate(date).toLocaleString(DateTime.DATE_MED), `<@${user}>`, true),
-    new Discord.MessageEmbed().setTitle(`${now.toLocaleString({ month: "long" })}'s Birthdays`),
+  const embed = new Discord.EmbedBuilder().setTitle(`${now.toLocaleString({ month: "long" })}'s Birthdays`).addFields(
+    monthBirthdays.map(({ user, date }) => ({
+      name: parseDate(date).toLocaleString(DateTime.DATE_MED),
+      value: `<@${user}>`,
+      inline: true,
+    })),
   )
   return { embeds: [embed] }
 }
@@ -92,7 +96,7 @@ const getAllBirthdays = async () => {
   return allBirthdays
 }
 
-const listAllBirthdays = async (channel: Discord.TextBasedChannels, author: Discord.User, page = 1) => {
+const listAllBirthdays = async (channel: SendableChannel, author: Discord.User, page = 1) => {
   const allBirthdays = await getAllBirthdays()
   if (!allBirthdays.length) {
     return "I'm sad... I don't know any birthday. :slight_frown:"
@@ -102,7 +106,7 @@ const listAllBirthdays = async (channel: Discord.TextBasedChannels, author: Disc
   }
   return await createSimplePageableEmbed(
     channel,
-    new Discord.MessageEmbed().setTitle("All Birthdays"),
+    new Discord.EmbedBuilder().setTitle("All Birthdays"),
     allBirthdays.map(({ user, date }) => ({
       name: parseDate(date).toLocaleString(DateTime.DATE_MED),
       value: `<@${user}>`,

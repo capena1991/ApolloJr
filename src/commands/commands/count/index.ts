@@ -1,11 +1,10 @@
-import Discord from "discord.js"
-
 import { MessageCommand } from "../../types"
 import { TaskQueueHandler } from "../../../utilities/queue"
+import { RepliableMessage } from "../../../utilities/discord"
 import { play } from "./game"
 import { getMessage } from "./messages"
 
-const doCount = async (message: Discord.Message, args: string[]) => {
+const doCount = async (message: RepliableMessage, args: string[]) => {
   const { channel, author, member } = message
 
   if (!member) {

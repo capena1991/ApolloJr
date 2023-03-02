@@ -17,7 +17,7 @@ const inventory: Command = {
     const ownedItems = Object.entries(user.items || {}).map(([id, amount]) => ({ item: typedItems[id], amount }))
     createSimplePageableEmbed(
       channel,
-      new Discord.MessageEmbed().setTitle("Inventory").setDescription("These are the items you own."),
+      new Discord.EmbedBuilder().setTitle("Inventory").setDescription("These are the items you own."),
       ownedItems.map(({ item, amount }) => ({
         name: `${item?.icon} ${item?.name}`,
         value: `**${amount}**`,

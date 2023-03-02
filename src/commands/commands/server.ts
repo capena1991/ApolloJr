@@ -4,10 +4,10 @@ import { DateTime } from "luxon"
 import { Command } from "../types"
 
 const TIER_LABEL = {
-  NONE: "No Level",
-  TIER_1: "Level 1",
-  TIER_2: "Level 2",
-  TIER_3: "Level 3",
+  [Discord.GuildPremiumTier.None]: "No Level",
+  [Discord.GuildPremiumTier.Tier1]: "Level 1",
+  [Discord.GuildPremiumTier.Tier2]: "Level 2",
+  [Discord.GuildPremiumTier.Tier3]: "Level 3",
 }
 
 const run = (guild: Discord.Guild | null) => {
@@ -17,16 +17,22 @@ const run = (guild: Discord.Guild | null) => {
 
   const { name, createdAt, premiumTier, ownerId, memberCount, channels } = guild
   const createdDt = DateTime.fromJSDate(createdAt)
-  let embed = new Discord.MessageEmbed()
+  let embed = new Discord.EmbedBuilder()
     .setTitle("About this server")
     .setDescription(`**${name}**`)
-    .addField("Created", `${createdDt.toLocaleString(DateTime.DATE_MED)}\n(${createdDt.toRelative()})`, true)
-    .addField("Boost", TIER_LABEL[premiumTier], true)
-    .addField("Owner", `<@${ownerId}>`, true)
-    .addField("Total members", memberCount.toString(), true)
-    .addField("Total channels", channels?.cache.size.toString() ?? "unknown", true)
+    .addFields(
+      {
+        name: "Created",
+        value: `${createdDt.toLocaleString(DateTime.DATE_MED)}\n(${createdDt.toRelative()})`,
+        inline: true,
+      },
+      { name: "Boost", value: TIER_LABEL[premiumTier], inline: true },
+      { name: "Owner", value: `<@${ownerId}>`, inline: true },
+      { name: "Total members", value: memberCount.toString(), inline: true },
+      { name: "Total channels", value: channels?.cache.size.toString() ?? "unknown", inline: true },
+    )
 
-  const icon = guild.iconURL({ size: 4096, dynamic: true })
+  const icon = guild.iconURL({ size: 4096, forceStatic: false })
   if (icon) {
     embed = embed.setThumbnail(icon)
   }

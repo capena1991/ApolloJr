@@ -3,7 +3,7 @@ import Discord from "discord.js"
 import { prefix, countingChannel } from "../utilities/config"
 import { logInfo } from "../utilities/log"
 import { Dict } from "../type-helpers"
-import { Command, InteractionCommand, MessageCommand } from "./types"
+import { Command, InteractionCommand, isInteractionCommand, isMessageCommand, MessageCommand } from "./types"
 
 import ping from "./commands/ping"
 import hello from "./commands/hello"
@@ -24,7 +24,7 @@ import gif from "./commands/gif"
 export { Command, MessageCommand, InteractionCommand }
 
 const runHelp = (client: Discord.Client) => {
-  let embed = new Discord.MessageEmbed()
+  let embed = new Discord.EmbedBuilder()
     .setTitle("Apollo Jr. commands")
     .setDescription("Here's a list of what you can ask me to do.")
     .addFields(
@@ -34,7 +34,7 @@ const runHelp = (client: Discord.Client) => {
       })),
     )
   if (client.user) {
-    embed = embed.setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
+    embed = embed.setThumbnail(client.user.displayAvatarURL({ forceStatic: false }))
   }
   return { embeds: [embed] }
 }
@@ -55,13 +55,15 @@ const allCommands = [...commands, ...hiddenCommands]
 const getCommandMap = (wantedCommands: Command[]) =>
   Object.fromEntries(wantedCommands.map((cmd) => [cmd.name, ...(cmd.aliases ?? [])].map((name) => [name, cmd])).flat())
 
-const messageCommandMap: Dict<MessageCommand> = getCommandMap(allCommands.filter(({ runOnMessage }) => runOnMessage))
+const messageCommandMap: Dict<MessageCommand> = getCommandMap(
+  allCommands.filter(isMessageCommand).filter(({ runOnMessage }) => runOnMessage),
+)
 export const getMessageCommand = (name: string) => {
   return messageCommandMap[name]
 }
 
 const interactionCommandMap: Dict<InteractionCommand> = getCommandMap(
-  allCommands.filter(({ runOnInteraction }) => runOnInteraction),
+  allCommands.filter(isInteractionCommand).filter(({ runOnInteraction }) => runOnInteraction),
 )
 export const getInteractionCommand = (name: string) => {
   return interactionCommandMap[name]
@@ -78,6 +80,7 @@ export const registerCommands = async (
   commandManager: Discord.ApplicationCommandManager | Discord.GuildApplicationCommandManager,
 ) => {
   const slashCommands = allCommands
+    .filter(isInteractionCommand)
     .filter(({ runOnInteraction }) => runOnInteraction)
     .map(({ name, description, options }) => ({ name, description, options }))
 

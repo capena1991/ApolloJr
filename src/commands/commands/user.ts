@@ -20,20 +20,26 @@ const getUserInfo = async (user: Discord.User, guildMember?: Discord.GuildMember
   const { id, username, bot, createdAt, discriminator } = user
   const { displayHexColor, joinedAt, roles } = guildMember ?? {}
   const { birthday, money } = await users.get(id)
-  let embed = new Discord.MessageEmbed()
+  let embed = new Discord.EmbedBuilder()
     .setTitle("User Info")
     .setDescription(`**<@${id}>** (${username}#${discriminator})${bot ? " :robot:" : ""}`)
-    .setThumbnail(user.displayAvatarURL({ size: 4096, dynamic: true }))
-    .addField("ID", id)
-    .addField("Created", showDateWithFromNow(createdAt), true)
-    .addField("Joined server", showDateWithFromNow(joinedAt), true)
+    .setThumbnail(user.displayAvatarURL({ size: 4096, forceStatic: false }))
+    .addFields(
+      { name: "ID", value: id },
+      { name: "Created", value: showDateWithFromNow(createdAt), inline: true },
+      { name: "Joined server", value: showDateWithFromNow(joinedAt), inline: true },
+    )
 
   if (displayHexColor) {
     embed = embed.setColor(displayHexColor)
   }
 
   if (birthday) {
-    embed = embed.addField("Birthday :birthday:", parseDate(birthday).toLocaleString(DateTime.DATE_MED), true)
+    embed = embed.addFields({
+      name: "Birthday :birthday:",
+      value: parseDate(birthday).toLocaleString(DateTime.DATE_MED),
+      inline: true,
+    })
   }
 
   const team = roles?.cache.has(positiveRole)
@@ -41,7 +47,10 @@ const getUserInfo = async (user: Discord.User, guildMember?: Discord.GuildMember
     : roles?.cache.has(negativeRole)
     ? "Negatives"
     : "Free Agent"
-  embed = embed.addField("Current team", team, true).addField("Money", money.toString(), true)
+  embed = embed.addFields(
+    { name: "Current team", value: team, inline: true },
+    { name: "Money", value: money.toString(), inline: true },
+  )
 
   // const typedItems = items as Dict<ObjectValues<typeof items>>
   // const allUserItems = Object.entries(userItems || {})
@@ -63,7 +72,7 @@ const ping: Command = {
     {
       name: "user",
       description: "The user that you want to know about.",
-      type: "USER",
+      type: Discord.ApplicationCommandOptionType.User,
     },
   ],
   runOnMessage: ({ channel, mentions, author, guild }) => {

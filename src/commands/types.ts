@@ -1,17 +1,29 @@
 import Discord from "discord.js"
 
-export interface Command {
+import { RepliableMessage } from "../utilities/discord"
+
+interface CommandBase {
   name: string
   aliases?: string[]
   description: string
   options?: Discord.ApplicationCommandOptionData[]
-  runOnMessage?: (message: Discord.Message, args: string[]) => void
-  runOnInteraction?: (interaction: Discord.CommandInteraction) => void
 }
 
-export type MessageCommand = Command & { runOnMessage: (message: Discord.Message, args: string[]) => void }
-export type InteractionCommand = Command & { runOnInteraction: (interaction: Discord.Interaction) => void }
+export interface MessageCommand extends CommandBase {
+  runOnMessage: (message: RepliableMessage, args: string[]) => void
+}
+
+export interface InteractionCommand extends CommandBase {
+  runOnInteraction: (interaction: Discord.ChatInputCommandInteraction) => void
+}
 
 export interface ConditionalCommand extends MessageCommand {
   condition: (message: Discord.Message) => boolean
 }
+
+export type Command = MessageCommand | InteractionCommand | ConditionalCommand
+
+export const isMessageCommand = (command: Command): command is MessageCommand => "runOnMessage" in command
+export const isInteractionCommand = (command: Command): command is InteractionCommand => "runOnInteraction" in command
+export const isConditionalCommand = (command: Command): command is ConditionalCommand =>
+  isMessageCommand(command) && "condition" in command

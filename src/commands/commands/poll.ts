@@ -23,7 +23,7 @@ const getPercent = (amount: number, total: number, width = 60) => {
 
 const getEmbed = ({ question, choices, votes, closed, multiple }: PollState) => {
   const totalVotes = votes.reduce((cum, choiceVotes) => cum + choiceVotes.length, 0)
-  return new Discord.MessageEmbed()
+  return new Discord.EmbedBuilder()
     .setTitle(`Poll (${multiple ? "multiple" : "single"} choice)`)
     .setDescription(question)
     .addFields(
@@ -32,7 +32,7 @@ const getEmbed = ({ question, choices, votes, closed, multiple }: PollState) => 
         value: `${getUserList(votes[i])}\n${getPercent(votes[i].length, totalVotes)}`,
       })),
     )
-    .setFooter(`Total votes: ${totalVotes}` + (closed ? "\nPoll closed 🔒" : ""))
+    .setFooter({ text: `Total votes: ${totalVotes}` + (closed ? "\nPoll closed 🔒" : "") })
 }
 
 const poll: Command = {

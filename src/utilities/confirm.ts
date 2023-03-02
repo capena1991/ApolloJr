@@ -1,7 +1,8 @@
 import Discord from "discord.js"
+import { SendableChannel } from "./discord"
 
 export const createConfirm = async (
-  channel: Discord.TextBasedChannels,
+  channel: SendableChannel,
   author: Discord.User,
   text: string,
   confirmIcon: string,

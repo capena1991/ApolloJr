@@ -23,7 +23,7 @@ if (isDev()) {
 }
 
 const formatMessage = ({ channel, guild, author, cleanContent, embeds }: Discord.Message) => {
-  const channelStr = ["dm", "group"].includes(channel.type)
+  const channelStr = [Discord.ChannelType.DM, Discord.ChannelType.GroupDM].includes(channel.type)
     ? "DM"
     : `${guild?.name || "unknown"}#${(<Discord.GuildChannel>channel).name}`
   const content = embeds.length ? (cleanContent ? `_<embed(s)>_ + ${cleanContent}` : "_<embed(s)>_") : cleanContent
