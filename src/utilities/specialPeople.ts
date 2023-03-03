@@ -4,8 +4,9 @@ import { chooseOne } from "./utils"
 
 const categories: Dict<{ names: string[] }> = {
   wife: { names: ["honey", "wifey", "hon'", "babe"] },
-  father: { names: ["dad"] },
+  father: { names: ["dad", "old man"] },
   aunt: { names: ["auntie"] },
+  uncle: { names: ["uncle"] },
 }
 
 export const getSpecialNickname = (userId: string, chance = 0.5) => {
