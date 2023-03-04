@@ -125,7 +125,13 @@ client.on("interactionCreate", async (interaction) => {
 
   logInteraction(interaction)
 
-  const { commandName } = interaction
+  const { commandName, channel } = interaction
+
+  if (getChannelCommand(channel?.id ?? "")) {
+    logInfo(`INVALID CHANNEL FOR SLASH COMMAND: ${commandName}`, { interaction })
+    interaction.reply({ content: "You can't do that in this channel", ephemeral: true })
+    return
+  }
 
   const command = getInteractionCommand(commandName)
 
