@@ -107,8 +107,8 @@ const messages = {
       `🔼 **Positives** have won **${positiveWins}** times\n🔽 **Negatives** have won **${negativeWins}** times`,
   },
   newRound: {
-    nice: ({ roundNumber }: { roundNumber?: number }) => `Round ${roundNumber} starts now.`,
-    sassy: ({ roundNumber }: { roundNumber?: number }) => `Round ${roundNumber} starts now.`,
+    nice: ({ roundNumber }: { roundNumber?: number }) => `Round ${(roundNumber ?? 0) + 1} starts now.`,
+    sassy: ({ roundNumber }: { roundNumber?: number }) => `Round ${(roundNumber ?? 0) + 1} starts now.`,
   },
   zero: {
     nice: () => "0",
