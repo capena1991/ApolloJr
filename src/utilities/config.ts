@@ -15,6 +15,7 @@ interface Config {
   alts: string[]
   specialPeople: Array<{ id: string; categories: string[] }>
   allBirthdays: Array<{ id: string; date: string }>
+  logMessages?: boolean
 }
 
 export const getConfig = <T extends keyof Config>(key: T): Config[T] => {
@@ -34,3 +35,4 @@ export const nicePeople = getConfig("nicePeople")
 export const alts = getConfig("alts")
 export const specialPeople = getConfig("specialPeople")
 export const allBirthdays = getConfig("allBirthdays")
+export const logMessages = getConfig("logMessages")

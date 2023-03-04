@@ -9,7 +9,7 @@ import {
 } from "./commands"
 import { getReaction } from "./reactions"
 import { token, prefix } from "./utilities/config"
-import { logMessage, logInfo } from "./utilities/log"
+import { logMessage, logInfo, logInteraction } from "./utilities/log"
 import { notifyBirthday1Day, notifyBirthday1Week } from "./utilities/birthdayNotifications"
 import { parseArgs, parseArgsWithCommand, schedule } from "./utilities/utils"
 import { MessageCommand } from "./commands"
@@ -32,7 +32,7 @@ const runMessageCommand = (
   commandType = "COMMAND",
 ) => {
   try {
-    logInfo(`EXECUTING ${commandType} ${command.name}`, message)
+    logInfo(`EXECUTING ${commandType} ${command.name}`, { message })
     return command.runOnMessage(message, args)
   } catch (error) {
     console.error(error)
@@ -64,14 +64,14 @@ client.on("messageCreate", async (message) => {
     throw Error("Logged in but no user.")
   }
 
+  logMessage(message)
+
   if (!isRepliableMessage(message)) {
     console.error("Unable to run command on stage channel.")
     return
   }
 
   const { content, channel, author, mentions } = message
-
-  logMessage(message)
 
   if (author.bot) {
     return
@@ -93,7 +93,7 @@ client.on("messageCreate", async (message) => {
 
   if (!content.startsWith(prefix)) {
     if (mentions.members?.has(client.user.id)) {
-      logInfo("MENTIONED", message)
+      logInfo("MENTIONED", { message })
       await channel.send(await getReaction("mention", message))
     }
     return
@@ -102,7 +102,7 @@ client.on("messageCreate", async (message) => {
   const { command, args } = parseArgsWithCommand(content, prefix)
 
   if (!command) {
-    logInfo("PREFIX WITH NO COMMAND", message)
+    logInfo("PREFIX WITH NO COMMAND", { message })
     await channel.send(await getReaction("noCommand", message))
     return
   }
@@ -110,7 +110,7 @@ client.on("messageCreate", async (message) => {
   const cmd = getMessageCommand(command)
 
   if (!cmd) {
-    logInfo("INVALID COMMAND", message)
+    logInfo("INVALID COMMAND", { message })
     await channel.send(await getReaction("invalidCommand", message))
     return
   }
@@ -123,18 +123,20 @@ client.on("interactionCreate", async (interaction) => {
     return
   }
 
+  logInteraction(interaction)
+
   const { commandName } = interaction
 
   const command = getInteractionCommand(commandName)
 
   if (!command) {
-    logInfo("INVALID SLASH COMMAND: ${commandName}")
+    logInfo(`INVALID SLASH COMMAND: ${commandName}`, { interaction })
     await interaction.reply(await getReaction("invalidCommand"))
     return
   }
 
   try {
-    logInfo(`EXECUTING SLASH COMMAND ${command.name}`)
+    logInfo(`EXECUTING SLASH COMMAND ${command.name}`, { interaction })
     await command.runOnInteraction(interaction)
   } catch (error) {
     console.error(error)

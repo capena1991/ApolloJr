@@ -1,6 +1,6 @@
 import Discord from "discord.js"
 import simpleLogger from "simple-node-logger"
-import { isDev } from "./config"
+import { logMessages } from "./config"
 
 interface Logger {
   info: (message: string) => void
@@ -8,7 +8,7 @@ interface Logger {
 
 let logger: Logger
 
-if (isDev()) {
+if (logMessages) {
   logger = simpleLogger.createRollingFileLogger({
     logDirectory: "data/logs/messages",
     fileNamePattern: "<DATE>.log",
@@ -30,13 +30,32 @@ const formatMessage = ({ channel, guild, author, cleanContent, embeds }: Discord
   return `\`${channelStr}:${author.tag}\` ${content}`
 }
 
+const formatInteraction = ({ channel, guild, user, commandName, options }: Discord.ChatInputCommandInteraction) => {
+  const channelStr =
+    channel && [Discord.ChannelType.DM, Discord.ChannelType.GroupDM].includes(channel.type)
+      ? "DM"
+      : `${guild?.name || "unknown"}#${(<Discord.GuildChannel>channel).name}`
+  const formattedOptions = JSON.stringify(Object.fromEntries(options.data.map(({ name, value }) => [name, value])))
+  return `\`${channelStr}:${user.tag}\` /${commandName} ${formattedOptions}`
+}
+
 export const logMessage = (message: Discord.Message) => {
   logger.info(formatMessage(message))
 }
 
-export const logInfo = (infoMessage: string, message: Discord.Message | undefined = undefined) => {
+export const logInteraction = (interaction: Discord.ChatInputCommandInteraction) => {
+  logger.info(formatInteraction(interaction))
+}
+
+export const logInfo = (
+  infoMessage: string,
+  { message, interaction }: { message?: Discord.Message; interaction?: Discord.ChatInputCommandInteraction } = {},
+) => {
   console.log(infoMessage)
   if (message) {
     console.log(formatMessage(message))
+  }
+  if (interaction) {
+    console.log(formatInteraction(interaction))
   }
 }
