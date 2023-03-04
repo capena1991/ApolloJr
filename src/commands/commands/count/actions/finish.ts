@@ -25,7 +25,12 @@ export const tryFinishRound = async (playData: PlayData): Promise<ActionResult> 
   let newPlayData = await grantRewards(playData, rewards)
   newPlayData = await archiveCurrentRound(newPlayData)
 
-  const roundsSummary = await getPreviousRoundsSummary()
+  const previousRoundsSummary = await getPreviousRoundsSummary()
+  const summaryKeyToUpdate = positivesWin ? "positiveWins" : "negativeWins"
+  const roundsSummary = {
+    ...previousRoundsSummary,
+    [summaryKeyToUpdate]: previousRoundsSummary[summaryKeyToUpdate] + 1,
+  }
 
   const messages = [
     {
