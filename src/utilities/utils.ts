@@ -24,6 +24,8 @@ export const joinReadable = (list: string[]) => {
   }
 }
 
+export const optionalText = (text: string, probability = 0.5) => (randBool(probability) ? text : "")
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const schedule = (fn: (...args: any[]) => any, time: number, ...args: any[]) => {
   setImmediate(fn, ...args)

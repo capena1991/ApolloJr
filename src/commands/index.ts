@@ -6,7 +6,7 @@ import { Dict } from "../type-helpers"
 import { Command, InteractionCommand, isInteractionCommand, isMessageCommand, MessageCommand } from "./types"
 
 import ping from "./commands/ping"
-import hello from "./commands/hello"
+import greetings from "./commands/greetings"
 import server from "./commands/server"
 import user from "./commands/user"
 import oracle from "./commands/oracle"
@@ -46,7 +46,7 @@ const help: Command = {
   runOnInteraction: (interaction) => interaction.reply(runHelp(interaction.client)),
 }
 
-const commands = [ping, hello, server, user, say, oracle, birthday, poll, help]
+const commands = [ping, ...greetings, server, user, say, oracle, birthday, poll, help]
 
 const hiddenCommands = [says, reset]
 
