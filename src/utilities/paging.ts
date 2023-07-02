@@ -25,7 +25,7 @@ export const createPageableEmbed = async (
 }
 
 export const createListPageableEmbed = (
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
+  channel: SendableChannel,
   embeds: Discord.EmbedBuilder[],
   author?: Discord.User,
 ) => createPageableEmbed(channel, (page) => embeds[page], embeds.length, author)

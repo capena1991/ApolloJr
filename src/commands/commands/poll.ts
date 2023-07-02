@@ -14,7 +14,7 @@ interface PollState {
 
 const choiceEmojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"]
 
-const getUserList = (users: Discord.User[]) => users.map((u) => `<@${u}>`).join(" ") || "No one yet"
+const getUserList = (users: Discord.User[]) => users.map((u) => `<@${u.id}>`).join(" ") || "No one yet"
 const getPercent = (amount: number, total: number, width = 60) => {
   const percent = total === 0 ? 0 : Math.round((amount * 100) / total)
   const scaled = Math.round((percent * width) / 100)

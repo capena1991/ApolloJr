@@ -144,6 +144,7 @@ const birthday: Command = {
         return allBirthdays.forEach(async ({ user }) => channel.send(await removeBirthday(user)))
       }
       case "":
+      case "month":
         return channel.send(await monthBirthdayList())
       case "all":
         return await listAllBirthdays(channel, author, parseInt(args[1]))
