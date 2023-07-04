@@ -22,7 +22,8 @@ const notifyBirthday = async (
     return
   }
   const { subscribed } = await subscriptions.get(subscriptionKey)
-  const notification = { reason: dateToCheck.toFormat("MM-dd"), datetime: now.toISO() }
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const notification = { reason: dateToCheck.toFormat("MM-dd"), datetime: now.toISO()! }
   const updated = await Promise.all(
     subscribed.map(async ({ user, lastNotification }) => {
       let res = { user, lastNotification }

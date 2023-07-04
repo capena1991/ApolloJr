@@ -22,18 +22,32 @@ export const getPlayData = async (userId: string, count: number): Promise<PlayDa
 export const savePlayData = ({ currentRound, userId, user }: PlayData) =>
   Promise.all([setCurrent(currentRound), users.set(userId, user)])
 
-const addUserCount = (user: UserData, datetime: DateTime): UserData => ({
-  ...user,
-  counting: {
-    ...user.counting,
-    lastCounts: [{ datetime: datetime.toISO() }, ...user.counting.lastCounts].slice(0, 5),
-  },
-})
+const addUserCount = (user: UserData, datetime: DateTime): UserData => {
+  const isoDatetime = datetime.toISO()
+  if (!isoDatetime) {
+    return user
+  }
 
-const addRoundCount = (round: CountingRound, userId: string, datetime: DateTime): CountingRound => ({
-  ...round,
-  last: { user: userId, datetime: datetime.toISO() },
-})
+  return {
+    ...user,
+    counting: {
+      ...user.counting,
+      lastCounts: [{ datetime: isoDatetime }, ...user.counting.lastCounts].slice(0, 5),
+    },
+  }
+}
+
+const addRoundCount = (round: CountingRound, userId: string, datetime: DateTime): CountingRound => {
+  const isoDatetime = datetime.toISO()
+  if (!isoDatetime) {
+    return round
+  }
+
+  return {
+    ...round,
+    last: { user: userId, datetime: isoDatetime },
+  }
+}
 
 export const addCountEntries = (
   { currentRound, userId, user, countSign }: PlayData,

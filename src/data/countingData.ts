@@ -15,7 +15,8 @@ export interface CountingRound {
 const initializeCountingRound = (roundNumber = 0) => ({
   roundNumber,
   count: 0,
-  last: { user: botUserId, datetime: DateTime.utc().toISO() }, // bot's user id
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  last: { user: botUserId, datetime: DateTime.utc().toISO()! }, // bot's user id
   contributions: {},
 })
 

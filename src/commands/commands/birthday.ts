@@ -41,7 +41,8 @@ const setBirthday = async (userId: string, date: string | undefined) => {
     return "I'm either dumb or that wasn't a valid date. I wouldn't be surprised of either."
   }
   const userData = await users.get(userId)
-  users.set(userId, { ...userData, birthday: parsedDate.toISODate() })
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  users.set(userId, { ...userData, birthday: parsedDate.toISODate()! })
   if (userData.birthday) {
     await removeBirthdayData(parseDate(userData.birthday), userId)
   }
@@ -66,7 +67,7 @@ const monthBirthdayList = async () => {
   const monthBirthdays: { user: string; date: string }[] = []
   const now = DateTime.local()
   const startOfMonth = now.startOf("month")
-  const daysInMonth = now.daysInMonth
+  const daysInMonth = now.daysInMonth ?? 31
   for (let d = 0; d < daysInMonth; d++) {
     const day = startOfMonth.plus({ days: d })
     const bds = await getBirthdayData(day)

@@ -17,9 +17,14 @@ const birthdaysKeyv = new Keyv<BirthdayData>(db, { namespace: "birthdays" })
 export const birthdays = new DataManager<BirthdayData>(birthdaysKeyv, initializeBirthdayData)
 
 export const addBirthday = async (date: DateTime, userId: string) => {
+  const isoDate = date.toISODate()
+  if (!isoDate) {
+    return
+  }
+
   const formattedDate = date.toFormat("MM-dd")
   const { birthdays: users } = await birthdays.get(formattedDate)
-  birthdays.set(formattedDate, { birthdays: [...users, { user: userId, date: date.toISODate() }] })
+  birthdays.set(formattedDate, { birthdays: [...users, { user: userId, date: isoDate }] })
 }
 
 export const removeBirthday = async (date: DateTime, userId: string) => {
