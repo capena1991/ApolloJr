@@ -12,7 +12,7 @@ const reset: Command = {
     }
     // TODO: reset info in other collections as well
     mentions.members?.forEach((user) => users.reset(user.id))
-    channel.send("done")
+    await channel.send("done")
   },
 }
 

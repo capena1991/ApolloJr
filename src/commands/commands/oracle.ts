@@ -44,9 +44,12 @@ const oracle: Command = {
       required: true,
     },
   ],
-  runOnMessage: ({ channel, author }, args) => channel.send(run(args.join(" "), author)),
-  runOnInteraction: (interaction) =>
-    interaction.reply(run(interaction.options.getString("question"), interaction.user)),
+  runOnMessage: async ({ channel, author }, args) => {
+    await channel.send(run(args.join(" "), author))
+  },
+  runOnInteraction: async (interaction) => {
+    await interaction.reply(run(interaction.options.getString("question"), interaction.user))
+  },
 }
 
 export default oracle

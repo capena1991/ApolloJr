@@ -42,8 +42,12 @@ const runHelp = (client: Discord.Client) => {
 const help: Command = {
   name: "help",
   description: "Shows you what you can ask me to do.",
-  runOnMessage: ({ channel, client }) => channel.send(runHelp(client)),
-  runOnInteraction: (interaction) => interaction.reply(runHelp(interaction.client)),
+  runOnMessage: async ({ channel, client }) => {
+    await channel.send(runHelp(client))
+  },
+  runOnInteraction: async (interaction) => {
+    await interaction.reply(runHelp(interaction.client))
+  },
 }
 
 const commands = [ping, ...greetings, server, user, say, oracle, birthday, poll, help]

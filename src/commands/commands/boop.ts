@@ -13,17 +13,18 @@ const gifs = [
 const boop: Command = {
   name: "boop",
   description: "Want to mildly annoy someone in a cute and wholesome way? I got your back.",
-  runOnMessage: ({ channel, author, mentions }) => {
+  runOnMessage: async ({ channel, author, mentions }) => {
     if (!mentions.users.size) {
-      return channel.send(
+      await channel.send(
         "Who do you want to boop? If you can't think of someone I offer myself as volunteer. :slight_smile:",
       )
+      return
     }
     const have = pluralize(mentions.users.size, "has", "have")
     const embed = new Discord.EmbedBuilder()
       .setDescription(`${mentions.users.map(({ id }) => `<@${id}>`).join(", ")} ${have} been booped by <@${author.id}>`)
       .setImage(chooseOne(gifs))
-    return channel.send({ embeds: [embed] })
+    await channel.send({ embeds: [embed] })
   },
 }
 

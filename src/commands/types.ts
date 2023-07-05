@@ -10,11 +10,11 @@ interface CommandBase {
 }
 
 export interface MessageCommand extends CommandBase {
-  runOnMessage: (message: RepliableMessage, args: string[]) => void
+  runOnMessage: (message: RepliableMessage, args: string[]) => Promise<void>
 }
 
 export interface InteractionCommand extends CommandBase {
-  runOnInteraction: (interaction: Discord.ChatInputCommandInteraction) => void
+  runOnInteraction: (interaction: Discord.ChatInputCommandInteraction) => Promise<void>
 }
 
 export interface ConditionalCommand extends MessageCommand {

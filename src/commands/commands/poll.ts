@@ -47,17 +47,17 @@ const poll: Command = {
     let closed = false
 
     if (!question) {
-      channel.send("What do you want people to vote on?")
+      await channel.send("What do you want people to vote on?")
       return
     }
 
     if (!choices.length) {
-      channel.send("You gotta give people some choices to vote on.")
+      await channel.send("You gotta give people some choices to vote on.")
       return
     }
 
     if (choices.length > choiceEmojis.length) {
-      channel.send("That's too many choices. I can't handle that :disappointed:")
+      await channel.send("That's too many choices. I can't handle that :disappointed:")
       return
     }
 

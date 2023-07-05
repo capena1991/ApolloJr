@@ -75,18 +75,20 @@ const ping: Command = {
       type: Discord.ApplicationCommandOptionType.User,
     },
   ],
-  runOnMessage: ({ channel, mentions, author, guild }) => {
+  runOnMessage: async ({ channel, mentions, author, guild }) => {
     const users = mentions.users.size ? [...mentions.users.values()] : [author]
-    users.forEach(async (u) => {
-      const embed = await getUserInfo(u, guild?.members.cache.get(u.id))
-      channel.send({ embeds: [embed] })
-    })
+    await Promise.all(
+      users.map(async (u) => {
+        const embed = await getUserInfo(u, guild?.members.cache.get(u.id))
+        await channel.send({ embeds: [embed] })
+      }),
+    )
   },
   runOnInteraction: async (interaction) => {
     const { options, user, guild } = interaction
     const wantedUser = options.getUser("user") ?? user
     const embed = await getUserInfo(wantedUser, guild?.members.cache.get(wantedUser.id))
-    interaction.reply({ embeds: [embed] })
+    await interaction.reply({ embeds: [embed] })
   },
 }
 

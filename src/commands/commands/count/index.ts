@@ -41,7 +41,7 @@ const queue = new TaskQueueHandler<void>()
 const count: MessageCommand = {
   name: "count",
   description: "The game of count. Two teams try to get the count to either 100 or -100",
-  runOnMessage: (message, args) => {
+  runOnMessage: async (message, args) => {
     queue.enqueue(() => doCount(message, args))
   },
 }

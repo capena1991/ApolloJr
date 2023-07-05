@@ -27,6 +27,10 @@ const greetings: Record<string, Greeting> = {
 export default Object.entries(greetings).map<Command>(([name, { description, reply }]) => ({
   name,
   description,
-  runOnMessage: async ({ channel, author }) => channel.send(reply(author)),
-  runOnInteraction: async (interaction) => interaction.reply(reply(interaction.user)),
+  runOnMessage: async ({ channel, author }) => {
+    await channel.send(reply(author))
+  },
+  runOnInteraction: async (interaction) => {
+    await interaction.reply(reply(interaction.user))
+  },
 }))

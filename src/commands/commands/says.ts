@@ -4,13 +4,13 @@ import { Command } from "../types"
 const says: Command = {
   name: "says",
   description: "Shhh.",
-  runOnMessage: (message, args) => {
+  runOnMessage: async (message, args) => {
     const { channel, author } = message
     if (!admins.includes(author.id) || !args.length) {
       return
     }
     message.delete()
-    channel.send(args.join(" "))
+    await channel.send(args.join(" "))
   },
 }
 

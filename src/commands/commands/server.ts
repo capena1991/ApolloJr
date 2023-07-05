@@ -48,8 +48,12 @@ const run = (guild: Discord.Guild | null) => {
 const server: Command = {
   name: "server",
   description: "I'll show you stuff that you might not know about this server.",
-  runOnMessage: ({ channel, guild }) => channel.send(run(guild)),
-  runOnInteraction: (interaction) => interaction.reply(run(interaction.guild)),
+  runOnMessage: async ({ channel, guild }) => {
+    await channel.send(run(guild))
+  },
+  runOnInteraction: async (interaction) => {
+    await interaction.reply(run(interaction.guild))
+  },
 }
 
 export default server

@@ -134,38 +134,47 @@ const birthday: Command = {
     switch ((args[0] || "").toLowerCase()) {
       case "setall":
         if (!admins.includes(author.id)) {
-          return channel.send("Nothing here for you, kid. Keep walking. :unamused:")
+          await channel.send("Nothing here for you, kid. Keep walking. :unamused:")
+          return
         }
         return allBirthdaysBackup.forEach(async ({ id, date }) => channel.send(await setBirthday(id, date)))
       case "removeall": {
         if (!admins.includes(author.id)) {
-          return channel.send("Nothing here for you, kid. Keep walking. :unamused:")
+          await channel.send("Nothing here for you, kid. Keep walking. :unamused:")
+          return
         }
         const allBirthdays = await getAllBirthdays()
-        return allBirthdays.forEach(async ({ user }) => channel.send(await removeBirthday(user)))
+        await Promise.all(allBirthdays.map(async ({ user }) => channel.send(await removeBirthday(user))))
+        return
       }
       case "":
       case "month":
-        return channel.send(await monthBirthdayList())
+        await channel.send(await monthBirthdayList())
+        return
       case "all":
-        return await listAllBirthdays(channel, author, parseInt(args[1]))
+        await listAllBirthdays(channel, author, parseInt(args[1]))
+        return
       case "set":
-        return channel.send(await setBirthday(author.id, args.slice(1).join(" ")))
+        await channel.send(await setBirthday(author.id, args.slice(1).join(" ")))
+        return
       case "remove":
       case "unset":
       case "delete":
       case "forget":
-        return channel.send(await removeBirthday(author.id))
+        await channel.send(await removeBirthday(author.id))
+        return
       case "sub":
       case "subscribe":
       case "notify":
-        return channel.send(await subscribeToNotifications(author.id))
+        await channel.send(await subscribeToNotifications(author.id))
+        return
       default: {
         const match = args[0].match(/<@!?(\d+)>/)
         if (match) {
-          return channel.send(await getBirthday(match[1]))
+          await channel.send(await getBirthday(match[1]))
+          return
         }
-        return channel.send(await setBirthday(author.id, args.join(" ")))
+        await channel.send(await setBirthday(author.id, args.join(" ")))
       }
     }
   },
