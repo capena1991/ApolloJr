@@ -6,21 +6,23 @@ interface Logger {
   info: (message: string) => void
 }
 
-let logger: Logger
+let messageLogger: Logger | undefined
 
 if (logMessages) {
-  logger = simpleLogger.createRollingFileLogger({
+  messageLogger = simpleLogger.createRollingFileLogger({
     logDirectory: "data/logs/messages",
     fileNamePattern: "<DATE>.log",
-    dateFormat: "YYYY.MM.DD",
+    dateFormat: "YYYY-MM-DD",
+    timestampFormat: "HH:mm:ss.SSSZ",
   })
-} else {
-  logger = {
-    info: () => {
-      // do nothing
-    },
-  }
 }
+
+const errorLogger = simpleLogger.createRollingFileLogger({
+  logDirectory: "data/logs/errors",
+  fileNamePattern: "<DATE>.log",
+  dateFormat: "YYYY-MM",
+  timestampFormat: "HH:mm:ss.SSSZ",
+})
 
 const formatMessage = ({ channel, guild, author, cleanContent, embeds }: Discord.Message) => {
   const channelStr = [Discord.ChannelType.DM, Discord.ChannelType.GroupDM].includes(channel.type)
@@ -40,11 +42,11 @@ const formatInteraction = ({ channel, guild, user, commandName, options }: Disco
 }
 
 export const logMessage = (message: Discord.Message) => {
-  logger.info(formatMessage(message))
+  messageLogger?.info(formatMessage(message))
 }
 
 export const logInteraction = (interaction: Discord.ChatInputCommandInteraction) => {
-  logger.info(formatInteraction(interaction))
+  messageLogger?.info(formatInteraction(interaction))
 }
 
 export const logInfo = (
@@ -58,4 +60,20 @@ export const logInfo = (
   if (interaction) {
     console.log(formatInteraction(interaction))
   }
+}
+
+export const logError = (
+  errorMessage: string,
+  { message, interaction }: { message?: Discord.Message; interaction?: Discord.ChatInputCommandInteraction } = {},
+) => {
+  if (message) {
+    console.error(formatMessage(message))
+    errorLogger.error(formatMessage(message))
+  }
+  if (interaction) {
+    console.error(formatInteraction(interaction))
+    errorLogger.error(formatInteraction(interaction))
+  }
+  console.error(errorMessage)
+  errorLogger.error(errorMessage)
 }
