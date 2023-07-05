@@ -1,3 +1,4 @@
+import http from "http"
 import Discord from "discord.js"
 
 import {
@@ -150,6 +151,13 @@ client.on("interactionCreate", async (interaction) => {
     await interaction.reply("Oops! There was an error trying to execute that command! :disappointed:")
   }
 })
+
+http
+  .createServer(function (_, res) {
+    res.write("I'm alive")
+    res.end()
+  })
+  .listen(8080)
 
 client.login(token).catch((e) => {
   logError(`Failed to login: ${e}`)

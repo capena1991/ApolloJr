@@ -60,6 +60,11 @@ typings/
 # next.js build output
 .next
 
+# replit stuff
+.build/
+.replit
+replit.nix
+
 /dist/
 /deleted.json
 /.vscode/
