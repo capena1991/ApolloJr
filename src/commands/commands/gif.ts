@@ -13,14 +13,9 @@ const gif: ConditionalCommand = {
   condition: ({ channel, content }) => gifChannels.includes(channel.id) && gifLinkRe.test(content),
   runOnMessage: async ({ channel, author }, args) => {
     const [url] = args
-    let gifUrl
-    try {
-      const { data } = await axios.get(url)
-      const $ = cheerio.load(data)
-      gifUrl = $('head>link[rel="image_src"]').attr("href")
-    } catch (error) {
-      console.error(error)
-    }
+    const { data } = await axios.get(url)
+    const $ = cheerio.load(data)
+    const gifUrl = $('head>link[rel="image_src"]').attr("href")
     if (!gifUrl) {
       return
     }
