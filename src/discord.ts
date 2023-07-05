@@ -9,7 +9,7 @@ import {
 } from "./commands"
 import { getReaction } from "./reactions"
 import { token, prefix } from "./utilities/config"
-import { logMessage, logInfo, logInteraction } from "./utilities/log"
+import { logMessage, logInfo, logInteraction, logError } from "./utilities/log"
 import { notifyBirthday1Day, notifyBirthday1Week } from "./utilities/birthdayNotifications"
 import { parseArgs, parseArgsWithCommand, schedule } from "./utilities/utils"
 import { MessageCommand } from "./commands"
@@ -24,7 +24,7 @@ const client = new Discord.Client({
   ],
 })
 
-const runMessageCommand = (
+const runMessageCommand = async (
   channel: SendableChannel,
   command: MessageCommand,
   message: RepliableMessage,
@@ -33,10 +33,10 @@ const runMessageCommand = (
 ) => {
   try {
     logInfo(`EXECUTING ${commandType} ${command.name}`, { message })
-    return command.runOnMessage(message, args)
+    await command.runOnMessage(message, args)
   } catch (error) {
-    console.error(error)
-    return channel.send("Oops! There was an error trying to execute that command! :disappointed:")
+    logError(`${error}`, { message })
+    await channel.send("Oops! There was an error trying to execute that command! :disappointed:")
   }
 }
 
@@ -61,13 +61,14 @@ client.on("ready", async () => {
 
 client.on("messageCreate", async (message) => {
   if (!client.user) {
+    logError(`Error: Logged in but no user.`, { message })
     throw Error("Logged in but no user.")
   }
 
   logMessage(message)
 
   if (!isRepliableMessage(message)) {
-    console.error("Unable to run command on stage channel.")
+    logError(`Error: Unable to run command on stage channel.`, { message })
     return
   }
 
@@ -145,11 +146,12 @@ client.on("interactionCreate", async (interaction) => {
     logInfo(`EXECUTING SLASH COMMAND ${command.name}`, { interaction })
     await command.runOnInteraction(interaction)
   } catch (error) {
-    console.error(error)
+    logError(`Error: ${error}`, { interaction })
     await interaction.reply("Oops! There was an error trying to execute that command! :disappointed:")
   }
 })
 
-client.login(token).catch(() => {
+client.login(token).catch((e) => {
+  logError(`Failed to login: ${e}`)
   process.exit()
 })
