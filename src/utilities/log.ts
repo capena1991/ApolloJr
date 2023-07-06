@@ -24,6 +24,13 @@ const errorLogger = simpleLogger.createRollingFileLogger({
   timestampFormat: "YYYY-MM-DDTHH:mm:ss.SSSZ",
 })
 
+const infoLogger = simpleLogger.createRollingFileLogger({
+  logDirectory: "data/logs/info",
+  fileNamePattern: "<DATE>.log",
+  dateFormat: "YYYY-MM-DD",
+  timestampFormat: "HH:mm:ss.SSSZ",
+})
+
 const formatMessage = ({ channel, guild, author, cleanContent, embeds }: Discord.Message) => {
   const channelStr = [Discord.ChannelType.DM, Discord.ChannelType.GroupDM].includes(channel.type)
     ? "DM"
@@ -54,11 +61,16 @@ export const logInfo = (
   { message, interaction }: { message?: Discord.Message; interaction?: Discord.ChatInputCommandInteraction } = {},
 ) => {
   console.log(infoMessage)
+  infoLogger.info(infoMessage)
   if (message) {
-    console.log(formatMessage(message))
+    const formattedMessage = formatMessage(message)
+    console.log(formattedMessage)
+    infoLogger.info(formattedMessage)
   }
   if (interaction) {
-    console.log(formatInteraction(interaction))
+    const formattedInteraction = formatInteraction(interaction)
+    console.log(formattedInteraction)
+    infoLogger.info(formattedInteraction)
   }
 }
 
@@ -67,12 +79,14 @@ export const logError = (
   { message, interaction }: { message?: Discord.Message; interaction?: Discord.ChatInputCommandInteraction } = {},
 ) => {
   if (message) {
-    console.error(formatMessage(message))
-    errorLogger.error(formatMessage(message))
+    const formattedMessage = formatMessage(message)
+    console.error(formattedMessage)
+    errorLogger.error(formattedMessage)
   }
   if (interaction) {
-    console.error(formatInteraction(interaction))
-    errorLogger.error(formatInteraction(interaction))
+    const formattedInteraction = formatInteraction(interaction)
+    console.error(formattedInteraction)
+    errorLogger.error(formattedInteraction)
   }
   console.error(errorMessage)
   errorLogger.error(errorMessage)
