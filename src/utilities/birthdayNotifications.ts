@@ -4,7 +4,7 @@ import { DateTime } from "luxon"
 import { getBirthdays } from "../data/birthdayData"
 import { subscriptions, knownSubscriptions } from "../data/subscriptions"
 import { joinReadable } from "./utils"
-import { logInfo } from "./log"
+import { logError, logInfo } from "./log"
 
 const notifyBirthday = async (
   client: Discord.Client,
@@ -47,7 +47,7 @@ const notifyBirthday = async (
           res = { user, lastNotification: notification }
         }
       } catch (e) {
-        console.log(`Error notifying user. Error: ${e}`)
+        logError(`Error notifying user. Error: ${e}`)
       }
       return res
     }),

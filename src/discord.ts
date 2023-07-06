@@ -45,7 +45,7 @@ client.on("ready", async () => {
   if (!client.user) {
     throw `Logged in but no user.`
   }
-  console.log(`Logged in as ${client.user?.tag}!`)
+  logInfo(`Logged in as ${client.user?.tag}!`)
   client.user.setPresence({
     status: "online",
     activities: [{ name: "all of you.", type: Discord.ActivityType.Listening }],

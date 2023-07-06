@@ -1,3 +1,5 @@
+import { logError } from "./log"
+
 type Task<T> = () => Promise<T>
 
 export class TaskQueueHandler<T> {
@@ -17,7 +19,7 @@ export class TaskQueueHandler<T> {
       try {
         await current()
       } catch (error) {
-        console.error(error)
+        logError(`Task queue error: ${error}`)
         continue
       }
     }
