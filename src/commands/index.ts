@@ -1,6 +1,6 @@
 import Discord from "discord.js"
 
-import { prefix, countingChannel } from "../utilities/config"
+import { prefix, countingChannel, pingChannel } from "../utilities/config"
 import { logInfo } from "../utilities/log"
 import { Dict } from "../type-helpers"
 import { Command, InteractionCommand, isInteractionCommand, isMessageCommand, MessageCommand } from "./types"
@@ -15,6 +15,7 @@ import says from "./commands/says"
 import reset from "./commands/reset"
 import birthday from "./commands/birthday"
 import count from "./commands/count"
+import keepAlive from "./commands/keepAlive"
 // import transfer from "./transfer"
 // import shop from "./shop"
 // import inventory from "./inventory"
@@ -73,7 +74,10 @@ export const getInteractionCommand = (name: string) => {
   return interactionCommandMap[name]
 }
 
-const channelCommands: Dict<MessageCommand> = { [countingChannel]: count }
+const channelCommands: Dict<MessageCommand> = {
+  [countingChannel]: count,
+  [pingChannel]: keepAlive,
+}
 export const getChannelCommand = (channelId: string) => channelCommands[channelId]
 
 const conditionalCommands = [gif]
