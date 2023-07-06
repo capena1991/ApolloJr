@@ -21,7 +21,7 @@ const errorLogger = simpleLogger.createRollingFileLogger({
   logDirectory: "data/logs/errors",
   fileNamePattern: "<DATE>.log",
   dateFormat: "YYYY-MM",
-  timestampFormat: "HH:mm:ss.SSSZ",
+  timestampFormat: "YYYY-MM-DDTHH:mm:ss.SSSZ",
 })
 
 const formatMessage = ({ channel, guild, author, cleanContent, embeds }: Discord.Message) => {
