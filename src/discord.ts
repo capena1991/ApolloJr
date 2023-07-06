@@ -32,6 +32,11 @@ const runMessageCommand = async (
   args: string[],
   commandType = "COMMAND",
 ) => {
+  if (message.author.bot && !command.allowsBots) {
+    logInfo(`COULD NOT EXECUTE ${commandType} ${command.name}. BOTS NOT ALLOWED.`, { message })
+    return
+  }
+
   try {
     logInfo(`EXECUTING ${commandType} ${command.name}`, { message })
     await command.runOnMessage(message, args)
@@ -73,11 +78,7 @@ client.on("messageCreate", async (message) => {
     return
   }
 
-  const { content, channel, author, mentions } = message
-
-  if (author.bot) {
-    return
-  }
+  const { content, channel, mentions } = message
 
   const channelCommand = getChannelCommand(channel.id)
   if (channelCommand) {

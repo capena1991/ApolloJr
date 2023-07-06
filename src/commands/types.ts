@@ -6,6 +6,7 @@ interface CommandBase {
   name: string
   aliases?: string[]
   description: string
+  allowsBots?: boolean
   options?: Discord.ApplicationCommandOptionData[]
 }
 
