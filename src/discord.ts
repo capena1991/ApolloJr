@@ -159,6 +159,8 @@ http
   })
   .listen(8080)
 
+setInterval(() => logInfo("I'm alive"), 60000)
+
 client.login(token).catch((e) => {
   logError(`Failed to login: ${e}`)
   process.exit()
